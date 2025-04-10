@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 2s infinite;
+        }
+        .animate-progress {
+            animation: progress 5s linear forwards;
+        }
+    </style>
+</head>
+<body class="bg-black h-screen flex items-center justify-center">
+    <div class="text-center">
+        <!-- Replace with your logo - using a placeholder div here -->
+        <div class="mx-auto w-32 h-32 bg-white rounded-full flex items-center justify-center animate-pulse-slow mb-8">
+            <span class="text-4xl font-bold text-gray-900">LOGO</span>
+        </div>
+        
+        <h1 class="text-2xl font-light text-gray-200 tracking-widest mb-6">ADMIN PORTAL</h1>
+        
+        <div class="w-64 h-1.5 bg-gray-700 rounded-full overflow-hidden mx-auto">
+            <div class="h-full bg-white animate-progress"></div>
+        </div>
+        
+        <p class="text-gray-400 mt-8 text-sm">Loading admin interface...</p>
+    </div>
+
+    <script>
+        setTimeout(function() {
+            window.location.href = "/admin/dashboard";
+        }, 5000);
+    </script>
+</body>
+</html>

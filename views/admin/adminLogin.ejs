@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiophile</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<!-- Admin Login Page -->
+<!-- Set the title for this page -->
+<!-- <% const title = "Admin Login" %> -->
+
+<style>
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      50% { opacity: 0.5; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes colorPulse {
+      0% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
+      33% { color: #9ca3af; text-shadow: 0 0 5px rgba(156,163,175,0.3); }
+      66% { color: #1f2937; text-shadow: 0 0 5px rgba(31,41,55,0.3); }
+      100% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 1.2s ease-in-out forwards;
+    }
+    
+    .animate-colorPulse {
+      animation: colorPulse 8s linear infinite;
+    }
+    
+    .hover-scale {
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .hover-scale:hover {
+      transform: scale(1.03);
+    }
+    
+    .input-transition {
+      transition: all 0.8s steps(4, end);
+    }
+    
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1.8s steps(8) infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .btn-transition {
+      transition: all 0.9s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    }
+  </style>
+  
+  <!-- Navbar with stepped animation -->
+  <nav class="bg-black text-white p-4 shadow-md sticky top-0 z-50 animate-fadeIn">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="text-xl font-bold">Admin Panel</div>
+      <div class="absolute left-1/2 transform -translate-x-1/2">
+        <span class="text-2xl font-bold tracking-wider animate-colorPulse">
+          AUDIOPHILE
+        </span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span id="adminName" class="hidden md:inline">Login</span>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Login Section with stepped transitions -->
+  <div class="flex flex-1 items-center justify-center py-12 min-h-[calc(100vh-136px)]">
+    <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl border border-black overflow-hidden md:min-h-[60vh] w-full max-w-3xl mx-4 hover-scale" style="animation-delay: 0.3s">
+        
+        <!-- Left Side - Login Form -->
+        <div class="w-full md:w-2/4 flex items-center justify-center p-6">
+            <div class="w-full max-w-md">
+                <div>
+                    <h2 class="text-2xl text-center font-bold text-gray-900 mb-2">Admin Login</h2>
+                    <p class="error absolute top-full left-0 text-red-500 text-sm mt-1 h-5"><%=locals.error %></p>
+                    <p class="text-center text-gray-600">Restricted Access</p>
+                </div>
+    
+                <form id="form" action="/admin/login" method="post" class="mt-8 space-y-6">
+                    <!-- Username/Email -->
+                    <div class="relative">
+                        <label for="username" class="sr-only">Username</label>
+                        <input id="username" name="username" type="text" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-md input-transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Username">
+                    </div>
+    
+                    <!-- Password -->
+                    <div class="relative">
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-md input-transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Password">
+                    </div>
+    
+                    <!-- Login Button -->
+                    <div>
+                        <button id="submitBtn" type="submit" 
+                            class="w-full py-3 px-6 bg-black text-white rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 btn-transition flex justify-center items-center gap-3">
+                            <span id="btnText">Login</span>
+                            <div id="loadingSpinner" class="loading-spinner hidden"></div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Right Side - Logo -->
+        <div class="hidden md:flex md:w-2/4 bg-black items-center justify-center p-6">
+            <img src="https://via.placeholder.com/150x150?text=Admin" alt="Admin Logo" 
+                 class="w-40 transition-all duration-1000 ease-in-out hover:rotate-12">
+        </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="bg-black text-white p-4 text-center w-full fixed bottom-0 animate-fadeIn" style="animation-delay: 0.6s">
+    <div class="container mx-auto">
+      <p>&copy; Admin 2025. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <script>
+    // Form submission loading animation
+    document.getElementById('form').addEventListener('submit', function(e) {
+      const btn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('loadingSpinner');
+      
+      // Show loading state
+      btn.disabled = true;
+      btn.classList.add('opacity-80');
+      btnText.textContent = 'Verifying...';
+      spinner.classList.remove('hidden');
+      
+      // Simulate loading (remove this in production)
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('opacity-80');
+        btnText.textContent = 'Login';
+        spinner.classList.add('hidden');
+      }, 3000);
+    });
+
+
+  </script>
+

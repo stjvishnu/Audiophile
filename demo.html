@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiophile - Register</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen text-white">
+    <!-- Header Section -->
+    <header class="bg-black sticky top-0 z-50 md:h-16 h-14 shadow-md">
+        <div class="container mx-auto px-4 h-full">
+            <div class="flex items-center justify-between h-full">
+                <!-- Logo Section -->
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <img src="https://via.placeholder.com/40" alt="Logo" class="md:h-10 md:w-10 h-8 w-8 mr-2">
+                        <span class="md:text-xl text-lg font-bold">Audiophile</span>
+                    </a>
+                </div>
+
+                <!-- Navigation Menu - Hidden on mobile -->
+                <nav class="hidden md:flex items-center md:space-x-6 space-x-4">
+                    <a href="#" class="hover:text-gray-300 transition">Home</a>
+                    
+                    <!-- Categories Dropdown -->
+                    <div class="relative group">
+                        <button class="hover:text-gray-300 transition flex items-center">
+                            Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-black border border-gray-700 mt-2 py-2 w-48 rounded-md shadow-lg z-10">
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Headphones</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Speakers</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Earphones</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Accessories</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Brands Dropdown -->
+                    <div class="relative group">
+                        <button class="hover:text-gray-300 transition flex items-center">
+                            Brands <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-black border border-gray-700 mt-2 py-2 w-48 rounded-md shadow-lg z-10">
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Sony</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Bose</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Sennheiser</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-800">Audio-Technica</a>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="hover:text-gray-300 transition">New Arrivals</a>
+                    <a href="#" class="hover:text-gray-300 transition">Deals</a>
+                </nav>
+
+                <!-- Right Side Elements -->
+                <div class="flex items-center">
+                    <!-- Mobile Search Button -->
+                    <button class="md:hidden text-white mr-3" id="mobile-search-button">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                    
+                    <!-- Desktop Search Box -->
+                    <div class="hidden md:flex items-center relative ml-auto mr-4">
+                        <input type="text" placeholder="Search products..." 
+                               class="bg-gray-800 text-white px-4 py-2 rounded-full md:w-64 w-48 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <button class="absolute right-3 text-gray-400 hover:text-white">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Icons Group -->
+                    <div class="flex items-center md:space-x-6 space-x-4 md:pl-6 pl-2">
+                        <!-- Wishlist -->
+                        <a href="#" class="relative hover:text-gray-300">
+                            <i class="fas fa-heart md:text-xl text-lg"></i>
+                            <span class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        </a>
+                        
+                        <!-- Cart -->
+                        <a href="#" class="relative hover:text-gray-300">
+                            <i class="fas fa-shopping-cart md:text-xl text-lg"></i>
+                            <span class="absolute -top-2 -right-2 bg-blue-500 text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        </a>
+                        
+                        <!-- User -->
+                        <a href="/login" class="hover:text-gray-300">
+                            <i class="fas fa-user md:text-xl text-lg"></i>
+                        </a>
+                        
+                        <!-- Mobile Menu Button -->
+                        <button class="md:hidden text-white" id="mobile-menu-button">
+                            <i class="fas fa-bars md:text-xl text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Search Box (Hidden by default) -->
+            <div class="md:hidden mt-3 hidden" id="mobile-search">
+                <div class="relative">
+                    <input type="text" placeholder="Search products..." 
+                           class="bg-gray-800 text-white px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    <button class="absolute right-3 top-2 text-gray-400 hover:text-white">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div class="md:hidden bg-gray-900 hidden" id="mobile-menu">
+            <div class="px-4 py-3 space-y-3">
+                <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Home</a>
+                
+                <!-- Mobile Categories Dropdown -->
+                <div class="relative">
+                    <button class="w-full text-left hover:bg-gray-800 px-2 py-1 rounded flex justify-between items-center mobile-dropdown-button">
+                        Categories <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="hidden mt-1 ml-4 space-y-2 mobile-dropdown-content">
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Headphones</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Speakers</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Earphones</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Accessories</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile Brands Dropdown -->
+                <div class="relative">
+                    <button class="w-full text-left hover:bg-gray-800 px-2 py-1 rounded flex justify-between items-center mobile-dropdown-button">
+                        Brands <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="hidden mt-1 ml-4 space-y-2 mobile-dropdown-content">
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Sony</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Bose</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Sennheiser</a>
+                        <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Audio-Technica</a>
+                    </div>
+                </div>
+                
+                <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">New Arrivals</a>
+                <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded">Deals</a>
+                <a href="/login" class="block hover:bg-gray-800 px-2 py-1 rounded">Login</a>
+                <a href="/register" class="block hover:bg-gray-800 px-2 py-1 rounded">Register</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Set the title for this page -->
+<!-- <% const title = "SignUp" %> -->
+
+<!-- Registration Section -->
+<div class="flex flex-1 items-center justify-center py-12">
+    <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl border border-black overflow-hidden md:min-h-[70vh] w-full max-w-3xl">
+        
+        <!-- Left Side - Logo (Hidden on mobile) -->
+        <div class="hidden md:flex md:w-2/4 bg-black items-center justify-center p-6">
+            <img src="https://via.placeholder.com/150x150?text=Audiophile" alt="Audiophile Logo" class="w-36">
+        </div>
+    
+        <!-- Right Side - Registration Form -->
+        <div class="w-full md:w-2/4 flex items-center justify-center p-6">
+            <div class="w-full max-w-md">
+                <div>
+                    <h2 class="text-2xl text-center font-bold text-gray-900">Create Your Account</h2>
+                    <p class="text-center text-gray-600 mt-2 text-sm">Join our community of audiophiles</p>
+                </div>
+    
+                <form id="signupForm" action="/user/SignUp" method="post" class="mt-6 space-y-5">
+                    <!-- First Name -->
+                    <div class="relative">
+                        <label for="firstName" class="sr-only">Full Name</label>
+                        <input id="firstName" name="firstName" type="text" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Full Name">
+                        <div id="firstName-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                    </div>
+                    
+                    <!-- Last Name -->
+                    <div class="relative">
+                        <label for="lastName" class="sr-only">Last Name</label>
+                        <input id="lastName" name="lastName" type="text" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Last Name">
+                        <div id="lastName-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                    </div>
+    
+                    <!-- Email -->
+                    <div class="relative">
+                        <label for="email" class="sr-only">Email</label>
+                        <input id="email" name="email" type="email" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Email">
+                        <div id="email-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                    </div>
+    
+                    <!-- Phone Number -->
+                    <div class="relative">
+                        <label for="mobile" class="sr-only">Phone Number</label>
+                        <input id="mobile" name="mobile" type="tel" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Mobile Number">
+                        <div id="mobile-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                    </div>
+    
+                    <!-- Password -->
+                    <div class="relative">
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Password">
+                        <div id="password-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                        <div class="text-xs text-gray-500 mt-2 pl-1">
+                            Must contain: 8+ characters, 1 uppercase, 1 number, 1 special character
+                        </div>
+                    </div>
+    
+                    <!-- Confirm Password -->
+                    <div class="relative">
+                        <label for="confirmPassword" class="sr-only">Confirm Password</label>
+                        <input id="confirmPassword" name="confirmPassword" type="password" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                            placeholder="Confirm Password">
+                        <div id="confirmPassword-error" class="absolute top-full left-0 text-red-500 text-sm mt-1 h-5 invisible"></div>
+                    </div>
+    
+                    <!-- Signup Button -->
+                    <div>
+                        <button id="submitBtn" type="submit" 
+                            class="w-full py-2 px-4 bg-black text-white rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                            Create Account
+                        </button>
+                    </div>
+    
+                    <!-- Already Have an Account? -->
+                    <div class="text-center">
+                        <p class="mt-2 text-sm text-gray-600">
+                            Already have an account? 
+                            <a href="/login" class="font-medium text-black hover:text-gray-800">
+                                Sign In
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+//script for form validation
+
+
+
+    document.querySelector('form').addEventListener('submit',function(e){
+        //document object
+        //querySelector - tool to select the html element (finding form element)
+        //addEventListener- a listener method to listen for the event to be happen ,like user click submit 
+        //accepts arguments- ["submit"-event name],[callback fn with arguemnt event(here it is submit;sumbit is e)]
+
+        e.preventDefault(); //submission to new page or referesh is prevented.To check validations
+
+        // Set loading state
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating Account...';
+
+        //get all form values
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const mobile = document.getElementById('mobile').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+        //value gives the value inside the element
+        //trim() removes the extra white spaces
+
+
+
+        //before valiadation starts
+        //Clears all previous error messages before new validation  
+        // Prevents old errors from persisting and ensures a clean form state 
+        clearErrors();
+
+        //validation starts here
+        
+        //1.Start with 'isValid=true',(assume that form is initially valid);
+        let isValid = true;
+
+        //firstName Validation
+        
+        if(!firstName){
+            showError('firstName',"First Name is Required");
+            isValid=false;
+        }else if(/^\s|\s{2,}|\s$/.test(firstName)){
+            showError('firstName',"Can't start/end with spaces or have multiple spaces");
+            isValid=false;
+           
+            //^\s - Leading space (space at start)
+
+            //\s{2,} - Two or more consecutive spaces
+
+            //\s$ - Trailing space (space at end)
+
+            //| means "OR" (checks for any of these 3 patterns)
+
+        }else if(firstName.replace(/\s+/g,'').length<2){
+            showError('firstName',"First Name must be atleast 2 characters");
+            isValid=false;
+
+
+             ///\s+/g - The regular expression pattern:
+
+            //\s = matches any whitespace character (spaces, tabs, newlines)
+
+            //+ = matches one or more occurrences
+
+            //g = global flag (replaces all matches, not just the first one)
+
+            //'' - Replaces all matched whitespace with nothing (empty string)
+
+        }else if(!/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(firstName)){
+            showError('firstName',"First Name should contain only characters");
+            isValid=false;
+            //Wraps the regex pattern.
+
+        // Starts checking from the beginning of the string.
+
+        //[a-zA-Z] → Allows lowercase (a-z) and uppercase (A-Z) letters.
+
+        // + Means "one or more" of the allowed characters.
+
+        // $ Ensures the check goes to the end of the string.
+
+        //(?:\s[a-zA-Z]+)*
+        //(?: ... ) - Groups the pattern 
+        //Must begin with a single space (\s)
+        //Must be followed by one or more letters ([a-zA-Z]+)
+        //The whole "space + letters" combo can appear zero or more times (*)
+        
+        //test() method is a regex method that return the boolean value. It check whether the string matches the regex pattern or not
+        }else if (firstName.replace(/\s+/g,'').length>15){
+            showError('firstName',"Maximum length is 15 characters(exculding spaces)");
+            isValid=false;
+        }
+
+
+        //lastName Validation
+
+        if(!lastName){
+            showError('lastName',"Last Name required");
+            isValid=false;
+        }else if (/^\s|\s{2,}|\s$/.test(lastName)){
+            showError("lastName","Cannot start/end with spaces or have multiple spaces");
+            isValid=false;
+        }else if(!/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(lastName)){
+            showError('lastName',"Last Name should contain only characters");
+            isValid=false;
+        }else if(lastName.replace(/\s+/g,'').length<2){
+            showError('lastName',"Last Name must be atleast 2 characters");
+            isValid=false;
+        }else if (lastName.replace(/\s+/g,'').length>15){
+            showError('lastName',"Maximum length is 15 characters(exculding spaces)");
+            isValid=false;
+        }
+
+
+
+        //email validation
+
+        if(!email){
+            showError('email',"Email required");
+            isValid=false;
+        }else if(!/^[^/s@]+@[^/s@]+\.[^\s@]+$/.test(email)){
+            showError('email',"Please enter a valid email address");
+            isValid=false;
+
+            //^	Matches the start of the string
+            //^ inside [ ] = Negation ("not these")
+            //[^\s@]+	1+ characters that are not spaces (\s) or @
+            //@	Must contain a single @ symbol
+            //[^\s@]+	1+ characters after @ (domain name part, no spaces or @)
+            //\.	A literal . (escaped because . alone means "any character" in regex)
+            //[^\s@]+	1+ characters after . (TLD like com, no spaces or @)
+            //$	Matches the end of the string
+
+        }else if(email.length>254){
+            showError('email',"Please enter a valid email address");
+            isValid=false;
+        }else if (/\.{2,}/.test(email) || /@.{0,1}$/.test(email)) {
+            showError('email', 'Invalid email format');
+            isValid = false;
+            // /\.{2,}/
+            //\. - Matches a literal dot (.)
+            //We use backslash \ because dot normally means "any character" in regex
+            //{2,} - Means "2 or more times" of the previous character (the dot)
+
+            //@.{0,1}$/
+            // /	Start of regex
+            // @	Literal @ symbol
+            // . 
+            //{0,1}	"Zero or one of the previous thing"
+            //$	End of the string
+            //	End of regex
+        } else if (/(\..*\.)|(^\.)|(\.$)/.test(email.split('@')[0])) {
+            showError('email', 'Invalid dots in email name');
+             isValid = false;
+
+             //\.	Matches a literal dot (.). The backslash (\) escapes the dot.
+             //\..*\. two dots anywhere followed by o or more charater followed by another dot
+             //^\.	Starts with a dot
+             //\.$	Ends with a dot
+        }
+
+        //mobile validation
+
+        if(!mobile){
+            showError('mobile',"Mobile number is required");
+            isValid=false;
+        }
+        //// Check for alphabets or invalid characters first
+        else if(/[a-zA-z]/.test(mobile)){
+            showError('mobile',"Cannot contain letters");
+            sValid=false;
+        }
+        //// Check for special characters (except allowed ones)
+        else if(/[^\d\s()+-]/.test(mobile)){
+            showError('mobile',"Only numbeers, spaces, +,-,() are allowed");
+            isValid=false;
+        }
+        
+        // Proceed with digit validation if format is acceptable
+
+        else{
+            
+            cleanedMobile = mobile.replace(/\D/g,'');
+            //\D (uppercase D)
+            //A special regex pattern that matches any character that is NOT a digit (0-9)
+            //Equivalent to [^0-9]
+            //meaning here replace any othe character other numbers with empty
+
+            if(cleanedMobile.length<10){
+                showError('mobile',"Must contain at least 10 digits");
+                isValid=false;
+            }
+            else if(cleanedMobile.length>10){
+                showError('mobile',"Cannot exeed 15 digits");
+                isValid=false;
+            }
+            else if(/^0+$/.test(cleanedMobile)){
+                showError('mobile',"Cannot be all zeroes");
+                isValid=false;
+
+                //^	Asserts position at the start of the string
+                //0	Matches the literal character 0
+                //+	Matches one or more of the preceding element (the 0)
+                //$	Asserts position at the end of the string
+            }
+            else if (/^(\d)\1{9,14}$/.test(cleanedMobile)) {
+            showError('mobile', 'Cannot be all repeating digits');
+            isValid = false;
+
+            //^ - Starts checking from the beginning
+            //\d) - Captures the first digit (any 0-9) and remembers it as \1
+            //\1{9,14} - Checks if the same digit (\1) repeats:
+            //9 to 14 more times (total 10-15 digits)
+            //$ - Ensures this continues to the end
+        }
+        }
+
+        //password validation
+
+        //here i am assigning possible erros as key-value pairs to an object
+
+        const passwordErros={
+            
+        required: 'Password is required',
+         minLength: 'Password must be at least 8 characters',
+         maxLength: 'Password cannot exceed 64 characters',
+        uppercase: 'Password must contain at least one uppercase letter (A-Z)',
+        lowercase: 'Password must contain at least one lowercase letter (a-z)',
+        number: 'Password must contain at least one number (0-9)',
+        specialChar: 'Password must contain at least one special character (!@#$%^&*)',
+        noSpaces: 'Password cannot contain spaces',
+        commonPassword: 'Password is too common and insecure',
+        sequentialChars: 'Password contains sequential characters (e.g., 123, abc)',
+        repeatedChars: 'Password contains repeated characters (e.g., aaa, 111)'
+        };
+
+        //assume some common passwords
+        const commonPasswords = ['password', '12345678', 'qwerty', 'letmein', 'admin123','user123'];
+
+        if(!password){
+            showError('password',passwordErros.required);
+            isValid=false;
+        }
+        else {
+            if(password !== password.trim()){
+                showError("password",passwordErros.noSpaces);
+                isValid=false;
+            }
+            else if (password.length<8){
+                showError("password",passwordErros.minLength);
+                isValid=false;
+            }
+            else if (password.length>64){
+                showError("password",passwordErros.maxLength);
+                isValid=false;
+            }
+
+            //complexeity checks
+
+            else if (!/[A-Z]/.test(password)){
+                showError("password",passwordErros.uppercase);
+                isValid=false;
+            }
+            else if (!/[a-z]/.test(password)){
+                showError("password",passwordErros.lowercase);
+                isValid=false;
+            }
+            else if (!/[0-9]/.test(password)){
+                showError("password",passwordErros.number);
+                isValid=false;
+            }
+            else if (!/[^a-bA-Z0-9]/.test(password)){
+                showError("password",passwordErros.specialChar);
+                isValid=false;
+                
+                //"Any character EXCEPT letters and numbers" (i.e., special chars)
+                //if any special character exist ,test method returns true and if conditions negates and control will not enter 
+            }
+
+            //security checks
+
+            else if(commonPasswords.includes(password.toLowerCase())){
+                showError('password',passwordErros.commonPassword);
+                isValid=false;
+            }
+            else if(/(.)\1{2,}/.test(password)){
+                showError('password',passwordErros.repeatedChars);
+                isValid=false;
+
+                //Repeated Characters Check
+                //(.) - Captures any single character (letters, numbers, symbols)
+                //\1 - Matches the exact same character as the first captured group
+                //{2,} - Requires the repeat to occur 2+ more times (so 3+ total)
+            }
+            else if(/123|234|345|abc|bcd|cde/i.test(password)){
+                showError('password',passwordErros.sequentialChars);
+                isValid=false;
+            }
+        }
+
+
+
+
+
+
+       function showError(field_id,message){
+            const field = document.getElementById(field_id);
+            const error_div = document.getElementById(`${field_id}-error`);
+
+            error_div.textContent = message;
+            error_div.classList.replace('invisible','visible')
+            //classList is a DOM property that lets you work with the CSS classes of an HTML element. It provides methods to add, remove, toggle, and check classes on an element.
+
+
+        }
+
+        
+
+    if (!isValid) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Create Account';
+    return; // prevent form submission if invalid
+}
+this.submit();
+
+    })
+
+</script>
+
+
+
+
+
+
+</html>
+
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Audiophile - <%= title %></title> -->

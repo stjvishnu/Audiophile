@@ -1,0 +1,177 @@
+<header class="bg-black sticky top-0 z-50 h-12 sm:h-14 md:h-16 shadow-md text-white">
+    <div class="container mx-auto px-2 sm:px-4 h-full">
+        <div class="flex items-center justify-between h-full">
+            <!-- Logo Section -->
+            <div class="flex items-center">
+                <a href="/" class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Logo" class="h-6 sm:h-8 md:h-10 w-6 sm:w-8 md:w-10 mr-2">
+                    <span class="text-base sm:text-lg md:text-xl font-bold">Audiophile</span>
+                </a>
+            </div>
+
+            <!-- Navigation Menu - Hidden on mobile -->
+            <nav class="hidden md:flex items-center md:space-x-6 space-x-4">
+                <a href="/" class="hover:text-gray-300 transition">Home</a>
+                
+                <!-- Categories Dropdown -->
+                <div class="relative group">
+                    <button class="hover:text-gray-300 transition flex items-center">
+                        Categories <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-black border border-gray-700 mt-2 py-2 w-48 rounded-md shadow-lg z-10">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Headphones</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Speakers</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Earphones</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Accessories</a>
+                    </div>
+                </div>
+                
+                <!-- Brands Dropdown -->
+                <div class="relative group">
+                    <button class="hover:text-gray-300 transition flex items-center">
+                        Brands <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-black border border-gray-700 mt-2 py-2 w-48 rounded-md shadow-lg z-10">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Sony</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Bose</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Sennheiser</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-800">Audio-Technica</a>
+                    </div>
+                </div>
+                
+                <a href="#" class="hover:text-gray-300 transition">New Arrivals</a>
+                <a href="#" class="hover:text-gray-300 transition">Deals</a>
+            </nav>
+
+            <!-- Right Side Elements -->
+            <div class="flex items-center">
+                <!-- Mobile Search Button -->
+                <button class="md:hidden text-white mr-2 sm:mr-3" id="mobile-search-button">
+                    <i class="fas fa-search text-base sm:text-lg"></i>
+                </button>
+                
+                <!-- Desktop Search Box -->
+                <div class="hidden md:flex items-center relative ml-auto mr-2 md:mr-4">
+                    <input type="text" placeholder="Search products..." 
+                           class="bg-gray-800 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full w-32 sm:w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm sm:text-base">
+                    <button class="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                        <i class="fas fa-search text-sm sm:text-base"></i>
+                    </button>
+                </div>
+                
+                <!-- Icons Group -->
+                <div class="flex items-center space-x-2 sm:space-x-4 md:space-x-6 pl-1 sm:pl-2 md:pl-6">
+                    <!-- Wishlist -->
+                    <a href="#" class="relative hover:text-gray-300">
+                        <i class="fas fa-heart text-base sm:text-lg md:text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-4 sm:h-5 w-4 sm:w-5 flex items-center justify-center">0</span>
+                    </a>
+                    
+                    <!-- Cart -->
+                    <a href="#" class="relative hover:text-gray-300">
+                        <i class="fas fa-shopping-cart text-base sm:text-lg md:text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-blue-500 text-xs rounded-full h-4 sm:h-5 w-4 sm:w-5 flex items-center justify-center">0</span>
+                    </a>
+                    
+                    <!-- User -->
+                    <a href="/login" class="hover:text-gray-300">
+                        <i class="fas fa-user text-base sm:text-lg md:text-xl"></i>
+                    </a>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden text-white" id="mobile-menu-button">
+                        <i class="fas fa-bars text-base sm:text-lg md:text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Search Box (Hidden by default) -->
+        <div class="md:hidden mt-2 sm:mt-3 hidden" id="mobile-search">
+            <div class="relative">
+                <input type="text" placeholder="Search products..." 
+                       class="bg-gray-800 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm sm:text-base">
+                <button class="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                    <i class="fas fa-search text-sm sm:text-base"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu (Hidden by default) -->
+    <div class="md:hidden bg-gray-900 hidden" id="mobile-menu">
+        <div class="px-2 sm:px-4 py-2 sm:py-3 space-y-2 sm:space-y-3">
+            <a href="/" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Home</a>
+            
+            <!-- Mobile Categories Dropdown -->
+            <div class="relative">
+                <button class="w-full text-left hover:bg-gray-800 px-2 py-1 rounded flex justify-between items-center mobile-dropdown-button text-sm sm:text-base">
+                    Categories <i class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div class="hidden mt-1 ml-2 sm:ml-4 space-y-1 sm:space-y-2 mobile-dropdown-content">
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Headphones</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Speakers</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Earphones</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Accessories</a>
+                </div>
+            </div>
+            
+            <!-- Mobile Brands Dropdown -->
+            <div class="relative">
+                <button class="w-full text-left hover:bg-gray-800 px-2 py-1 rounded flex justify-between items-center mobile-dropdown-button text-sm sm:text-base">
+                    Brands <i class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div class="hidden mt-1 ml-2 sm:ml-4 space-y-1 sm:space-y-2 mobile-dropdown-content">
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Sony</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Bose</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Sennheiser</a>
+                    <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Audio-Technica</a>
+                </div>
+            </div>
+            
+            <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">New Arrivals</a>
+            <a href="#" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Deals</a>
+            <a href="/login" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Login</a>
+            <a href="/signup" class="block hover:bg-gray-800 px-2 py-1 rounded text-sm sm:text-base">Register</a>
+        </div>
+    </div>
+</header>
+
+<!-- Include Font Awesome for icons (assuming it's already in your project) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<!-- JavaScript for toggling mobile menu and search -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Toggle mobile menu
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Toggle mobile search
+        const mobileSearchButton = document.getElementById('mobile-search-button');
+        const mobileSearch = document.getElementById('mobile-search');
+        mobileSearchButton.addEventListener('click', () => {
+            mobileSearch.classList.toggle('hidden');
+        });
+
+        // Toggle dropdowns in mobile menu
+        document.querySelectorAll('.mobile-dropdown-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                content.classList.toggle('hidden');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.mobile-dropdown-button') && !e.target.closest('.mobile-dropdown-content')) {
+                document.querySelectorAll('.mobile-dropdown-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+            }
+        });
+    });
+</script>
