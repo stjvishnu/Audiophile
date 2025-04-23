@@ -1,6 +1,8 @@
 import express from "express";
 import * as userController from "../controller/userController.js"
+import usermiddleware from "../middlewares/usermiddleware.js";
 const router = express.Router();
+
 //router is an mini instance of express which can handle routes and also it can have its own logic.But for app.js router act like middleware
 //also in router object all the routes are internally stored in array form like:
 // router.stack = [
@@ -12,11 +14,27 @@ const router = express.Router();
 //auth routes
 router.get('/SignUp',userController.getSignUp)
 router.post('/SignUp',userController.postSignUp);
-router.get('/login',userController.getLogin);
+router.get('/login',usermiddleware.authLogin,userController.getLogin);
 router.post('/login',userController.postLogin);
+router.get('/logout',userController.getLogout);
+router.get('/send-otp',userController.getOtp)
+router.post('/send-otp',userController.postOtp)
+router.get('/otpSuccess',userController.getOtpSuccess)
+router.get('/forgot-password',userController.getForgotPassword)
+router.post('/forgot-password',userController.postForgotPassword)
+router.get('/verify-otp',userController.getVerifyOtp);
+router.post('/verify-otp',userController.postVerifyOtp);
+router.get('/reset-password',userController.getResetPassword)
+router.post('/reset-password',userController.postResetPassword)
 
 //home route
 router.get('/',userController.getHome);
 
+//otp route
+router.get('/otp',userController.getOtp)
+router.post('/otp',userController.postOtp)
+
+router.get('/auth/google',userController.getGoogleAuth);
+router.get('/auth/google/callback',userController.getGoogleAuthCallBack);
 
 export default router;

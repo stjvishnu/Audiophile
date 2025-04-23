@@ -67,20 +67,20 @@
   </style>
   
   <!-- Navbar with stepped animation -->
-  <nav class="bg-black text-white p-4 shadow-md sticky top-0 z-50 animate-fadeIn">
+  <nav class="bg-white text-black p-4 shadow-md sticky top-0 z-50 animate-fadeIn">
     <div class="container mx-auto flex justify-between items-center">
       <div class="text-xl font-bold">Admin Panel</div>
-      <div class="absolute left-1/2 transform -translate-x-1/2">
-        <span class="text-2xl font-bold tracking-wider animate-colorPulse">
+      <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+        <!-- <span class="text-2xl font-bold tracking-wider animate-colorPulse">
           AUDIOPHILE
-        </span>
+        </span> -->
+        <img src="/images/audiophile-logo-black.png" alt="Brand" class="h-14 w-auto ml-0">
       </div>
       <div class="flex items-center space-x-4">
         <span id="adminName" class="hidden md:inline">Login</span>
       </div>
     </div>
   </nav>
-  
   <!-- Login Section with stepped transitions -->
   <div class="flex flex-1 items-center justify-center py-12 min-h-[calc(100vh-136px)]">
     <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl border border-black overflow-hidden md:min-h-[60vh] w-full max-w-3xl mx-4 hover-scale" style="animation-delay: 0.3s">
@@ -125,8 +125,8 @@
         
         <!-- Right Side - Logo -->
         <div class="hidden md:flex md:w-2/4 bg-black items-center justify-center p-6">
-            <img src="https://via.placeholder.com/150x150?text=Admin" alt="Admin Logo" 
-                 class="w-40 transition-all duration-1000 ease-in-out hover:rotate-12">
+            <img src="/images/white-logo.svg" alt="Admin Logo" 
+                 class="w-60 transition-all duration-1000 ease-in-out hover:rotate-12">
         </div>
     </div>
   </div>

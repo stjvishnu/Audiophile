@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
-        unique:true,
         
     }, 
     lastName:{
@@ -16,20 +15,32 @@ const userSchema = new mongoose.Schema({
     email:{
         type:String,
         required:true,
-        unique:true,
         lowercase:true,
         
     },
     mobile:{
         type:String,
-        required:true,
+        default:null,
         
        
     },
     password:{
         type:String,
-        required:true,
+        default:null,
     },
+    otp:{
+        type:String
+    },
+    otpExpiry:{
+        type:Date
+    },
+    isVerified:{
+        type: Boolean,
+        default:false
+    },
+    googleID:{
+        type : String,
+    }
   
 });
 

@@ -1,11 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDb from "./config/dbConnect.js"
-import routes from "./routes/index.js";
+import routes from "./routes/userIndex.js";
 import adminRouter from "./routes/adminRoute.js"
 import path, { dirname } from "path"
 import { fileURLToPath } from "url";
 import expressEjsLayouts from "express-ejs-layouts";
+import nocache from "nocache";
+import cookieParser from "cookie-parser";
+import passport from "passport";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +22,10 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,'public')))
+app.use(nocache())
+app.use(cookieParser())
+app.use(passport.initialize());
+
 
 //Views settings
 app.set('view engine',"ejs")//telling the express that we are using ejs template engine
@@ -30,8 +37,12 @@ app.set("layout","layouts/user-layout")
 
 
 //routes
+app.get('/demo',(req,res)=>{
+  res.render('user/demo')
+})
 app.use('/',routes);
 app.use('/admin',adminRouter);
+
 
 app.listen(PORT,()=>{
   console.log(`Server starts to listen at port ${PORT}`)
