@@ -1,6 +1,6 @@
 import express from "express";
-import * as userController from "../controller/userController.js"
-import usermiddleware from "../middlewares/usermiddleware.js";
+import * as userController from "../../controller/userController.js"
+import usermiddleware from "../../middlewares/usermiddleware.js";
 const router = express.Router();
 
 //router is an mini instance of express which can handle routes and also it can have its own logic.But for app.js router act like middleware
@@ -27,8 +27,6 @@ router.post('/verify-otp',userController.postVerifyOtp);
 router.get('/reset-password',userController.getResetPassword)
 router.post('/reset-password',userController.postResetPassword)
 
-//home route
-router.get('/',userController.getHome);
 
 //otp route
 router.get('/otp',userController.getOtp)

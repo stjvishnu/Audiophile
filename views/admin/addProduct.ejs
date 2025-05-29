@@ -1,0 +1,658 @@
+<!-- Modal Dialog -->
+<div id="productModal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-xl hidden flex items-center justify-center z-50 text-black">
+  <div class="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto animate-scale-in m-4">
+    <!-- Modal Header -->
+    <div class="text-center p-6 border-b">
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent animate-pulse-soft">
+        Add New Product
+      </h2>
+      <p class="text-gray-500 max-w-md mx-auto">
+        Fill in the details to add a new product to your inventory.
+      </p>
+    </div>
+    
+    <!-- Modal Body -->
+    <form id="productForm" class="space-y-6 p-6">
+      <!-- Basic Product Information -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in" style="animation-delay: 100ms;">
+        <div class="space-y-2">
+          <label for="name" class="block font-medium text-gray-700">Product Name *</label>
+          <input id="name" name="name" placeholder="Enter product name" required 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <div class="text-red-500 text-sm hidden" id="name-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="category" class="block font-medium text-gray-700">Category *</label>
+          <select id="category" name="category" required 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <option value="" disabled selected>Select a category</option>
+            <option value="1">Headphones</option>
+            <option value="2">Earbuds</option>
+            <option value="3">Speakers</option>
+            <option value="4">Accessories</option>
+          </select>
+          <div class="text-red-500 text-sm hidden" id="category-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="subCategory" class="block font-medium text-gray-700">Sub Category *</label>
+          <select id="subCategory" name="subCategory" required 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <option value="" disabled selected>Select a sub-category</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+          <div class="text-red-500 text-sm hidden" id="subCategory-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="brand" class="block font-medium text-gray-700">Brand *</label>
+          <input id="brand" name="brand" placeholder="Enter brand name" required 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <div class="text-red-500 text-sm hidden" id="brand-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="price" class="block font-medium text-gray-700">Price * ($)</label>
+          <input id="price" name="price" type="number" placeholder="0.00" required min="0" step="0.01" 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <div class="text-red-500 text-sm hidden" id="price-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="stock" class="block font-medium text-gray-700">Stock *</label>
+          <input id="stock" name="stock" type="number" placeholder="0" required min="0" step="1" 
+            class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+            <div class="text-red-500 text-sm hidden" id="stock-error"></div>
+        </div>
+      </div>
+      
+      <!-- Product Description -->
+      <div class="space-y-4 animate-fade-in" style="animation-delay: 200ms;">
+        <div class="space-y-2">
+          <label for="description1" class="block font-medium text-gray-700">Primary Description *</label>
+          <textarea id="description1" name="description1" placeholder="Enter main product description" required rows="4" 
+            class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm resize-none"></textarea>
+            <div class="text-red-500 text-sm hidden" id="description1-error"></div>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="description2" class="block font-medium text-gray-700">Secondary Description</label>
+          <textarea id="description2" name="description2" placeholder="Enter additional product description (optional)" rows="4" 
+            class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm resize-none"></textarea>
+            <div class="text-red-500 text-sm hidden" id="description2-error"></div>
+        </div>
+      </div>
+      
+      <!-- Product Status -->
+      <div class="flex items-center space-x-3 animate-fade-in" style="animation-delay: 300ms;">
+        <div class="switch-root" id="isActiveSwitch" data-state="checked" role="switch" aria-checked="true" tabindex="0">
+          <div class="switch-thumb"></div>
+        </div>
+        <label for="isActiveSwitch" class="font-medium text-gray-700">Product Active Status</label>
+        <input type="hidden" name="isActive" id="isActive" value="true">
+        <div class="text-red-500 text-sm hidden" id="isActive-error"></div>
+      </div>
+      
+      <!-- Product Images -->
+      <div class="space-y-4 animate-fade-in" style="animation-delay: 400ms;">
+        <div class="flex justify-between items-center">
+          <label class="font-medium text-gray-700">Product Images * (Max 5)</label>
+          <span class="text-sm text-gray-500" id="imageCount">0/5 images</span>
+        </div>
+        
+    <!-- 5-slot image upload UI -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="imageSlots">
+          <!-- Image slots will be generated by JavaScript -->
+        </div>
+        <div class="text-red-500 text-sm hidden" id="images-error" ></div>
+        
+        <input id="fileInput" type="file" accept="image/*" multiple class="hidden">
+      </div>
+          
+      <!-- Product Variants Section -->
+      <div class="space-y-4 animate-fade-in" style="animation-delay: 600ms;">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-medium text-gray-800">Product Variants</h3>
+          <button type="button" id="addVariantBtn" 
+            class="flex items-center gap-1 border border-gray-300 rounded-md px-3 py-1.5 text-gray-700 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-400 transition-all duration-300">
+            <i class="ri-add-line"></i> Add Variant
+          </button>
+       
+        </div>
+        <div class="text-red-500 text-sm flex justify-center" id="images-error" >hi</div>
+        <div id="variantsContainer" class="space-y-8">
+          <!-- Variant templates will be added here by JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-4 gap-2 pt-4 border-t animate-fade-in" style="animation-delay: 800ms;">
+        <button type="button" id="cancelBtn" 
+          class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-300">
+          Cancel
+        </button>
+        <button type="submit" 
+          class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 shadow-md hover:shadow-lg transition-all duration-300">
+          Create Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Embedded CSS for Modal -->
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out forwards;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Custom switch styles */
+  .switch-root {
+    width: 44px;
+    height: 24px;
+    background-color: rgb(229, 231, 235);
+    border-radius: 9999px;
+    position: relative;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  
+  .switch-thumb {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+  }
+  
+  .switch-root[data-state="checked"] {
+    background-color: rgb(31, 41, 55);
+  }
+  
+  .switch-root[data-state="checked"] .switch-thumb {
+    transform: translateX(20px);
+  }
+</style>
+
+<!-- Embedded JavaScript for Modal -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal controls
+    const modal = document.getElementById('productModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = document.getElementById('productForm');
+    
+    // Toggle switch
+    const isActiveSwitch = document.getElementById('isActiveSwitch');
+    const isActiveInput = document.getElementById('isActive');
+    
+    // Image upload
+    const fileInput = document.getElementById('fileInput');
+    const imageSlots = document.getElementById('imageSlots');
+    const imageCount = document.getElementById('imageCount');
+    let uploadedImages = [];
+    
+    // Variants
+    const variantsContainer = document.getElementById('variantsContainer');
+    const addVariantBtn = document.getElementById('addVariantBtn');
+    let variantCounter = 0;
+    
+    // Create initial image slots
+    createImageSlots();
+    
+    // Add initial variant
+    addVariant();
+    
+    // Close modal
+    cancelBtn.addEventListener('click', function() {
+      modal.classList.add('hidden');
+      // modal.classList.remove('flex');
+      location.reload();
+
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+        // modal.classList.remove('flex');
+        location.reload();
+      }
+    });
+    
+    // Toggle switch functionality
+    isActiveSwitch.addEventListener('click', function() {
+      const currentState = isActiveSwitch.getAttribute('data-state');
+      const newState = currentState === 'checked' ? 'unchecked' : 'checked';
+      isActiveSwitch.setAttribute('data-state', newState);
+      isActiveSwitch.setAttribute('aria-checked', newState === 'checked' ? 'true' : 'false');
+      isActiveInput.value = newState === 'checked' ? 'true' : 'false';
+    });
+    
+    // Add variant button
+    addVariantBtn.addEventListener('click', function() {
+      addVariant();
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Check if at least one product image is uploaded
+      if (uploadedImages.length === 0) {
+        alert("Please upload at least one product image");
+        return;
+      }
+      
+      // Collect form data
+      const formData = new FormData(form);
+      
+      // Add image files
+      uploadedImages.forEach((image, index) => {
+        formData.append(`productImage${index}`, image);
+      });
+      
+      // Convert FormData to object for processing
+      const formObject = Object.fromEntries(formData);
+      console.log("Form submitted!", formObject);
+      
+      // Show success message
+      showToast("Product created successfully!");
+      
+      // Reset form and close modal
+      form.reset();
+      resetImageSlots();
+      modal.classList.add('hidden');
+      // modal.classList.remove('flex');
+    });
+    
+    // Image slots creation
+    function createImageSlots() {
+      imageSlots.innerHTML = '';
+      
+      for (let i = 0; i < 5; i++) {
+        const slot = document.createElement('div');
+        const hasImage = i < uploadedImages.length;
+        
+        slot.className = `relative rounded-lg overflow-hidden h-32 border-2 transition-all duration-300 animate-scale-in ${hasImage ? 'border-gray-300' : 'border-dashed border-gray-400 hover:border-gray-600 cursor-pointer'}`;
+        slot.style.animationDelay = `${i * 100}ms`;
+        
+        if (hasImage) {
+          // Create image preview
+          slot.innerHTML = `
+            <img src="${URL.createObjectURL(uploadedImages[i])}" alt="Product ${i + 1}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+            <button type="button" class="absolute top-1 right-1 bg-white/80 backdrop-blur-sm rounded-full p-1.5 shadow-md hover:bg-red-50 transition-all duration-200 remove-image" data-index="${i}">
+              <i class="ri-close-line text-red-500"></i>
+            </button>
+          `;
+        } else {
+          // Create empty slot
+          slot.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full p-3 group">
+              <i class="ri-image-line text-3xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300 animate-float"></i>
+              <p class="mt-2 text-xs font-medium text-gray-500 text-center group-hover:text-gray-700 transition-colors duration-300">
+                ${i === 0 && uploadedImages.length === 0 ? "Add Primary Image*" : "Add Image"}
+              </p>
+            </div>
+          `;
+          
+          slot.addEventListener('click', function() {
+            if (uploadedImages.length < 5) {
+              fileInput.click();
+            }
+          });
+        }
+        
+        imageSlots.appendChild(slot);
+      }
+      
+      // Add event listeners to remove buttons
+      const removeButtons = document.querySelectorAll('.remove-image');
+      removeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const index = parseInt(this.getAttribute('data-index'));
+          removeImage(index);
+        });
+      });
+      
+      // Update image count
+      imageCount.textContent = `${uploadedImages.length}/5 images`;
+    }
+    
+    // File input change
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files.length > 0) {
+        const newFiles = Array.from(this.files);
+        
+        // Check if adding new files would exceed the limit
+        if (uploadedImages.length + newFiles.length > 5) {
+          alert("Maximum 5 images allowed");
+          return;
+        }
+        
+        // Add new files to the uploadedImages array
+        uploadedImages = [...uploadedImages, ...newFiles];
+        
+        // Update image slots
+        createImageSlots();
+        
+        // Reset file input
+        this.value = '';
+      }
+    });
+    
+    // Remove image
+    function removeImage(index) {
+      uploadedImages.splice(index, 1);
+      createImageSlots();
+    }
+    
+    // Reset image slots
+    function resetImageSlots() {
+      uploadedImages = [];
+      createImageSlots();
+    }
+    
+    // Add variant
+    function addVariant() {
+      const variantId = `variant-${variantCounter}`;
+      variantCounter++;
+      
+      const variantElement = document.createElement('div');
+      variantElement.className = 'border rounded-lg p-5 space-y-4 bg-white shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in';
+      variantElement.id = variantId;
+      
+      variantElement.innerHTML = `
+        <div class="flex justify-between items-center">
+          <h4 class="font-medium text-gray-700">Variant #${variantCounter}</h4>
+          ${variantCounter > 1 ? `
+            <button type="button" class="remove-variant text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors duration-300 p-1.5 rounded-md">
+              <i class="ri-delete-bin-line mr-1"></i>
+              Remove
+            </button>
+          ` : ''}
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label for="${variantId}-color" class="block font-medium text-gray-700">Color *</label>
+            <input id="${variantId}-color" name="variants[${variantCounter-1}][color]" placeholder="e.g. Black, Red, Blue" required 
+              class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+          </div>
+          
+          <div class="space-y-2">
+            <label for="${variantId}-connectorType" class="block font-medium text-gray-700">Connector Type *</label>
+            <select id="${variantId}-connectorType" name="variants[${variantCounter-1}][connectorType]" required
+              class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+              <option value="" disabled selected>Select connector type</option>
+              <option value="Type-C">Type-C</option>
+              <option value="3.5mm">3.5mm</option>
+              <option value="Wireless">Wireless</option>
+            </select>
+          </div>
+          
+          <div class="space-y-2">
+            <label for="${variantId}-stock" class="block font-medium text-gray-700">Stock *</label>
+            <input id="${variantId}-stock" name="variants[${variantCounter-1}][stock]" type="number" placeholder="0" required min="0"
+              class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+          </div>
+          
+          <div class="space-y-2">
+            <label for="${variantId}-price" class="block font-medium text-gray-700">Price * ($)</label>
+            <input id="${variantId}-price" name="variants[${variantCounter-1}][price]" type="number" placeholder="0.00" required min="0" step="0.01"
+              class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+          </div>
+          
+          <div class="space-y-2">
+            <label for="${variantId}-sku" class="block font-medium text-gray-700">SKU *</label>
+            <input id="${variantId}-sku" name="variants[${variantCounter-1}][sku]" placeholder="Stock Keeping Unit" required
+              class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
+          </div>
+          
+          <div class="col-span-1 md:col-span-2 flex items-center space-x-3">
+            <div class="switch-root" id="${variantId}-isActiveSwitch" data-state="checked" role="switch" aria-checked="true" tabindex="0">
+              <div class="switch-thumb"></div>
+            </div>
+            <label for="${variantId}-isActiveSwitch" class="font-medium text-gray-700">Variant Active Status</label>
+            <input type="hidden" name="variants[${variantCounter-1}][isActive]" id="${variantId}-isActive" value="true">
+          </div>
+          
+          <!-- Variant images with 5-slot design -->
+          <div class="col-span-1 md:col-span-2 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="block font-medium text-gray-700">Variant Images (Max 5)</label>
+              <span class="text-sm text-gray-500" id="${variantId}-imageCount">0/5 images</span>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3" id="${variantId}-imageSlots">
+              <!-- Variant image slots will be added by JavaScript -->
+            </div>
+            
+            <input id="${variantId}-fileInput" type="file" accept="image/*" multiple class="hidden">
+          </div>
+        </div>
+      `;
+      
+      variantsContainer.appendChild(variantElement);
+      
+      // Setup variant image slots
+      setupVariantImageSlots(variantId);
+      
+      // Setup variant switch
+      const variantSwitch = document.getElementById(`${variantId}-isActiveSwitch`);
+      const variantIsActiveInput = document.getElementById(`${variantId}-isActive`);
+      
+      variantSwitch.addEventListener('click', function() {
+        const currentState = variantSwitch.getAttribute('data-state');
+        const newState = currentState === 'checked' ? 'unchecked' : 'checked';
+        variantSwitch.setAttribute('data-state', newState);
+        variantSwitch.setAttribute('aria-checked', newState === 'checked' ? 'true' : 'false');
+        variantIsActiveInput.value = newState === 'checked' ? 'true' : 'false';
+      });
+      
+      // Setup remove variant button
+      const removeButton = variantElement.querySelector('.remove-variant');
+      if (removeButton) {
+        removeButton.addEventListener('click', function() {
+          variantElement.remove();
+        });
+      }
+    }
+    
+    // Setup variant image slots
+    function setupVariantImageSlots(variantId) {
+      const variantImageSlots = document.getElementById(`${variantId}-imageSlots`);
+      const variantFileInput = document.getElementById(`${variantId}-fileInput`);
+      const variantImageCount = document.getElementById(`${variantId}-imageCount`);
+      let variantUploadedImages = [];
+      
+      // Create initial slots
+      for (let i = 0; i < 5; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'relative rounded-lg overflow-hidden h-24 border-2 border-dashed border-gray-400 hover:border-gray-600 cursor-pointer transition-all duration-300 animate-scale-in';
+        slot.style.animationDelay = `${i * 100}ms`;
+        
+        slot.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full p-2 group">
+            <i class="ri-image-line text-2xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300"></i>
+            <p class="mt-1 text-xs font-medium text-gray-500 text-center group-hover:text-gray-700 transition-colors duration-300">
+              Add Image
+            </p>
+          </div>
+        `;
+        
+        slot.addEventListener('click', function() {
+          if (variantUploadedImages.length < 5) {
+            variantFileInput.click();
+          }
+        });
+        
+        variantImageSlots.appendChild(slot);
+      }
+      
+      // File input change for variant
+      variantFileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          const newFiles = Array.from(this.files);
+          
+          // Check if adding new files would exceed the limit
+          if (variantUploadedImages.length + newFiles.length > 5) {
+            alert("Maximum 5 images allowed per variant");
+            return;
+          }
+          
+          // Add new files to the variantUploadedImages array
+          variantUploadedImages = [...variantUploadedImages, ...newFiles];
+          
+          // Update variant image slots
+          updateVariantImageSlots();
+          
+          // Reset file input
+          this.value = '';
+        }
+      });
+      
+      // Update variant image slots
+      function updateVariantImageSlots() {
+        variantImageSlots.innerHTML = '';
+        
+        for (let i = 0; i < 5; i++) {
+          const slot = document.createElement('div');
+          const hasImage = i < variantUploadedImages.length;
+          
+          slot.className = `relative rounded-lg overflow-hidden h-24 border-2 transition-all duration-300 animate-scale-in ${hasImage ? 'border-gray-300' : 'border-dashed border-gray-400 hover:border-gray-600 cursor-pointer'}`;
+          slot.style.animationDelay = `${i * 100}ms`;
+          
+          if (hasImage) {
+            // Create image preview
+            slot.innerHTML = `
+              <img src="${URL.createObjectURL(variantUploadedImages[i])}" alt="Variant Image ${i + 1}" class="w-full h-full object-cover transition-transform duration-300">
+              <button type="button" class="absolute top-1 right-1 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-md hover:bg-red-50 transition-all duration-200 variant-remove-image" data-index="${i}">
+                <i class="ri-close-line text-red-500 text-xs"></i>
+              </button>
+            `;
+          } else {
+            // Create empty slot
+            slot.innerHTML = `
+              <div class="flex flex-col items-center justify-center h-full p-2 group">
+                <i class="ri-image-line text-2xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300"></i>
+                <p class="mt-1 text-xs font-medium text-gray-500 text-center group-hover:text-gray-700 transition-colors duration-300">
+                  Add Image
+                </p>
+              </div>
+            `;
+            
+            slot.addEventListener('click', function() {
+              if (variantUploadedImages.length < 5) {
+                variantFileInput.click();
+              }
+            });
+          }
+          
+          variantImageSlots.appendChild(slot);
+        }
+        
+        // Add event listeners to remove buttons
+        const removeButtons = variantImageSlots.querySelectorAll('.variant-remove-image');
+        removeButtons.forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const index = parseInt(this.getAttribute('data-index'));
+            removeVariantImage(index);
+          });
+        });
+        
+        // Update image count
+        variantImageCount.textContent = `${variantUploadedImages.length}/5 images`;
+      }
+      
+      // Remove variant image
+      function removeVariantImage(index) {
+        variantUploadedImages.splice(index, 1);
+        updateVariantImageSlots();
+      }
+    }
+    
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in flex items-center';
+      toast.innerHTML = `
+        <i class="ri-check-line mr-2 text-green-400"></i>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.replace('animate-fade-in', 'animate-fade-out');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+  });
+</script>

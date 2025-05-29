@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import Category from "../models/categoryModel.js"
 import dotenv from 'dotenv';
 dotenv.config()
 
@@ -6,14 +7,13 @@ dotenv.config()
 const isLogin = async (req,res,next)=>{
   try{
     const token = req.cookies.token;
-    console.log(token)
-
+    
     if(!token){
       return res.redirect('/user/login')
     }
 
     const verifyToken =  jwt.verify(token,process.env.JWT_SECRET_KEY);
-    console.log(verifyToken)
+    
     req.user=verifyToken.userId;
     next();
   }
@@ -43,7 +43,25 @@ const authLogin = (req,res,next)=>{
     next(); // if token invalid, allow login page
   }
 }
+
+
+// categories middlewares
+
+const setCategories = async(req,res,next)=>{
+  try{
+    const categories = await Category.find()
+    res.locals.categories = categories;
+    next();
+  }
+  catch(err){
+    console.error("Error in fetching Categories",err);
+    next();
+  }
+}
+
 export default{
   isLogin,
-  authLogin
+  authLogin,
+  setCategories
+
 }

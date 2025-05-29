@@ -34,9 +34,9 @@ const userSchema = new mongoose.Schema({
     otpExpiry:{
         type:Date
     },
-    isVerified:{
+    isActive:{
         type: Boolean,
-        default:false
+        default:true
     },
     googleID:{
         type : String,

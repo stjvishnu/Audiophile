@@ -426,22 +426,22 @@ const getLogout = (req, res) => {
   res.redirect("/user/login");
 };
 
-const getHome = async (req, res) => {
-  try {
-    const token = req.cookies.token;
-    if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      let name = decoded.name;
-      res.locals.user = {
-        name,
-      };
-    }
-    res.render("user/home.ejs");
-  } catch (err) {
-    console.log("Error Getting Home", err);
-    res.render("user/home.ejs");
-  }
-};
+// const getHome = async (req, res) => {
+//   try {
+//     const token = req.cookies.token;
+//     if (token) {
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+//       let name = decoded.name;
+//       res.locals.user = {
+//         name,
+//       };
+//     }
+//     res.render("user/home.ejs");
+//   } catch (err) {
+//     console.log("Error Getting Home", err);
+//     res.render("user/home.ejs");
+//   }
+// };
 
 // ------------------------------------------
 // Google Authentication
@@ -500,7 +500,6 @@ export default {
   postLogin,
   getLogout,
   getLogin,
-  getHome,
   getOtp,
   postOtp,
   getOtpSuccess,

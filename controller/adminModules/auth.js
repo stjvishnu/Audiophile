@@ -1,9 +1,8 @@
 const getLoadAdmin = (req,res)=>{
-  res.redirect('admin/login')
+  res.redirect('admin/auth/login')
 }
 const getAdminLogin = (req,res)=>{
   res.render('admin/adminLogin.ejs',{layout:false})
-
 }
 
 const postAdminLogin =  (req,res)=>{
@@ -26,19 +25,10 @@ const postAdminLogin =  (req,res)=>{
   
 }
 
-const getAdminDasboard = (req,res)=>{
-  res.render('admin/adminDashboard.ejs',{layout:false})
-}
 
-
-const getAdminSplash=(req,res)=>{
-  res.render('admin/adminSplash.ejs',{layout:false})
-}
 
 export default{
   getLoadAdmin ,
   getAdminLogin,
-  getAdminSplash,
   postAdminLogin,
-  getAdminDasboard
 }

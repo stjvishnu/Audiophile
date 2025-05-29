@@ -1,5 +1,9 @@
 
 import userAuthentication from "./userModules/auth.js"
+import productController from "./userModules/products.js"
+
+//testing
+
 
 
 
@@ -29,3 +33,8 @@ export const getOtpSuccess=userAuthentication.getOtpSuccess;
 export const getGoogleAuth = userAuthentication.getGoogleAuth;
 export const getGoogleAuthCallBack = userAuthentication.getGoogleAuthCallBack;
 
+
+
+//products controller
+
+export const getProducts = productController.getProducts;

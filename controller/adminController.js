@@ -1,7 +1,42 @@
 import  adminAuthentication from './adminModules/auth.js'
+import  dashboardController from './adminModules/dashboard.js'
+import  adminSplashController from './adminModules/adminSplash.js'
+
+
+//testing controllers
+import usersController from './adminModules/users.js'
+import categoryController from "./adminModules/category.js";
+import subcategoryController from "./adminModules/subCategory.js";
+import productController from "./adminModules/products.js"
+
+
 
 export const getLoadAdmin = adminAuthentication.getLoadAdmin;
 export const getAdminLogin = adminAuthentication.getAdminLogin;
 export const postAdminLogin = adminAuthentication.postAdminLogin;
-export const getAdminDasboard = adminAuthentication.getAdminDasboard;
-export const getAdminSplash = adminAuthentication.getAdminSplash;
+
+
+export const getAdminDasboard = dashboardController.getAdminDasboard;
+
+export const getAdminSplash = adminSplashController.getAdminSplash;
+
+
+// testing controllers
+
+export const getUsers = usersController.getUsers;
+export const putUsers = usersController.putUsers;
+export const searchUsers = usersController.searchUsers;
+//testing controllers
+
+export const addCategory = categoryController.addCategory;
+export const editCategory =categoryController.editCategory;
+export const deleteCategory = categoryController.deleteCategory;
+// export const addSubCategory = subcategoryController.addSubCategory
+
+//products Controller
+
+export const getProducts = productController.getProducts;
+export const addProducts = productController.addProducts;
+export const editProducts = productController.editProducts;
+export const deleteProducts = productController.deleteProducts;
+export const softDeleteProducts = productController.softDeleteProducts;
