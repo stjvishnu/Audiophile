@@ -1,0 +1,165 @@
+
+<!-- Pagination Component -->
+<div class="flex justify-center items-center mt-8">
+  <nav class="flex items-center gap-1 sm:gap-2">
+    <!-- Previous Button -->
+    <button
+      id="prevBtn"
+      class="group flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-black bg-opacity-100 backdrop-blur-sm rounded-full border border-gray-600 text-white transition-all duration-300 hover:bg-opacity-20 hover:border-gray-400 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-opacity-10" 
+    
+      
+    >
+      <svg class="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="hidden sm:inline text-sm font-medium ">Previous</span>
+    </button>
+
+    <!-- Page Numbers Container -->
+    <div class="flex items-center gap-3 mx-2 sm:mx-4 " id="pageNumbers">
+      <!-- Page numbers will be dynamically generated here -->
+      
+    </div>
+
+    <!-- Next Button -->
+    <button
+      id="nextBtn"
+      class="group flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-black bg-opacity-100 backdrop-blur-sm rounded-full border border-gray-600 text-white transition-all duration-300 hover:bg-opacity-20 hover:border-gray-400 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-opacity-10"
+  
+    >
+      <span class="hidden sm:inline text-sm font-medium">Next</span>
+      <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Page Info -->
+  <div class="hidden md:block ml-6 text-sm text-gray-400" id="pageInfo">
+    <!-- Page info will be dynamically updated here -->
+  </div>
+</div>
+
+<style>
+  /* Pagination specific animations */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .page-btn-active {
+    animation: pulse-glow 2s infinite;
+  }
+
+  .page-btn {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .page-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .page-btn-active {
+    background-color: #ffffff !important; /* Solid white background */
+    color: #000000 !important; /* Black text */
+    transform: scale(1.1);
+    animation: pulse-glow 2s infinite;
+    border-color: #000000 !important; /* Black border for contrast */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+
+    //dynamic page numbers
+    const pageNumbersContainer = document.getElementById("pageNumbers");
+    const pageInfo = document.getElementById('pageInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+
+
+    const page = <%= currentPage %>;       // current page from server
+    const totalPages = <%= totalPages %>;  
+    
+ 
+
+
+    const maxButtons = 5; // Max page buttons to show
+
+    let startPage = Math.max(1, page - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages-1, startPage + maxButtons - 1);
+
+    if (endPage - startPage + 1 < maxButtons) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+
+    // clear any exisiting content
+    pageNumbersContainer.innerHTML = ""
+
+    //First button + dots aka ellipsis
+    if(startPage>1){
+      const firstBtn = createPageButton(1,page===1);
+      pageNumbersContainer.appendChild(firstBtn)
+    }
+
+    if(startPage>2){
+      const dots = document.createElement("span");
+      dots.className= "px-3 py-1 text-gray-400";
+      dots.textContent="...";
+      pageNumbersContainer.appendChild(dots)
+    }
+
+    // // Middle buttons (exactly 5 when possible)
+    for(let i=startPage;i<=endPage;i++){
+      const btn=createPageButton(i,i==page);
+      pageNumbersContainer.appendChild(btn)
+    }
+
+
+    if(endPage<totalPages){
+      if(endPage<totalPages-1){
+        const dots=document.createElement("span");
+        dots.className="px-3 py-1 text-gray-400";
+        dots.textContent="..."
+        pageNumbersContainer.appendChild(dots)
+       
+        
+      }
+    }
+         // Add last page button
+    if(totalPages>=1){
+      const lastBtn = createPageButton(totalPages,page===totalPages);
+        pageNumbersContainer.appendChild(lastBtn);
+    }
+
+    if(pageInfo){
+      pageInfo.textContent=`Page ${page} of ${totalPages}`;
+    }
+
+    prevBtn.disabled = page<=1
+    nextBtn.disabled = page>=totalPages
+
+    prevBtn.addEventListener('click',()=>changePage(page-1))
+    nextBtn.addEventListener('click',()=>changePage(page+1))
+
+    //utility funcion to create buttons
+    function createPageButton(pageNumber,isActive=false)
+    {
+      const btn = document.createElement("button");
+      btn.textContent = pageNumber;
+      btn.className = "group flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2  rounded-2xl border border-gray-600  transition-all duration-300 " + (isActive ? "page-btn-active" : "bg-gray-100 bg-opacity-10 text-white backdrop-blur-sm hover:bg-opacity-20 hover:border-gray-400 hover:scale-105 hover:shadow-md")
+      btn.addEventListener('click',()=>changePage(pageNumber));
+      return btn
+    }
+
+    function changePage(pageNumber){
+      loadURL('page',pageNumber)
+    }
+  })
+</script>

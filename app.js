@@ -20,30 +20,9 @@ dotenv.config();
 
 connectDb()
 
-// LiveReload server
-const liveReloadServer = livereload.createServer();
-let reloadTimeout;
-liveReloadServer.watch([
-  __dirname + "/views",
-  __dirname + "/public",
-  __dirname + "/controller",
-  __dirname + "/routes",
-  
-   // or any other folder you want to watch
-]);
 
 
-// Connect LiveReload middleware
-app.use(connectLiveReload());
-
-liveReloadServer.server.once("connection", () => {
-  if (reloadTimeout) clearTimeout(reloadTimeout);
-  reloadTimeout = setTimeout(() => {
-    liveReloadServer.refresh("/");
-  }, 100); // Keep it fast but stable
-});
-
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,'public')))
@@ -51,6 +30,7 @@ app.use(express.static(path.join(__dirname,'assets')))
 app.use(nocache())
 app.use(cookieParser())
 app.use(passport.initialize());
+app.use(usermiddleware.setName)
 app.use(usermiddleware.setCategories)
 
 
@@ -59,6 +39,8 @@ app.set('view engine',"ejs")//telling the express that we are using ejs template
 app.set('views',path.join(__dirname,"views"));
 app.use(expressEjsLayouts)
 app.set("layout","layouts/user-layout")
+
+
 
 
 

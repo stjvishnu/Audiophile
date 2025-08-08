@@ -12,10 +12,15 @@ const router = express.Router();
 //whenever a request comes to router object , express check router.stack to find a matching route
 
 //auth routes
+
+router.get('/',userController.getUserHome)
+
 router.get('/SignUp',userController.getSignUp)
 router.post('/SignUp',userController.postSignUp);
+
 router.get('/login',usermiddleware.authLogin,userController.getLogin);
 router.post('/login',userController.postLogin);
+
 router.get('/logout',userController.getLogout);
 router.get('/send-otp',userController.getOtp)
 router.post('/send-otp',userController.postOtp)

@@ -1,52 +1,47 @@
 <!-- Music Passion Section -->
-<section class="py-12 md:py-16 bg-white">
+<section class="py-12 md:py-16 bg-transparent">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Changed to grid for better equal height control -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
       <!-- Left Side: Logo (unchanged) -->
-      <div class="flex justify-center items-start shadow-2xl overflow-hidden">
+      <div class="flex justify-center items-start rounded-[4.2rem] shadow-2xl overflow-hidden">
         <div class="relative group w-full max-w-xs sm:max-w-sm">
           <img 
             src="images/Black-logo.png"  
             alt="Audiophile Logo"
-            class="w-full h-auto object-contain 
+            class="w-full h-full object-contain 
                   transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                   group-hover:scale-105 group-hover:-translate-y-2"
           >
         </div>
       </div>
 
-      <!-- Right Side: Responsive Text Over Image -->
-      <div class="relative min-h-[300px] md:min-h-0 h-full">
-        <!-- Background Image -->
-        <div class="absolute inset-0 rounded-lg overflow-hidden shadow-lg">
-          <img 
-            src="images/music-symbol.png" 
-            alt="Music Background"
-            class="w-full h-full object-cover opacity-90"
-          >
-        </div>
-        
-        <!-- Text Overlay - now properly responsive -->
-        <div class="absolute inset-0 flex flex-col justify-center p-6 md:p-8 text-center md:text-left">
-          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight drop-shadow-lg animate-fadeInUp">
-            Like You, We Love Music
-          </h2>
-          <div class="text-base sm:text-lg md:text-xl text-white leading-relaxed drop-shadow-md animate-fadeInUp delay-100 space-y-3 sm:space-y-4">
-            <p>
-              At Audiophile, we are driven by a passion for precision sound. Our brand represents 
-              a commitment to delivering high-fidelity headsets.
-            </p>
-            <p>
-              Designed for true audio enthusiasts, Audiophile blends cutting-edge technology with
-              unmatched clarity.
-            </p>
-            <p class="mt-4 sm:mt-6 text-lg sm:text-xl font-medium italic">
-              "Experience sound at its purest."
-            </p>
-          </div>
-        </div>
-      </div>
+      
+      <!-- Right Side: Clean Vertical Stack with Professional Style -->
+<div class="flex flex-col justify-center items-center text-center bg-transparent rounded-[4rem] shadow-2xl p-6 sm:p-10 space-y-6 h-full w-full">
+  
+  <!-- Heading -->
+  <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 drop-shadow-sm leading-tight">
+    Like You, We Love Music
+  </h2>
+
+  <!-- Center Icon -->
+  <div class="w-28 sm:w-36">
+    <img src="images/gif-main.gif" alt="Sound Wave Icon" class="w-full h-auto object-contain">
+    <!-- Replace with your actual icon path -->
+  </div>
+
+  <!-- Subtext -->
+  <p class="text-sm text-gray-400 font-mono tracking-wide">
+    A commitment to delivering high-fidelity Audio.
+  </p>
+
+  <!-- Tagline -->
+  <p class="text-lg sm:text-xl md:text-2xl italic font-semibold text-gray-900 leading-relaxed">
+    "Experience sound at its purest."
+  </p>
+</div>
+
     </div>
   </div>
 </section>

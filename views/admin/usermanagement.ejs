@@ -22,7 +22,7 @@
     <!-- Users list -->
     <div class="mt-8">
       <!-- Table header -->
-      <div class="bg-white text-black rounded-lg p-4 mb-4 grid grid-cols-12 gap-4 items-center font-semibold">
+      <div class="bg-black text-white rounded-lg p-4 mb-4 grid grid-cols-12 gap-4 items-center font-semibold border border-white border-opacity-40">
         <div class="col-span-1">Photo</div>
         <div class="col-span-2">Name</div>
         <div class="col-span-3">Email</div>
@@ -35,7 +35,7 @@
       <div class="space-y-4" id="usersContainer" >
         <% users.forEach((user, index) => { %>
           <div 
-            class="bg-white bg-opacity-90 backdrop-blur-sm text-black rounded-lg p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl"
+            class="bg-black bg-opacity-90 backdrop-blur-sm text-white rounded-lg p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40"
             style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.1 %>s; opacity: 0; transform: translateY(20px);"
           >
             <div class="col-span-1">
@@ -46,8 +46,8 @@
               >
             </div>
             <div class="col-span-2 font-medium"><%= user.firstName %></div>
-            <div class="col-span-3 text-gray-600"><%= user.email %></div>
-            <div class="col-span-2 text-gray-600"><%= user.mobile %></div>
+            <div class="col-span-3 "><%= user.email %></div>
+            <div class="col-span-2 "><%= user.mobile %></div>
             <div class="col-span-2">
               <span class="<%= user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> w-16 py-1 rounded-full text-sm font-medium text-center inline-block">
                 <%= user.isActive ? "Active" : "InActive" %>

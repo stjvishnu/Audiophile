@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken"
+
 const getLoadAdmin = (req,res)=>{
   res.redirect('admin/auth/login')
 }
@@ -6,19 +8,24 @@ const getAdminLogin = (req,res)=>{
 }
 
 const postAdminLogin =  (req,res)=>{
-
+  const userName = req.body.username;
+  const password = req.body.password;  
   try{
-    const adminName="Admin";
-    const password="Admin@123"
-    const adminUserName = req.body.username;
-    const adminPassword = req.body.password;
+
+
+    if(userName == process.env.ADMIN_USERNAME && password==process.env.ADMIN_PASSWORD){
+      const adminToken = jwt.sign({
+        userName:process.env.ADMIN_USERNAME,
+        password: process.env.ADMIN_PASSWORD
+      },process.env.JWT_ADMIN_KEY,{expiresIn:'15m'})
   
-    if(adminUserName == adminName && adminPassword==password){
+      res.cookie('adminToken',adminToken,{httpOnly:true})
       res.render('admin/adminSplash.ejs',{layout:false})
-    }
-    else{
+    }else{
       res.render('admin/adminLogin.ejs',{layout:false})
     }
+
+
   }catch(err){
     console.error(err)
   }

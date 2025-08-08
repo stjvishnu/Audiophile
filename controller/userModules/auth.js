@@ -6,6 +6,16 @@ import otpHelper from "../../utils/otp-helper.js";
 import emailSender from "../../utils/emailSender.js";
 import passport from "../../utils/googleAuth.js";
 
+
+
+const getUserHome = (req,res)=>{
+  try{
+    return res.render("user/home.ejs");
+  }catch(err){
+    console.error('Error in Getting Home',err)
+  }
+} 
+
 /*╔══════════════════════╗
   ║    SIGNUP-LOGIC      ║
   ╚══════════════════════╝*/
@@ -369,13 +379,11 @@ const postLogin = async (req, res) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-    console.log(email, password);
-    const user = await User.findOne({
-      email,
-    });
+    // console.log(email, password);
+    const user = await User.findOne({email,});
 
     if (!user) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Invalid credentials",
       });
@@ -390,6 +398,7 @@ const postLogin = async (req, res) => {
       });
     }
 
+    //create Tokens
     const accessToken = jwt.sign(
       {
         userId: user._id,
@@ -398,31 +407,51 @@ const postLogin = async (req, res) => {
       },
       process.env.JWT_SECRET_KEY,
       {
-        expiresIn: "1hr",
+        expiresIn: "15m",
       }
     );
-    console.log(accessToken);
+    
+    const refreshToken = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        name: user.firstName,
+      },
+      process.env.JWT_REFRESH_KEY,
+      {
+        expiresIn:'7d'
+      }
+    )
 
     res
       .cookie("token", accessToken, {
         httpOnly: true,
         secure: false,
-        maxAge: 60 * 60 * 1000,
+      })
+      .cookie('refreshToken',refreshToken,{
+        httpOnly:true,
+        secure: false,
       })
       .redirect("/");
+      console.log(`access Token : ${refreshToken}, refresh token : ${refreshToken}`);
   } catch (err) {
     console.error("Error in postLogin", err);
     res.status(500).json({
       error: "Internal Server error",
     });
   }
+
 };
 
 const getLogout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,
-  });
+  })
+  .clearCookie('refreshToken',{
+    httpOnly:true,
+    secure:false
+  })
   res.redirect("/user/login");
 };
 
@@ -467,19 +496,31 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
           return res.redirect('/user/login');
         }
     
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
           {
             email: user.email,
             name: user.firstName,
             googleId: user.googleID,
           },
           process.env.JWT_SECRET_KEY,
-          { expiresIn: '1hr' }
+          { expiresIn: '15m' }
         );
+
+        const refreshToken = jwt.sign(
+          {
+            email: user.email,
+            name: user.firstName,
+            googleId: user.googleID,
+          },
+          process.env.JWT_REFRESH_KEY,
+          {expiresIn:'7d'}
+        )
     
-        res.cookie('token', token, {
+        res
+        .cookie('token', accessToken, {
           httpOnly: true,
-        });
+        })
+        .cookie('refreshToken',refreshToken,{httpOnly:true})
     
         res.redirect('/');
       } catch (err) {
@@ -495,6 +536,7 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
 // ------------------------------------------
 
 export default {
+  getUserHome,
   getSignUp,
   postSignUp,
   postLogin,

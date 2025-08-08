@@ -12,14 +12,14 @@
     </div>
     
     <!-- Modal Body -->
-    <form id="productForm" class="space-y-6 p-6">
+    <form id="productForm" method="post" action="/admin/products" class="space-y-6 p-6">
       <!-- Basic Product Information -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in" style="animation-delay: 100ms;">
         <div class="space-y-2">
-          <label for="name" class="block font-medium text-gray-700">Product Name *</label>
-          <input id="name" name="name" placeholder="Enter product name" required 
+          <label for="productName" class="block font-medium text-gray-700">Product Name *</label>
+          <input id="productName" name="name" placeholder="Enter product name" required 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
-            <div class="text-red-500 text-sm hidden" id="name-error"></div>
+          <div class="text-red-500 text-sm hidden" id="name-error"></div>
         </div>
         
         <div class="space-y-2">
@@ -27,10 +27,10 @@
           <select id="category" name="category" required 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
             <option value="" disabled selected>Select a category</option>
-            <option value="1">Headphones</option>
-            <option value="2">Earbuds</option>
-            <option value="3">Speakers</option>
-            <option value="4">Accessories</option>
+            <option value="headphones">Headphones</option>
+            <option value="earbuds">Earbuds</option>
+            <option value="speakers">Speakers</option>
+            <option value="accessories">Accessories</option>
           </select>
           <div class="text-red-500 text-sm hidden" id="category-error"></div>
         </div>
@@ -40,9 +40,9 @@
           <select id="subCategory" name="subCategory" required 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
             <option value="" disabled selected>Select a sub-category</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
           </select>
           <div class="text-red-500 text-sm hidden" id="subCategory-error"></div>
         </div>
@@ -51,21 +51,21 @@
           <label for="brand" class="block font-medium text-gray-700">Brand *</label>
           <input id="brand" name="brand" placeholder="Enter brand name" required 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
-            <div class="text-red-500 text-sm hidden" id="brand-error"></div>
+          <div class="text-red-500 text-sm hidden" id="brand-error"></div>
         </div>
         
         <div class="space-y-2">
           <label for="price" class="block font-medium text-gray-700">Price * ($)</label>
           <input id="price" name="price" type="number" placeholder="0.00" required min="0" step="0.01" 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
-            <div class="text-red-500 text-sm hidden" id="price-error"></div>
+          <div class="text-red-500 text-sm hidden" id="price-error"></div>
         </div>
         
         <div class="space-y-2">
           <label for="stock" class="block font-medium text-gray-700">Stock *</label>
           <input id="stock" name="stock" type="number" placeholder="0" required min="0" step="1" 
             class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
-            <div class="text-red-500 text-sm hidden" id="stock-error"></div>
+          <div class="text-red-500 text-sm hidden" id="stock-error"></div>
         </div>
       </div>
       
@@ -75,14 +75,14 @@
           <label for="description1" class="block font-medium text-gray-700">Primary Description *</label>
           <textarea id="description1" name="description1" placeholder="Enter main product description" required rows="4" 
             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm resize-none"></textarea>
-            <div class="text-red-500 text-sm hidden" id="description1-error"></div>
+          <div class="text-red-500 text-sm hidden" id="description1-error"></div>
         </div>
         
         <div class="space-y-2">
           <label for="description2" class="block font-medium text-gray-700">Secondary Description</label>
           <textarea id="description2" name="description2" placeholder="Enter additional product description (optional)" rows="4" 
             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm resize-none"></textarea>
-            <div class="text-red-500 text-sm hidden" id="description2-error"></div>
+          <div class="text-red-500 text-sm hidden" id="description2-error"></div>
         </div>
       </div>
       
@@ -103,11 +103,11 @@
           <span class="text-sm text-gray-500" id="imageCount">0/5 images</span>
         </div>
         
-    <!-- 5-slot image upload UI -->
+        <!-- 5-slot image upload UI -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="imageSlots">
           <!-- Image slots will be generated by JavaScript -->
         </div>
-        <div class="text-red-500 text-sm hidden" id="images-error" ></div>
+        <div class="text-red-500 text-sm hidden" id="images-error"></div>
         
         <input id="fileInput" type="file" accept="image/*" multiple class="hidden">
       </div>
@@ -115,14 +115,13 @@
       <!-- Product Variants Section -->
       <div class="space-y-4 animate-fade-in" style="animation-delay: 600ms;">
         <div class="flex justify-between items-center">
-          <h3 class="text-lg font-medium text-gray-800">Product Variants</h3>
+          <h3 class="text-lg font-medium text-gray-800">Product Variants <span class="text-sm font-normal text-gray-500">(Optional)</span></h3>
           <button type="button" id="addVariantBtn" 
             class="flex items-center gap-1 border border-gray-300 rounded-md px-3 py-1.5 text-gray-700 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-400 transition-all duration-300">
             <i class="ri-add-line"></i> Add Variant
           </button>
-       
         </div>
-        <div class="text-red-500 text-sm flex justify-center" id="images-error" >hi</div>
+        <div class="text-red-500 text-sm hidden justify-center" id="variants-error"></div>
         <div id="variantsContainer" class="space-y-8">
           <!-- Variant templates will be added here by JavaScript -->
         </div>
@@ -153,6 +152,17 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(10px);
     }
   }
 
@@ -258,37 +268,53 @@
     const variantsContainer = document.getElementById('variantsContainer');
     const addVariantBtn = document.getElementById('addVariantBtn');
     let variantCounter = 0;
-    
+    const variantImages = {};
+
     // Create initial image slots
     createImageSlots();
     
-    // Add initial variant
-    addVariant();
+    // Setup toggle switch accessibility
+    function setupToggleSwitch(switchElement, inputElement) {
+      switchElement.addEventListener('click', toggle);
+      switchElement.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+
+      function toggle() {
+        const currentState = switchElement.getAttribute('data-state');
+        const newState = currentState === 'checked' ? 'unchecked' : 'checked';
+        switchElement.setAttribute('data-state', newState);
+        switchElement.setAttribute('aria-checked', newState === 'checked');
+        inputElement.value = newState === 'checked';
+      }
+    }
+
+    // Apply to product switch
+    setupToggleSwitch(isActiveSwitch, isActiveInput);
     
     // Close modal
     cancelBtn.addEventListener('click', function() {
       modal.classList.add('hidden');
-      // modal.classList.remove('flex');
-      location.reload();
-
+      form.reset();
+      resetImageSlots();
+      variantsContainer.innerHTML = '';
+      variantCounter = 0;
+      variantImages = {};
     });
     
     // Close modal when clicking outside
     modal.addEventListener('click', function(e) {
       if (e.target === modal) {
         modal.classList.add('hidden');
-        // modal.classList.remove('flex');
-        location.reload();
+        form.reset();
+        resetImageSlots();
+        variantsContainer.innerHTML = '';
+        variantCounter = 0;
+        variantImages = {};
       }
-    });
-    
-    // Toggle switch functionality
-    isActiveSwitch.addEventListener('click', function() {
-      const currentState = isActiveSwitch.getAttribute('data-state');
-      const newState = currentState === 'checked' ? 'unchecked' : 'checked';
-      isActiveSwitch.setAttribute('data-state', newState);
-      isActiveSwitch.setAttribute('aria-checked', newState === 'checked' ? 'true' : 'false');
-      isActiveInput.value = newState === 'checked' ? 'true' : 'false';
     });
     
     // Add variant button
@@ -299,22 +325,98 @@
     // Form submission
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      
-      // Check if at least one product image is uploaded
-      if (uploadedImages.length === 0) {
-        alert("Please upload at least one product image");
-        return;
+      let isValid = true;
+
+      // Validate product name
+      const productName = document.getElementById('productName').value.trim();
+      if (!productName) {
+        showError('name-error', 'Product name is required');
+        isValid = false;
+      } else {
+        clearError('name-error');
       }
-      
+
+      // Validate category
+      const category = document.getElementById('category').value;
+      if (!category) {
+        showError('category-error', 'Please select a category');
+        isValid = false;
+      } else {
+        clearError('category-error');
+      }
+
+      // Validate sub-category
+      const subCategory = document.getElementById('subCategory').value;
+      if (!subCategory) {
+        showError('subCategory-error', 'Please select a sub-category');
+        isValid = false;
+      } else {
+        clearError('subCategory-error');
+      }
+
+      // Validate brand
+      const brand = document.getElementById('brand').value.trim();
+      if (!brand) {
+        showError('brand-error', 'Brand name is required');
+        isValid = false;
+      } else {
+        clearError('brand-error');
+      }
+
+      // Validate price
+      const price = parseFloat(document.getElementById('price').value);
+      if (isNaN(price) || price < 0) {
+        showError('price-error', 'Please enter a valid price');
+        isValid = false;
+      } else {
+        clearError('price-error');
+      }
+
+      // Validate stock
+      const stock = parseInt(document.getElementById('stock').value);
+      if (isNaN(stock) || stock < 0) {
+        showError('stock-error', 'Please enter a valid stock quantity');
+        isValid = false;
+      } else {
+        clearError('stock-error');
+      }
+
+      // Validate primary description
+      const description1 = document.getElementById('description1').value.trim();
+      if (!description1) {
+        showError('description1-error', 'Primary description is required');
+        isValid = false;
+      } else {
+        clearError('description1-error');
+      }
+
+      // Validate product images
+      if (uploadedImages.length === 0) {
+        showError('images-error', 'Please upload at least one product image');
+        isValid = false;
+      } else {
+        clearError('images-error');
+      }
+
+      if (!isValid) return;
+
       // Collect form data
       const formData = new FormData(form);
-      
-      // Add image files
       uploadedImages.forEach((image, index) => {
         formData.append(`productImage${index}`, image);
       });
-      
-      // Convert FormData to object for processing
+
+      // Add variant images if variants exist
+      const variantElements = variantsContainer.querySelectorAll('[id^="variant-"]');
+      if (variantElements.length > 0) {
+        Object.keys(variantImages).forEach(variantId => {
+          variantImages[variantId].forEach((image, index) => {
+            formData.append(`${variantId}-image${index}`, image);
+          });
+        });
+      }
+
+      // Log form data (replace with backend fetch in production)
       const formObject = Object.fromEntries(formData);
       console.log("Form submitted!", formObject);
       
@@ -324,8 +426,10 @@
       // Reset form and close modal
       form.reset();
       resetImageSlots();
+      variantsContainer.innerHTML = '';
+      variantCounter = 0;
+      variantImages = {};
       modal.classList.add('hidden');
-      // modal.classList.remove('flex');
     });
     
     // Image slots creation
@@ -340,7 +444,6 @@
         slot.style.animationDelay = `${i * 100}ms`;
         
         if (hasImage) {
-          // Create image preview
           slot.innerHTML = `
             <img src="${URL.createObjectURL(uploadedImages[i])}" alt="Product ${i + 1}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
             <button type="button" class="absolute top-1 right-1 bg-white/80 backdrop-blur-sm rounded-full p-1.5 shadow-md hover:bg-red-50 transition-all duration-200 remove-image" data-index="${i}">
@@ -348,7 +451,6 @@
             </button>
           `;
         } else {
-          // Create empty slot
           slot.innerHTML = `
             <div class="flex flex-col items-center justify-center h-full p-3 group">
               <i class="ri-image-line text-3xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300 animate-float"></i>
@@ -387,19 +489,13 @@
       if (this.files && this.files.length > 0) {
         const newFiles = Array.from(this.files);
         
-        // Check if adding new files would exceed the limit
         if (uploadedImages.length + newFiles.length > 5) {
-          alert("Maximum 5 images allowed");
+          showToast("Maximum 5 images allowed");
           return;
         }
         
-        // Add new files to the uploadedImages array
         uploadedImages = [...uploadedImages, ...newFiles];
-        
-        // Update image slots
         createImageSlots();
-        
-        // Reset file input
         this.value = '';
       }
     });
@@ -428,47 +524,45 @@
       variantElement.innerHTML = `
         <div class="flex justify-between items-center">
           <h4 class="font-medium text-gray-700">Variant #${variantCounter}</h4>
-          ${variantCounter > 1 ? `
-            <button type="button" class="remove-variant text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors duration-300 p-1.5 rounded-md">
-              <i class="ri-delete-bin-line mr-1"></i>
-              Remove
-            </button>
-          ` : ''}
+          <button type="button" class="remove-variant text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors duration-300 p-1.5 rounded-md">
+            <i class="ri-delete-bin-line mr-1"></i>
+            Remove
+          </button>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
             <label for="${variantId}-color" class="block font-medium text-gray-700">Color *</label>
-            <input id="${variantId}-color" name="variants[${variantCounter-1}][color]" placeholder="e.g. Black, Red, Blue" required 
+            <input id="${variantId}-color" name="variants[${variantCounter-1}][color]" placeholder="e.g. Black, Red, Blue" 
               class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
           </div>
           
           <div class="space-y-2">
             <label for="${variantId}-connectorType" class="block font-medium text-gray-700">Connector Type *</label>
-            <select id="${variantId}-connectorType" name="variants[${variantCounter-1}][connectorType]" required
+            <select id="${variantId}-connectorType" name="variants[${variantCounter-1}][connectorType]" 
               class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
               <option value="" disabled selected>Select connector type</option>
-              <option value="Type-C">Type-C</option>
+              <option value="type-c">Type-C</option>
               <option value="3.5mm">3.5mm</option>
-              <option value="Wireless">Wireless</option>
+              <option value="wireless">Wireless</option>
             </select>
           </div>
           
           <div class="space-y-2">
             <label for="${variantId}-stock" class="block font-medium text-gray-700">Stock *</label>
-            <input id="${variantId}-stock" name="variants[${variantCounter-1}][stock]" type="number" placeholder="0" required min="0"
+            <input id="${variantId}-stock" name="variants[${variantCounter-1}][stock]" type="number" placeholder="0"  min="0"
               class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
           </div>
           
           <div class="space-y-2">
             <label for="${variantId}-price" class="block font-medium text-gray-700">Price * ($)</label>
-            <input id="${variantId}-price" name="variants[${variantCounter-1}][price]" type="number" placeholder="0.00" required min="0" step="0.01"
+            <input id="${variantId}-price" name="variants[${variantCounter-1}][price]" type="number" placeholder="0.00"  min="0" step="0.01"
               class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
           </div>
           
           <div class="space-y-2">
             <label for="${variantId}-sku" class="block font-medium text-gray-700">SKU *</label>
-            <input id="${variantId}-sku" name="variants[${variantCounter-1}][sku]" placeholder="Stock Keeping Unit" required
+            <input id="${variantId}-sku" name="variants[${variantCounter-1}][sku]" placeholder="Stock Keeping Unit" 
               class="w-full h-10 px-3 py-2 rounded-md border border-gray-300 bg-white text-base transition-all duration-300 focus:ring-2 focus:ring-gray-400 focus:outline-none shadow-sm">
           </div>
           
@@ -504,22 +598,14 @@
       // Setup variant switch
       const variantSwitch = document.getElementById(`${variantId}-isActiveSwitch`);
       const variantIsActiveInput = document.getElementById(`${variantId}-isActive`);
-      
-      variantSwitch.addEventListener('click', function() {
-        const currentState = variantSwitch.getAttribute('data-state');
-        const newState = currentState === 'checked' ? 'unchecked' : 'checked';
-        variantSwitch.setAttribute('data-state', newState);
-        variantSwitch.setAttribute('aria-checked', newState === 'checked' ? 'true' : 'false');
-        variantIsActiveInput.value = newState === 'checked' ? 'true' : 'false';
-      });
+      setupToggleSwitch(variantSwitch, variantIsActiveInput);
       
       // Setup remove variant button
       const removeButton = variantElement.querySelector('.remove-variant');
-      if (removeButton) {
-        removeButton.addEventListener('click', function() {
-          variantElement.remove();
-        });
-      }
+      removeButton.addEventListener('click', function() {
+        variantElement.remove();
+        delete variantImages[variantId];
+      });
     }
     
     // Setup variant image slots
@@ -527,75 +613,26 @@
       const variantImageSlots = document.getElementById(`${variantId}-imageSlots`);
       const variantFileInput = document.getElementById(`${variantId}-fileInput`);
       const variantImageCount = document.getElementById(`${variantId}-imageCount`);
-      let variantUploadedImages = [];
+      variantImages[variantId] = variantImages[variantId] || [];
       
-      // Create initial slots
-      for (let i = 0; i < 5; i++) {
-        const slot = document.createElement('div');
-        slot.className = 'relative rounded-lg overflow-hidden h-24 border-2 border-dashed border-gray-400 hover:border-gray-600 cursor-pointer transition-all duration-300 animate-scale-in';
-        slot.style.animationDelay = `${i * 100}ms`;
-        
-        slot.innerHTML = `
-          <div class="flex flex-col items-center justify-center h-full p-2 group">
-            <i class="ri-image-line text-2xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300"></i>
-            <p class="mt-1 text-xs font-medium text-gray-500 text-center group-hover:text-gray-700 transition-colors duration-300">
-              Add Image
-            </p>
-          </div>
-        `;
-        
-        slot.addEventListener('click', function() {
-          if (variantUploadedImages.length < 5) {
-            variantFileInput.click();
-          }
-        });
-        
-        variantImageSlots.appendChild(slot);
-      }
-      
-      // File input change for variant
-      variantFileInput.addEventListener('change', function() {
-        if (this.files && this.files.length > 0) {
-          const newFiles = Array.from(this.files);
-          
-          // Check if adding new files would exceed the limit
-          if (variantUploadedImages.length + newFiles.length > 5) {
-            alert("Maximum 5 images allowed per variant");
-            return;
-          }
-          
-          // Add new files to the variantUploadedImages array
-          variantUploadedImages = [...variantUploadedImages, ...newFiles];
-          
-          // Update variant image slots
-          updateVariantImageSlots();
-          
-          // Reset file input
-          this.value = '';
-        }
-      });
-      
-      // Update variant image slots
       function updateVariantImageSlots() {
         variantImageSlots.innerHTML = '';
         
         for (let i = 0; i < 5; i++) {
           const slot = document.createElement('div');
-          const hasImage = i < variantUploadedImages.length;
+          const hasImage = i < variantImages[variantId].length;
           
           slot.className = `relative rounded-lg overflow-hidden h-24 border-2 transition-all duration-300 animate-scale-in ${hasImage ? 'border-gray-300' : 'border-dashed border-gray-400 hover:border-gray-600 cursor-pointer'}`;
           slot.style.animationDelay = `${i * 100}ms`;
           
           if (hasImage) {
-            // Create image preview
             slot.innerHTML = `
-              <img src="${URL.createObjectURL(variantUploadedImages[i])}" alt="Variant Image ${i + 1}" class="w-full h-full object-cover transition-transform duration-300">
+              <img src="${URL.createObjectURL(variantImages[variantId][i])}" alt="Variant Image ${i + 1}" class="w-full h-full object-cover transition-transform duration-300">
               <button type="button" class="absolute top-1 right-1 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-md hover:bg-red-50 transition-all duration-200 variant-remove-image" data-index="${i}">
                 <i class="ri-close-line text-red-500 text-xs"></i>
               </button>
             `;
           } else {
-            // Create empty slot
             slot.innerHTML = `
               <div class="flex flex-col items-center justify-center h-full p-2 group">
                 <i class="ri-image-line text-2xl text-gray-400 group-hover:text-gray-600 transition-colors duration-300"></i>
@@ -606,7 +643,7 @@
             `;
             
             slot.addEventListener('click', function() {
-              if (variantUploadedImages.length < 5) {
+              if (variantImages[variantId].length < 5) {
                 variantFileInput.click();
               }
             });
@@ -626,14 +663,45 @@
         });
         
         // Update image count
-        variantImageCount.textContent = `${variantUploadedImages.length}/5 images`;
+        variantImageCount.textContent = `${variantImages[variantId].length}/5 images`;
       }
+      
+      // File input change for variant
+      variantFileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          const newFiles = Array.from(this.files);
+          
+          if (variantImages[variantId].length + newFiles.length > 5) {
+            showToast("Maximum 5 images allowed per variant");
+            return;
+          }
+          
+          variantImages[variantId] = [...variantImages[variantId], ...newFiles];
+          updateVariantImageSlots();
+          this.value = '';
+        }
+      });
       
       // Remove variant image
       function removeVariantImage(index) {
-        variantUploadedImages.splice(index, 1);
+        variantImages[variantId].splice(index, 1);
         updateVariantImageSlots();
       }
+      
+      updateVariantImageSlots();
+    }
+    
+    // Error handling
+    function showError(id, message) {
+      const errorDiv = document.getElementById(id);
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+    }
+
+    function clearError(id) {
+      const errorDiv = document.getElementById(id);
+      errorDiv.textContent = '';
+      errorDiv.classList.add('hidden');
     }
     
     // Toast notification

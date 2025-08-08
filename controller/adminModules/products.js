@@ -26,79 +26,81 @@ const getProducts = async (req,res)=>{
 //Add Products
 
 const addProducts = async (req,res) =>{
+  console.log('hii')
+  console.log(req.body)
 
-  try{
+  // try{
 
-    const imageFilesArray =req.files
+  //   const imageFilesArray =req.files
 
-    const imageArray = imageFilesArray.map((file)=>{
-      return file.path;
-    })
+  //   const imageArray = imageFilesArray.map((file)=>{
+  //     return file.path;
+  //   })
 
-    const {name,category,subCategory,brand,price,stock,discount,description1,description2, productImages,productsDetails,variants,isDeleted,isActive} = req.body
+  //   const {name,category,subCategory,brand,price,stock,discount,description1,description2, productImages,productsDetails,variants,isDeleted,isActive} = req.body
 
-    const categoryExist = await Category.findOne({name:category})
+  //   const categoryExist = await Category.findOne({name:category})
 
-    //validating fields
+  //   //validating fields
 
-    if(!name || 
-      !category || 
-      !subCategory || 
-      !brand || 
-      !isDeleted || 
-      !isActive || 
-      discount === undefined ||
-      price === undefined || 
-      stock == undefined){
-      throw new Error ("Missing Fields Required") //later return res.render
-    }
+  //   if(!name || 
+  //     !category || 
+  //     !subCategory || 
+  //     !brand || 
+  //     !isDeleted || 
+  //     !isActive || 
+  //     discount === undefined ||
+  //     price === undefined || 
+  //     stock == undefined){
+  //     throw new Error ("Missing Fields Required") //later return res.render
+  //   }
 
-    //validating category
+  //   //validating category
 
-    if(!categoryExist){
-      return res.status(400).json({message:"Invalid Category"});
-    }
+  //   if(!categoryExist){
+  //     return res.status(400).json({message:"Invalid Category"});
+  //   }
 
-    //validating subCategory
+  //   //validating subCategory
 
-    const validSubCategories = Products.schema.path('subCategory').enumValues;
-    if(!validSubCategories.includes(subCategory)){
-      return res.status(400).json({message:`subCategory doesn't exits, must be on of ${validSubCategories}.join(',') `})
-    }
+  //   const validSubCategories = Products.schema.path('subCategory').enumValues;
+  //   if(!validSubCategories.includes(subCategory)){
+  //     return res.status(400).json({message:`subCategory doesn't exits, must be on of ${validSubCategories}.join(',') `})
+  //   }
 
-    //validating price
-    if(price<0 || isNaN(price)){
-      return res.status(400).json({message:"Price should be positive"});
-    }
+  //   //validating price
+  //   if(price<0 || isNaN(price)){
+  //     return res.status(400).json({message:"Price should be positive"});
+  //   }
 
-    //validating stock
-    if(stock<0 || isNaN(stock)){
-      return res.status(400).json({message:"Stock can't be negative"});
-    }
+  //   //validating stock
+  //   if(stock<0 || isNaN(stock)){
+  //     return res.status(400).json({message:"Stock can't be negative"});
+  //   }
 
-    const discountedPrice = price - (price * discount / 100)
+  //   const discountedPrice = price - (price * discount / 100)
     
-    const newProduct = new Products({
-      name,
-      category:categoryExist._id,
-      subCategory,
-      brand,
-      price,
-      stock,
-      discountedPrice,
-      discount,
-      isActive,
-      isDeleted,
-      productImages:imageArray,
-    })
-    await newProduct.save();
-    res.status(200).json({message:"Product Added Successfully"})
+  //   const newProduct = new Products({
+  //     name,
+  //     category:categoryExist._id,
+  //     subCategory,
+  //     brand,
+  //     price,
+  //     stock,
+  //     discountedPrice,
+  //     discount,
+  //     isActive,
+  //     isDeleted,
+  //     productImages:imageArray,
+  //   })
+  //   await newProduct.save();
+  //   res.status(200).json({message:"Product Added Successfully"})
 
-  }
-  catch(err){
-    res.json({message:"Error in Adding Products"})
-    console.log("error in adding products",err);
-  }
+  // }
+  // catch(err){
+  //   res.json({message:"Error in Adding Products"})
+  //   console.log("error in adding products",err);
+  // }
 }
 
 

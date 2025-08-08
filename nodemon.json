@@ -1,7 +1,0 @@
-{
-  "watch": ["app.js", "routes", "controllers", "views", "public"],
-  "ignore": ["node_modules", ".git"],
-  "ext": "js,ejs,json,css",
-  "delay": "100",
-  "exec": "node app.js"
-}

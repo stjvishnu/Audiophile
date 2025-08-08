@@ -1,11 +1,12 @@
 
 import userAuthentication from "./userModules/auth.js"
 import productController from "./userModules/products.js"
+import cartController from "./userModules/cart.js"
 
 //testing
 
 
-
+export const getUserHome = userAuthentication.getUserHome;
 
 export const getSignUp = userAuthentication.getSignUp;
 export const postSignUp = userAuthentication.postSignUp;
@@ -37,4 +38,9 @@ export const getGoogleAuthCallBack = userAuthentication.getGoogleAuthCallBack;
 
 //products controller
 
-export const getProducts = productController.getProducts;
+export const allProducts = productController.allProducts;
+export const postFilter = productController.postFilter;
+export const searchProducts = productController.searchProducts;
+
+//cart controler
+export const getCart = cartController.getCart;
