@@ -1,0 +1,161 @@
+<div class="min-h-screen bg-black text-white p-4 md:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto">
+ <!-- Header Section -->
+<div class="bg-black  text-white rounded-lg p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-white border-opacity-40">
+
+  <!-- Title -->
+  <h1 class="text-2xl font-bold">Products</h1>
+
+  <!-- Search Bar -->
+  <div class="relative w-full md:w-80">
+    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <input
+      type="search"
+      id="searchInput"
+      placeholder="Search products..."
+      class="w-full pl-10 pr-4 py-2 bg-gray-900 bg-opacity-60 text-white rounded-full border border-gray-700 focus:border-gray-400 focus:ring-0 focus:outline-none placeholder-gray-400 transition duration-300"
+    >
+  </div>
+
+  <!-- Add Product Button -->
+  <button 
+    onclick="openAddModal()"
+    class="bg-gray-900 bg-opacity-60 hover:bg-gray-800 text-white py-2 px-5 rounded-full flex items-center gap-2 transition-all duration-300 transform hover:scale-105 border border-gray-600 hover:border-gray-400"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    <span>Add Product</span>
+  </button>
+
+    <%- include('addProduct') %>
+    <!-- //include('editProduct') // -->
+</div>
+
+
+      <!-- Products List -->
+
+      <div class="mt-8 ">
+
+        <!-- Table header -->
+
+        <div class="bg-black text-white rounded-lg p-4 mb-4 grid grid-cols-12 gap-4 items-center font-semibold border border-white border-opacity-40">
+          <div class="col-span-1">NO</div>
+          <div class="col-span-1 ">Image</div>
+          <div class="col-span-2 text-center">NAME</div>
+          <div class="col-span-2">BRAND</div>
+          <div class="col-span-2">CATEGORY</div>
+          <div class="col-span-1">Price</div>
+          <div class="col-span-1">Status</div>
+          <div class="col-span-2 ">Actions</div>
+        </div>
+
+        <!-- Product List-->
+
+        <div class="space-y-4" id="usersContainer">
+          <% products.forEach((product,index)=>{ %>
+              <div class="<%=product.isDeleted ?
+                "bg-gray-600 backdrop-blur-sm text-gray-400 rounded-lg p-3 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 border border-gray-500 border-opacity-30 opacity-50 cursor-not-allowed"
+                :
+                "bg-black  backdrop-blur-sm text-white rounded-lg p-3 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40 disabled:bg-black opacity-40"
+                %>"
+              
+
+              style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.1 %>s; opacity:0; transform: translateY(20px);"
+              >
+              <div class="col-span-1 "> <%= index+1 %> </div>
+              <div class="col-span-1"> <img class="w-14 h-14  object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-125" src="<%= product.variants[index].attributes.productImages[0] %>" alt="<%= product.name %>"> </div>
+                <div class="col-span-2 text-center <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.name %> </div>
+                <div class="col-span-2 <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.brand %> </div>
+                <div class="col-span-2 <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.category?.name %> </div>
+                <div class="col-span-1 <%= product.isDeleted ? 'line-through' : '' %>"><%= product.variants[index].attributes.price %></div>
+                <div class="col-span-1">
+                  <% if(product.isDeleted){ %>
+                   <span class="text-red-500 " >Deleted</span> 
+                 <% } else if(!product.isActive){ %>
+                    <span class="text-orange-500">InActive</span> 
+                    <% } else { %>
+                     <span class="text-green-500">Active</span> 
+                      <% } %>
+                </div>
+
+
+                <div class="col-span-2 space-x-2">
+                  <i id="editBtn" class="fa-solid fa-pen cursor-pointer
+                  <%=product.isDeleted ? 'pointer-events-none':''%>
+                  " style="color: #ffffff;"
+                   onclick="openAddModal('<%=product._id %>')"></i>
+
+
+                  <i id="blockBtn" class="
+                  fa-solid fa-lock cursor-pointer
+                  <%=product.isDeleted ? 'pointer-events-none':''%>
+                  <%=product.isActive ?'' :'hidden'%>
+                  " 
+                  style="color: #cc2424;" onclick="blockProduct('<%=product._id %>')"></i>
+
+
+                  <i id="<%= product._id %>" class="
+                    fa-solid fa-lock-open cursor-pointer
+                    <%=product.isActive ? 'hidden':''%>
+                    " style="color: #04a978;" onclick="unblockProduct('<%=product._id %>')"></i>
+
+
+                  <i  class="fa-solid fa-trash cursor-pointer
+                   <%= product.isDeleted ? 'hidden' : ''%>" 
+                  style="color: #ffffff;"
+                   onclick="deleteProduct('<%= product?._id %>')"></i>
+
+
+                   <i id="<%= product.isDeleted %> " class=" fa-solid fa-trash-arrow-up cursor-pointer
+                   <%= product.isDeleted ? '' : 'hidden'%> "
+                    style="color: #ff0000;" onclick="restoreProduct('<%= product?._id %>')"></i>
+
+                </div>
+
+              </div>
+          <% }) %> 
+        </div>
+
+      </div>
+  </div>
+
+<!-- Paginaton-->
+
+<%-include ('./partials/pagination.ejs') %>
+
+
+</div>
+
+
+
+<style>
+  @keyframes slideIn {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-open {
+    overflow: hidden;
+  }
+
+  #modalContent.show {
+    transform: scale(1);
+    opacity: 1;
+  }
+</style>
+
+<script src="/js/admin/adminProductScript.js"></script>
+<!-- <script src="/js/admin/editTestScript.js"></script> -->

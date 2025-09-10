@@ -1,0 +1,96 @@
+<% const title="OTP Verification" %>
+
+    <div class="bg-white min-h-screen flex items-center justify-center p-4">
+        <div
+            class="w-full max-w-md bg-black p-8 rounded-xl border border-gray-800 shadow-2xl transform transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+
+
+            <!-- Error Message Container -->
+            <% if (locals.error) { %>
+                <div id="errorDiv" class="mb-6 transform transition-all duration-500 animate-slideDown">
+                    <div
+                        class="bg-white/10 backdrop-blur-sm border border-red-500/20 rounded-lg p-4 relative overflow-hidden">
+                        <!-- Animated border effect -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-red-500/20 to-white/20 animate-pulse"></div>
+                        <!-- Error message -->
+                        <div class="relative z-10 flex items-center">
+                            <svg class="w-5 h-5 text-red-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v4M12 16h.01" />
+                            </svg>
+                            <p class="text-red-400 text-sm font-medium">
+                                <%= error %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+
+                    <div class="text-center">
+                        <h1 class="text-2xl font-semibold text-white mb-2">Verify Your Email</h1>
+                        <p class="text-gray-400 text-sm mb-8">
+                            Enter the 6-digit code sent to your email
+                        </p>
+                    </div>
+
+                    <form action="/user/otp" method="post" id="otpVerificationForm" class="space-y-6">
+                        <input id="email" type="hidden" name="email" value="<%= email %>" />
+
+                        <!-- OTP Input Group -->
+                        <div class="flex justify-between gap-2 mb-6">
+                            <% for (let i=1; i <=6; i++) { %>
+                                <div class="relative">
+                                    <input type="text" id="otp<%= i %>" name="otp<%= i %>" maxlength="1" required
+                                        class="w-12 h-14 text-center bg-transparent text-white text-xl font-bold border-2 border-gray-700 rounded-lg focus:border-white focus:outline-none transition-colors duration-200"
+                                        inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" />
+                                </div>
+                                <% } %>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-white text-black py-3 rounded-full font-medium transform transition-all duration-300 hover:bg-gray-200 hover:-translate-y-0.5 active:translate-y-0">
+                            Verify
+                        </button>
+                        <!-- Didn't receive code section -->
+                        <div class="text-center mb-4 flex items-center justify-center space-x-2">
+                            <p class="text-gray-400 text-sm">Didn't receive the code?</p>
+                            <button type="button" id="resendBtn"
+                                class="text-white font-medium hover:text-gray-300 transition-colors duration-200">
+                                Resend Code
+                            </button>
+                            <span id="in" class="text-white font-medium">in</span>
+                            <span id="countdownTimer" class="text-lg text-white font-medium"></span>
+                        </div>
+
+                        <!-- Back to Login Link -->
+                        <div class="text-center mt-6">
+                            <a href="/user/login"
+                                class="text-gray-400 text-sm hover:text-white transition-colors duration-200">
+                                Back to Sign in
+                            </a>
+                        </div>
+                    </form>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-1rem);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slideDown {
+            animation: slideDown 0.5s ease-out forwards;
+        }
+    </style>
+
+    <script src="/js/user/otpScript.js"></script>

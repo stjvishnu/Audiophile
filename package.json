@@ -1,11 +1,11 @@
 {
   "name": "audiophile-main",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon -e js,ejs,html app.js",
+    "start": "node src/app.js",
+    "dev": "DEBUG=app nodemon -e js,ejs,html app.js",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -17,6 +17,7 @@
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.1",
     "cookie-parser": "^1.4.7",
+    "debug": "^4.4.1",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
@@ -31,6 +32,7 @@
     "otp-generator": "^4.0.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "toastify-js": "^1.12.0",
     "toastr": "^2.1.4"
   },
   "devDependencies": {
