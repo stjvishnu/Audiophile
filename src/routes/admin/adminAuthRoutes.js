@@ -1,12 +1,14 @@
 import express from 'express';
 import * as adminController from '../../controller/adminController.js'
+import adminMiddleware from '../../middlewares/adminMiddleware.js';
 const router=express.Router();
 
 //auth
 
 router.get('/',adminController.getLoadAdmin)
-router.get('/login',adminController.getAdminLogin)
+router.get('/login',adminMiddleware.isAdminLogin,adminController.getAdminLogin)
 router.post('/login',adminController.postAdminLogin)
+router.get('/logout',adminController.getAdminLogout)
 // adminRouter.get('/dashboard',adminController.getAdminDasboard)
 // adminRouter.get('/',adminController.getAdminSplash)
 

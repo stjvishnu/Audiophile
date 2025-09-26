@@ -38,7 +38,10 @@
         })
         .then(response => {
           if (response.ok) {
-            window.location.reload();
+            showToast('success','Category Added Successfully')
+            setTimeout(()=>{
+              window.location.reload();
+            },3000)
           }else{
             showToast('warning','Category Already Exists')
           }

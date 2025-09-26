@@ -20,7 +20,7 @@ router.get('/SignUp',userController.getSignUp)
 router.post('/SignUp',userController.postSignUp);
 
 router.get('/login',usermiddleware.authLogin,userController.getLogin);
-router.post('/login',userController.postLogin);
+router.post('/login',usermiddleware.blockedUser,userController.postLogin);
 
 router.get('/logout',userController.getLogout);
 router.get('/send-otp',userController.getOtp)
@@ -40,10 +40,6 @@ router.post('/otp',userController.postOtp)
 router.post('/resend-otp',userController.resendOtp)
 
 router.get('/auth/google',userController.getGoogleAuth);
-router.get('/auth/google/callback',userController.getGoogleAuthCallBack);
-
-
-router.get('/test',userController.test)
-router.post('/test',upload.any(),userController.postTest);
+router.get('/auth/google/callback',usermiddleware.blockedUser,userController.getGoogleAuthCallBack);
 
 export default router;

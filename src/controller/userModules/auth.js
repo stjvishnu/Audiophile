@@ -10,8 +10,8 @@ import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 
 
 const getUserHome = (req,res)=>{
-  try{
-    return res.status(HTTP_STATUS.OK).render("user/home.ejs");
+  try{ 
+    return res.status(HTTP_STATUS.OK).render("user/home.ejs",{msg:req.query || null});
   }catch(err){
     console.error('Error in Getting Home',err)
   }
@@ -40,7 +40,6 @@ const getSignUp = (req, res) => {
 // ------------------------------------------
 
 const postSignUp = async (req, res) => {
-  console.log(req.body);
   const { firstName, lastName, email, mobile, password, confirmPassword } =
     req.body;
   try {
@@ -63,8 +62,6 @@ const postSignUp = async (req, res) => {
 
     const otp = otpHelper.generateOtp();
     const otpExpiry = otpHelper.otpExpiry();
-
-    console.log(otp);
 
     //create new user
     const payLoad = {
@@ -113,7 +110,6 @@ const getOtp = (req, res) => {
     const token = req.cookies.tempData;
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const email = decoded.email;
-    console.log("Email debug in get otp: ", email);
     res.render("user/otp.ejs", {
       email,
     });
@@ -130,10 +126,6 @@ const getOtp = (req, res) => {
 const postOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    console.log("OTP Verification Attempt:", {
-      email,
-      otp,
-    });
     const token = req.cookies.tempData;
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
@@ -192,12 +184,10 @@ const postOtp = async (req, res) => {
 
 const resendOtp = async (req,res)=>{
 
-  console.log('Request received in resend otp');
   try{
     const email = req.body.email;
     const token = req.cookies.tempData;
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decoded);
     const otp = otpHelper.generateOtp();
     const otpExpiry = otpHelper.otpExpiry();
     const {iat,exp,...payload} = decoded;
@@ -266,9 +256,6 @@ const postForgotPassword = async (req, res) => {
         expiresIn: "10m",
       }
     );
-    ////////
-    console.log(forgotToken);
-    ////////
 
     await emailSender.sendOtpMail(email, otp);
     res
@@ -352,7 +339,6 @@ const getResetPassword = (req, res) => {
 const postResetPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, email } = req.body;
-    console.log("Email from postResetPassword", email);
     if (newPassword != confirmPassword) {
       return res.render("user/reset-password.ejs", {
         error: "Password Mismatches",
@@ -406,9 +392,7 @@ const postLogin = async (req, res) => {
     
     const email = req.body.email;
     const password = req.body.password;
-    console.log(email, password);
     const user = await User.findOne({email});
-    console.log(user);
 
     if (!user) {
       return res.status(400).json({
@@ -422,7 +406,6 @@ const postLogin = async (req, res) => {
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
-    console.log(isPasswordMatch);
 
     if (!isPasswordMatch) {
 
@@ -492,23 +475,6 @@ const getLogout = (req, res) => {
   res.redirect("/user/login");
 };
 
-// const getHome = async (req, res) => {
-//   try {
-//     const token = req.cookies.token;
-//     if (token) {
-//       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-//       let name = decoded.name;
-//       res.locals.user = {
-//         name,
-//       };
-//     }
-//     res.render("user/home.ejs");
-//   } catch (err) {
-//     console.log("Error Getting Home", err);
-//     res.render("user/home.ejs");
-//   }
-// };
-
 // ------------------------------------------
 // Google Authentication
 // ------------------------------------------
@@ -574,71 +540,6 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
 
 
 
-const test=(req,res)=>{
-  res.render('user/testingPage.ejs')
-}
-
-const postTest = async (req,res)=>{
-  console.log('Call inside postTest');
-  console.log(req.body)
-  console.log(req.files)
-  const formData = req.body;
-  const images = req.files;
-  try{
-
-    const variants = []; //variant array
-    const variantCount = Math.max(...Object.keys(formData).filter(key=>key.startsWith('variant-')).map(key=>parseInt(key.split('-')[1])))
-    console.log(variantCount);
-
-    for(let i=1;i<=variantCount;i++){
-      const productImg=images.filter(file=>file.fieldname.startsWith(`variant-${i}-image`)).map(file=>file.path)
-      console.log('Inside loop');
-      console.log('pictures:',picture);
-
-      variants.push({
-        sku:formData[`variant-${i}-sku`],
-        attributes : {
-          color:formData[`variant-${i}-color`],
-          plug:formData[`variant-${i}-plug`],
-          mic:formData[`variant-${i}-mic`],
-          stock: parseInt(formData[`variant-${i}-stock`]),
-          price: parseFloat(formData[`variant-${i}-price`]),
-          discount: parseFloat(formData[`variant-${i}-discount`]),
-          productImages : productImg,
-        }
-      })
-    }
-  
-
-    const productData = {
-      name: formData.name,
-      category : formData.category,
-      subCategory : formData.subCategory,
-      brand : formData.brand,
-      description1 : formData.description1,
-      description2 : formData.description2,
-      productDetails : {
-        driver: formData.driver,
-        driverConfiguration : formData.driverConfiguration,
-        impedence : formData.impedence,
-        soundSignature : formData.soundSignature,
-        plug:formData.plug,
-        microphone : formData.microphone,
-      },
-      variants,
-    };
-
-    const product = new Product(productData);
-    await product.save();
-
-    res.status(200).json({message:'Product created successfully',product})
-
-  }catch(err){
-    console.log('error in creating product',err)
-    res.status(500).json({message:'Server Error'})
-  }
-}
-
 
 
 
@@ -665,6 +566,4 @@ export default {
   postResetPassword,
   getGoogleAuth,
   getGoogleAuthCallBack,
-  test,
-  postTest
 };

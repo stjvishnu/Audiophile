@@ -15,8 +15,6 @@ const getCategory = async (req,res)=>{
 
     const categories = await Category.find().sort({createdAt:-1}).skip(skip).limit(limit);
     res.status(HTTP_STATUS.OK).render('admin/categories.ejs',{categories,layout:"layouts/admin-dashboard-layout",pageTitle :"Category",currentPage:page,totalPages:totalPages})
-
-  // res.render('admin/categories.ejs',{categories,layout:"layouts/admin-dashboard-layout",pageTitle :"Category"})
   }
   catch(err){
     console.log("Error in getCategory",err);
@@ -41,14 +39,13 @@ const addCategory = async (req,res)=>{
 
   try{
     const {name}= req.body;
-  console.log(name);
    const categoryExist= await Category.findOne({name});
    if(categoryExist){
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Category Already Exists'});
    }
     const category = new Category({name}) //create a new document
     await category.save(); //save the document to collection the tha model is mapped to
-    res.json({message:"success"})
+    res.status(HTTP_STATUS.OK).json({message:"New Category Added"})
   }catch(err){
     console.log('Add Category',err);
     res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Error in Adding Category"})
@@ -69,8 +66,6 @@ const editCategory = async (req,res)=>{
       return res.status(HTTP_STATUS.CONFLICT).json({message:'Category Already Exists'})
     }
     const category = await Category.findById(categoryId);
-    console.log(category.name);
-    console.log(name);
     if(!category){
       res.status(HTTP_STATUS.NOT_FOUND).json({message:"This category didn't exist"})
     }
@@ -136,6 +131,7 @@ const deleteCategory = async(req,res)=>{
  
 }
 
+
 const restoreCategory = async(req,res)=>{
   try{
     const categoryId = req.params.id;
@@ -168,14 +164,14 @@ const blockCategory = async (req,res)=>{
   try{
     const categoryId=req.params.id;
     if(!mongoose.Types.ObjectId.isValid(categoryId)){
-      return res.status(400).json({message:'Invalid Category ID'})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Category ID'})
     }
     const category = Category.findById(categoryId);
     if(!category){
-      return res.status(400).json({message:"Category Doesn't Exist"})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Category Doesn't Exist"})
     }
     await Category.findByIdAndUpdate(categoryId,{isActive:false})
-    res.status(200).json({message:'Category blocked successfully'})
+    res.status(HTTP_STATUS.OK).json({message:'Category blocked successfully'})
   }catch(err){
     console.log('Block Category',err);
     res.status(400).json({message:"Error in Blocking Category"})
@@ -186,17 +182,17 @@ const unblockCategory = async (req,res)=>{
   try{
     const categoryId=req.params.id;
     if(!mongoose.Types.ObjectId.isValid(categoryId)){
-      return res.status(400).json({message:'Invalid Category ID'})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Category ID'})
     }
     const category = Category.findById(categoryId);
     if(!category){
-      return res.status(400).json({message:"Category Doesn't Exist"})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Category Doesn't Exist"})
     }
     await Category.findByIdAndUpdate(categoryId,{isActive:true})
-    res.status(200).json({message:'Category blocked successfully'})
+    res.status(HTTP_STATUS.OK).json({message:'Category blocked successfully'})
   }catch(err){
     console.log('Block Category',err);
-    res.status(400).json({message:"Error in Blocking Category"})
+    res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Error in Blocking Category"})
   }
 }
 

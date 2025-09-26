@@ -4,21 +4,21 @@ import dashboardrouter from "./dashboardRoutes.js";
 import adminLoadRouter from "./adminLoadRouter.js";
 import usersRouter from "./userRouter.js"
 import categoryRouter  from "./categoryRoutes.js";
-import subCategoryRouter  from "./subCategoryRouter.js";
 import productRouter from "./productRoutes.js"
+
+import adminMiddleware from "../../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
 
 router.use('/auth',adminAuthRoutes)
-router.use('/dashboard',dashboardrouter)
+router.use('/dashboard',adminMiddleware.restrictedAdminLogin,dashboardrouter)
 router.use('/',adminLoadRouter)
 
 
-router.use('/users',usersRouter) //list users
-router.use('/category',categoryRouter)
-router.use('/subCategory',subCategoryRouter)
-router.use('/products',productRouter)
+router.use('/users',adminMiddleware.restrictedAdminLogin,usersRouter) //list users
+router.use('/category',adminMiddleware.restrictedAdminLogin,categoryRouter)
+router.use('/products',adminMiddleware.restrictedAdminLogin,productRouter)
 
 
 

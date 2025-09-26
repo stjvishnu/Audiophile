@@ -1,20 +1,35 @@
 
 
-const isLogin = (req,res,next)=>{
+const isAdminLogin = (req,res,next)=>{
 
   try{
     const adminToken = req.cookies.adminToken; 
-    if(!adminToken){
-     return res.redirect('/admin/auth/login')
+    if(adminToken){
+     return res.redirect('/admin/dashboard')
     }
     
-    return next();
+    next()
   }catch(err){
     console.log(err)
-    return res.redirect('/admin/auth/login')
+    next();
+  }
+}
+
+const restrictedAdminLogin = (req,res,next)=>{
+  try{
+    const adminToken = req.cookies.adminToken;
+    if(!adminToken){
+      return res.redirect('/admin/auth/login')
+    }
+    next();
+  }catch (err){
+    console.log('restricted login',err)
+    next();
   }
 }
 
 export default {
-  isLogin
+  isAdminLogin,
+  restrictedAdminLogin
 }
+

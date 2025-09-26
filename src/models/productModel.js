@@ -9,6 +9,10 @@ const productSchema = new mongoose.Schema({
     type:String,
     required:true,
   },
+  brand:{
+    type:String,
+    required: true,
+  },
   category:{
     type:mongoose.Types.ObjectId,
     ref:"Category",
@@ -19,9 +23,9 @@ const productSchema = new mongoose.Schema({
     enum:["Beginner","Intermediate","Advanced"],
     required:true,
   },
-  brand:{
-    type:String,
-    required: true,
+  isActive:{
+    type:Boolean,
+    default:true
   },
   description1:{
     type:String,
@@ -36,8 +40,7 @@ const productSchema = new mongoose.Schema({
     driverConfiguration: String,
     impedance: String,
     soundSignature : String,
-    plug: String,
-    microphone: String,
+    mic: String,
   },
   variants:[
     {
@@ -49,13 +52,18 @@ const productSchema = new mongoose.Schema({
         stock:{type:Number,required:true},
         price:{type:Number,required:true},
         discount:{type:Number,required:true},
+        isActive:{type:Boolean,default:true},
+        isDeleted:{type:Boolean,default:false},
         productImages :[String]
       },
-      isActive:{type:Boolean,default:true},
-      isDeleted:{type:Boolean,default:false},
+  
       
     }
   ],
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 },
 {
   timestamps:true,

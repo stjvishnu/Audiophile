@@ -8,7 +8,6 @@ const storage = new CloudinaryStorage({
   params: {
     folder : 'audiophile-products',
     allowed_formats: ['jpg', 'png', 'jpeg'],
-    transformation: [{ width: 500, height: 500,}],
   },
 })
 

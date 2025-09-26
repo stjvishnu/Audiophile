@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 
 const getHome = async (req, res) => {
   try {
-    res.redirect('/user')
-    // return res.render("user/home.ejs");
+  return   res.redirect('/user')
+   
   } catch (err) {
     console.log("Error Getting Home", err);
     return res.render("user/home.ejs");

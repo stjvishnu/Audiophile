@@ -48,7 +48,6 @@ const allProducts = async (req, res) => {
         }
 
         const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption);
-        console.log(products);
         res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages });
       } catch (err) {
         console.error(err);
@@ -66,11 +65,8 @@ const searchProductsPage=(req,res)=>{
 }
 
 const singleProduct = async (req,res)=>{
-  console.log('Req received at singleProduct');
   const productId= req.params.id;
-  console.log(productId);
   const product=await Product.findById(productId);
-  console.log(product);
   if(product){
     res.render('user/singleProduct.ejs',{product})
   }

@@ -49,7 +49,3 @@ export const searchProductsPage = productController.searchProductsPage;
 //cart controler
 export const getCart = cartController.getCart;
 
-
-
-export const test=userAuthentication.test;
-export const postTest = userAuthentication.postTest;

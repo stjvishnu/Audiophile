@@ -46,42 +46,44 @@ const getProducts = async (req,res)=>{
 //Add Products
 
 const addProducts = async (req,res)=>{
-  console.log('Call inside postTest');
-  console.log(req.body)
-  console.log(req.files)
   const formData = req.body;
   const images = req.files;
   try{
+    // Basic Validation
 
-      //check if the product already exists
-      console.log(formData.name)
-       const productExists =  await Products.findOne({name:formData.name})
-      if(productExists){
-       return res.status(HTTP_STATUS.CONFLICT).json(RESPONSE_MESSAGES.CONFLICT);
-      }
+    // validate Product exist or not
+    const productExits = await Products.findOne({name:formData.name})
+    if(productExits){
+      return res.status(HTTP_STATUS.CONFLICT).json({message:'Same Product Exists'});
+    }
 
-      console.log(formData.category)
-      //validate category
-      const categoryDoc = await Category.findOne({name:formData.category});
-      if(!categoryDoc){
-          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Product category not found'});
-         }
-        const categoryId=categoryDoc._id;
+    //validate category
+    const categoryDoc = await Category.findOne({name:formData.category});
+    if(!categoryDoc){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Product category not found'});
+       }
+      const categoryId=categoryDoc._id;
     
+  
 
-      //validate subCategory
-      const validSubCategories = ['Beginner','Intermediate','Advanced'];
-      if(!validSubCategories.includes(formData.subCategory)){
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({success:false,message:'Invalid Subcategory, Must be Beginner,Intermediate,Advanced'})
-      }
+    //validate subCategory
+    const validSubCategories = ['Beginner','Intermediate','Advanced'];
+    if(!validSubCategories.includes(formData.subCategory)){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({success:false,message:'Invalid Subcategory, Must be Beginner,Intermediate,Advanced'})
+    }
 
-    const variants = []; //variant array
-    const variantCount = Math.max(...Object.keys(formData).filter(key=>key.startsWith('variant-')).map(key=>parseInt(key.split('-')[1])))
-    console.log(variantCount);
 
+
+
+
+    const variants=[];
+
+    const variantCount = Math.max(...images.map(file => parseInt(file.fieldname.split('-')[1])));
+    
     for(let i=1;i<=variantCount;i++){
-      const productImg=images.filter(file=>file.fieldname.startsWith(`variant-${i}-image`)).map(file=>file.path)
      
+      const productImages = images.filter(file=>file.fieldname.startsWith(`variant-${i}-image`)).map(file=>file.path)
+      
 
       variants.push({
         sku:formData[`variant-${i}-sku`],
@@ -92,41 +94,41 @@ const addProducts = async (req,res)=>{
           stock: parseInt(formData[`variant-${i}-stock`]),
           price: parseFloat(formData[`variant-${i}-price`]),
           discount: parseFloat(formData[`variant-${i}-discount`]),
-          productImages : productImg,
+          productImages,
+          isActive:formData[`variant-${i}-isActive`]
         }
       })
     }
-  
 
     const productData = {
       name: formData.name,
       category :categoryId,
       subCategory : formData.subCategory,
       brand : formData.brand,
+      isActive:formData.isActive,
       description1 : formData.description1,
       description2 : formData.description2,
+    
       productDetails : {
         driver: formData.driver,
         driverConfiguration : formData.driverConfiguration,
-        impedence : formData.impedence,
+        impedance : formData.impedance,
         soundSignature : formData.soundSignature,
-        plug:formData.plug,
-        microphone : formData.microphone,
+        mic: formData.microphone,
       },
       variants,
-      isActive : true,
-      isDeleted:false,
     };
-
     const product = new Products(productData);
-    await product.save();
-
-    res.status(200).json({message:'Product created successfully',product})
+    await product.save()
+  
+    res.status(200).json({message:'Done'})
+    
 
   }catch(err){
-    console.log('error in creating product',err)
-    res.status(500).json({message:'Server Error'})
+    console.log(err);
+    res.status(400).json({message:'Invalid'})
   }
+
 }
 
 
@@ -138,88 +140,103 @@ const addProducts = async (req,res)=>{
 //Edit Products
 
 const editProducts = async (req, res) => {
-  console.log('request hits');
-  console.log('Form data received:', req.body);
+  const formData = req.body;
+  const images = req.files;
+  const productId=req.params.id;
+  try{
+    // Basic Validation
 
-  try {
-    const productId = req.params.id;
-    console.log(productId);
-    const {
-      name,
-      category,
-      subCategory,
-      brand,
-      price,
-      stock,
-      discount,
-      discountedPrice,
-      description1,
-      description2,
-      driver,
-      driverConfig,
-      impedance,
-      plug,
-      microphone,
-      isActive,
-    } = req.body;
-
-    // Get categoryId
-    let categoryId;
-    const categoryDoc = await Category.findOne({ name: category });
-    if (categoryDoc) categoryId = categoryDoc._id;
-
-    // Handle uploaded images (if any)
-    let imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      imageUrls = req.files.map(file => ({
-        url: file.path,
-        public_id: file.filename,
-      }));
+    // validate Product exist or not
+    const productExits = await Products.findById(productId)
+    if(!productExits){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Product not found'});
     }
 
-    // Build update object
-    const updateData = {
-      name,
-      category: categoryId,
-      subCategory,
-      brand,
-      price: parseFloat(price),
-      stock: parseInt(stock),
-      discount: discount ? parseInt(discount) : null,
-      discountedPrice: discountedPrice ? parseFloat(discountedPrice) : null,
-      description1,
-      description2: description2 || null,
-      productsDetails: {
-        driver: driver || null,
-        driverConfiguration: driverConfig || null,
-        impedance: impedance || null,
-        plug: plug || null,
-        microphone: microphone || null
+    //validate category
+    const categoryDoc = await Category.findOne({name:formData.category});
+    if(!categoryDoc){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Product category not found'});
+       }
+      const categoryId=categoryDoc._id;
+  
+
+    //validate subCategory
+    const validSubCategories = ['Beginner','Intermediate','Advanced'];
+    if(!validSubCategories.includes(formData.subCategory)){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({success:false,message:'Invalid Subcategory, Must be Beginner,Intermediate,Advanced'})
+    }
+
+  
+    const imgUrls=Object.keys(formData).filter((key)=>key.includes('image')&&key.startsWith('variant-'));
+
+    imgUrls.forEach((key)=>{
+      images.push({
+        fieldname:key,
+        path:formData[key]
+      })
+    })
+
+
+
+
+    const variants=[];
+
+    const variantCount = Math.max(...images.map(file => parseInt(file.fieldname.split('-')[1])));
+    
+    for(let i=1;i<=variantCount;i++){
+     
+      const productImages = images.filter((file,ind)=>file.fieldname.startsWith(`variant-${i}-image${ind+1}`)).map(file=>file.path)
+      
+
+      variants.push({
+        sku:formData[`variant-${i}-sku`],
+        attributes : {
+          color:formData[`variant-${i}-color`],
+          plug:formData[`variant-${i}-plug`],
+          mic:formData[`variant-${i}-mic`],
+          stock: parseInt(formData[`variant-${i}-stock`]),
+          price: parseFloat(formData[`variant-${i}-price`]),
+          discount: parseFloat(formData[`variant-${i}-discount`]),
+          productImages,
+          isActive:formData[`variant-${i}-isActive`]
+        }
+      })
+    }
+
+    const productData = {
+      name: formData.name,
+      category :categoryId,
+      subCategory : formData.subCategory,
+      brand : formData.brand,
+      isActive:formData.isActive,
+      description1 : formData.description1,
+      description2 : formData.description2,
+    
+      productDetails : {
+        driver: formData.driver,
+        driverConfiguration : formData.driverConfiguration,
+        impedance : formData.impedance,
+        soundSignature : formData.soundSignature,
+        mic: formData.microphone,
       },
-      microphone: microphone || null,
-      isActive: isActive === 'true',
+      variants,
     };
 
-    // If new images uploaded, replace old images
-    if (imageUrls.length > 0) updateData.productImages = imageUrls;
+    const updatedProduct = await Products.findByIdAndUpdate(productId,productData,{ new: true, runValidators: true });
 
-    const updatedProduct = await Products.findByIdAndUpdate(productId, updateData, { new: true });
-
-    if (!updatedProduct) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+    if(!updatedProduct){
+      res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Error in updating Product'})
     }
+  
+    res.status(HTTP_STATUS.OK).json({message:'Product Updated Successfully',product:updatedProduct})
+    
 
-    res.json({
-      success: true,
-      message: "Product updated successfully",
-      data: updatedProduct
-    });
-
-  } catch (err) {
-    console.error("Error editing product:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+  }catch(err){
+    console.log(err);
+    res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Error updating product'})
   }
-};
+
+}
 
 //Hard Delete Products
 

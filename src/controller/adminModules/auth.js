@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js'
 
 const getLoadAdmin = (req, res) => {
   res.redirect('admin/auth/login')
@@ -25,7 +26,7 @@ const postAdminLogin = (req, res) => {
       res.cookie('adminToken', adminToken, {
         httpOnly: true
       })
-      res.render('admin/adminSplash.ejs', {
+      res.status(HTTP_STATUS.OK).render('admin/adminSplash.ejs', {
         layout: false
       })
     } else {
@@ -41,10 +42,23 @@ const postAdminLogin = (req, res) => {
 
 }
 
-
+const getAdminLogout=(req,res)=>{
+  try{
+    const token = req.cookies.adminToken;
+   res.clearCookie('adminToken',{
+    httpOnly: true,
+    secure: false,
+  })
+   res.redirect('/admin/auth/login')
+  }catch(err){
+    console.log('Error in Get Admin Logout',err)
+    return res.redirect('/admin/auth/login')
+  }
+}
 
 export default {
   getLoadAdmin,
   getAdminLogin,
   postAdminLogin,
+  getAdminLogout
 }

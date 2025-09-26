@@ -241,25 +241,35 @@ const setName = (req, res, next) => {
 
 
 const blockedUser = async (req,res,next)=>{
+  console.log('Call inside blocked user');
+  let user;
   try{
     const token = req.cookies.token;
     if(!token){
          return next();
     }
+    console.log(token);
     const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
-    const userId=decoded.userId;
-    const user= await Users.findById(userId)
-    console.log(user);
+    console.log(decoded); 
+    const userId=decoded.userId || decoded.email;
+    if(typeof userId==='object'){
+       user= await Users.findById(userId)
+    }else if (typeof userId==='string'){
+       user= await Users.findOne({email:userId})
+    }
+    console.log(userId);
+   
     if(user){
       if(user.isActive==false){
         res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
-        return res.redirect('/');
+        return res.redirect('/user?msg=blocked');
       }
     }
 
     next()
   }catch(err){
     console.log('Blcoked User',err);
+    next();
   }
 }
 

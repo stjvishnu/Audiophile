@@ -6,14 +6,15 @@ import  adminSplashController from './adminModules/adminSplash.js'
 //testing controllers
 import usersController from './adminModules/users.js'
 import categoryController from "./adminModules/category.js";
-import subcategoryController from "./adminModules/subCategory.js";
 import productController from "./adminModules/products.js"
 
 
+//Auth controllers
 
 export const getLoadAdmin = adminAuthentication.getLoadAdmin;
 export const getAdminLogin = adminAuthentication.getAdminLogin;
 export const postAdminLogin = adminAuthentication.postAdminLogin;
+export const getAdminLogout = adminAuthentication.getAdminLogout;
 
 
 export const getAdminDasboard = dashboardController.getAdminDasboard;

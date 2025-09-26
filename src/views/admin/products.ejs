@@ -35,7 +35,7 @@
   </button>
 
     <%- include('addProduct') %>
-    <!-- //include('editProduct') // -->
+
 </div>
 
 
@@ -70,11 +70,11 @@
               style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.1 %>s; opacity:0; transform: translateY(20px);"
               >
               <div class="col-span-1 "> <%= index+1 %> </div>
-              <div class="col-span-1"> <img class="w-14 h-14  object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-125" src="<%= product.variants[index].attributes.productImages[0] %>" alt="<%= product.name %>"> </div>
+              <div class="col-span-1"> <img class="w-14 h-14  object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-125" src="<%= product.variants[0]?.attributes?.productImages[0] %>" alt="<%= product.name %>"> </div>
                 <div class="col-span-2 text-center <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.name %> </div>
                 <div class="col-span-2 <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.brand %> </div>
                 <div class="col-span-2 <%= product.isDeleted ? 'line-through' : '' %>"> <%= product?.category?.name %> </div>
-                <div class="col-span-1 <%= product.isDeleted ? 'line-through' : '' %>"><%= product.variants[index].attributes.price %></div>
+                <div class="col-span-1 <%= product.isDeleted ? 'line-through' : '' %>"><%= product.variants[0]?.attributes?.price %></div>
                 <div class="col-span-1">
                   <% if(product.isDeleted){ %>
                    <span class="text-red-500 " >Deleted</span> 

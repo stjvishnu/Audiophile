@@ -1,6 +1,6 @@
 
 function sweetAlert(type,title,message,cancel=true,confirm=false,timer=null){
-  console.log(cancel,confirm);
+  // console.log(cancel,confirm);
  return Swal.fire({
     title : title,
     text : message,
