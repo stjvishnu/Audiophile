@@ -1,4 +1,66 @@
+
+function resetForm(){
+ const form= document.getElementById('productForm');
+ form.reset();
+
+
+ 
+
+ const variantsContainer = document.getElementById('variantsContainer');
+ const variantTemplate = document.getElementById('variant').cloneNode(true);
+  variantsContainer.innerHTML = '';
+  document.querySelectorAll('.error-div').forEach(err=>err.classList.add('hidden'))
+
+
+      croppedImages = {};
+
+
+      variantTemplate.querySelector("h3 span").textContent = ` 🛒 Product Variant 1`;
+      variantTemplate.querySelectorAll('input, select, textarea, div.imagePreview,label,div.error-div')
+      .forEach((el) => {
+
+        if (el.id) {
+          if (el.id.split('-').length > 2) {
+            const firstName = el.id.split('-')[0];
+            const secondName = el.id.split('-')[1];
+            el.id = `${firstName}-${secondName}-1`;
+          } else {
+            const baseId = el.id.split('-')[0];
+            el.id = `${baseId}-1`;
+
+          }
+
+        }
+        if (el.tagName === 'LABEL' && el.hasAttribute('data-variant')) {
+          const baseFor = el.getAttribute('for').split('-')[0];
+          el.setAttribute('for', `${baseFor}-1`);
+        }
+
+        if (el.name) {
+          const baseName = el.name.split('-')[0];
+          el.name = `${baseName}-1`;
+        }
+        if (el.classList.contains('imagePreview')) {
+          el.innerHTML = ''
+        }
+      })
+
+      variantsContainer.appendChild(variantTemplate);
+
+ const title = document.getElementById('modalTitle');
+ const titleTag = document.getElementById('modalTitleTag');
+ const submitBtn= document.getElementById('submitBtn')
+ title.innerText='Add Product';
+ titleTag.innerText='Add Product to the Inventory';
+ submitBtn.innerText='Create Product'
+}
+
 async function openAddModal(productId=null) {
+  console.log(productId);
+  if(!productId){
+    productId=null;
+    resetForm();
+  }
   let product;
   if(productId){
     const title = document.getElementById('modalTitle');
@@ -42,6 +104,7 @@ async function openAddModal(productId=null) {
 
   //Edit Mode
   if(productId){
+    console.log('Went inside edit mode apend',productId);
     productNameContainer.value=product?.name||null;
     brandContainer.value=product?.brand||null;
     categoryContainer.value=product?.category?.name||null;
@@ -64,7 +127,7 @@ async function openAddModal(productId=null) {
     const errorId = index ? `${inputId}-error-${index}` : `${inputId}-error`
     console.log('Error id is', errorId);
     const errorDiv = document.getElementById(errorId);
-    console.log(errorDiv)
+    
     if (errorDiv) {
       errorDiv.textContent = message;
       errorDiv.classList.remove('hidden')
@@ -98,7 +161,7 @@ async function openAddModal(productId=null) {
 
     if (inputId == 'category') {
       if (!value.trim()) {
-        showError(inputId, 'Product name is required');
+        showError(inputId, 'Category name is required');
         isValid = false;
       }
     }
@@ -116,7 +179,7 @@ async function openAddModal(productId=null) {
     if (inputId == 'subCategory') {
       const subCategories = ['Beginner', 'Intermediate', 'Advanced'];
       if (!value.trim()) {
-        showError(inputId, 'Product name is required');
+        showError(inputId, 'SubCategory name is required');
         isValid = false;
       } else if (!subCategories.includes(value)) {
         showError('subCategory', 'SubCategory Should Beginner,Intermediate or advanced');
@@ -198,13 +261,6 @@ async function openAddModal(productId=null) {
     if (inputId == 'soundSignature') {
       if (!value) {
         showError('soundSignature', 'soundSignature is required');
-        isValid = false;
-      }
-    }
-
-    if (inputId == 'soundSignature') {
-      if (!value) {
-        showError('microphone', 'microphone is required');
         isValid = false;
       }
     }
@@ -350,9 +406,7 @@ async function openAddModal(productId=null) {
     const imgDivs = variantDiv.querySelectorAll('input[type="file"][id^="productImage"]');
 
     imgDivs.forEach((imgInput) => {
-      console.log(imgInput,'trouble');
       imgInput.addEventListener('change', (e) => {
-        // console.log(imgInput);
         const file = e.target.files[0];
     
         if (file.size > 10485760) {
@@ -403,7 +457,6 @@ async function openAddModal(productId=null) {
   confirmBtn.addEventListener('click', () => {
     if (cropper) {
       const canvas = cropper.getCroppedCanvas({imageSmoothingEnabled: false});
-      console.log(canvas);
       canvas.toBlob((blob) => {
         const croppedUrl = URL.createObjectURL(blob);
         if (currentPreview) {
@@ -432,9 +485,7 @@ async function openAddModal(productId=null) {
   function appendImages(newVariant,index,images){
    images.forEach((image,i)=>{
     const imgInput = newVariant.querySelector(`#productImage${i+1}-${index}`)
-    console.log(imgInput);
     const preview = newVariant.querySelector(`#preview-productImage${i+1}-${index}`);
-    console.log('preview',preview);
     if(image){
       preview.innerHTML=`
       <img src='${image}' class='object-cover w-full h-full rounded-lg'>
@@ -453,21 +504,16 @@ async function openAddModal(productId=null) {
 
   }
   function intializeBtn(currentInput=null,currentPreview=null) {
-    console.log('Inside currentPreview');
     const cancelImageBtn = currentPreview.querySelector('#cancel-image');
-    console.log('Btn cheeck',cancelImageBtn);
     const recropImageBtn = currentPreview.querySelector('#recrop-btn');
 
     cancelImageBtn.addEventListener('click', () => {
-      console.log('Cancel btn clicked');
-      console.log(currentPreview);
       currentPreview.innerHTML = '';
       delete croppedImages[currentInput.id];
       currentInput.value = ''
     })
 
     recropImageBtn.addEventListener('click', () => {
-      console.log('Cropper btn clicked');
       const img = currentPreview.querySelector('img');
       if (img) {
         cropperImage.src = img.src;
@@ -500,6 +546,7 @@ async function openAddModal(productId=null) {
 
   //Intialize variants for edit mode
   if(productId){
+    console.log('intialize variants for edit',productId);
     variantsContainer.innerHTML='';
     product.variants.forEach((variantObj,ind)=>{
       let index=ind+1;
@@ -570,7 +617,6 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
         croppedImages[`productImage4-${index}`],
         croppedImages[`productImage5-${index}`],
       ]
-      console.log(images);
       if (!images.every(img => img)) {
         showError(`productImages`, 'All 5 Images Required', index);
         isValid = false
@@ -581,8 +627,9 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
     return isValid;
   }
 
-  variantBtn.addEventListener('click', () => {
+  function variantHandlerEvent(){
 
+    
     console.log('Variant btn clicked');
     if (!validateAllVariants()) {
       showToast('warning', 'Validate All Variants before adding new one');
@@ -627,12 +674,13 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
       });
 
 
-    console.log(newVariant)
-
     imageEventListener(newVariant)
     attachVariantValidation(newVariant, variantCount)
     variantsContainer.appendChild(newVariant)
-  })
+  
+  }
+
+  variantBtn.addEventListener('click', variantHandlerEvent)
 
 
 
@@ -643,9 +691,15 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
 
   //form submission
 
-  form.addEventListener('submit', (e) => {
+  const handleAddEditProduct= async function(e){
+
+    document.getElementById('loading').classList.remove('hidden')
+
+    console.log("handler add product function");
+   
     e.preventDefault();
-    console.log('Call inside submit');
+    console.log('Product Id in Start of form SUbmission',productId);
+    console.log('Form submitted');
 
     isValid = true; // Resetting Global isValid for validation on submission
 
@@ -669,10 +723,10 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
     //validate variants
 
     validateAllVariants();
-    console.log('In form submission', isValid)
+   
 
     if(!isValid){
-      showToast('warning','Cannot Add Product,Error in Validation');
+      showToast('warning','Cannot Add Product');
       return
     }
 
@@ -769,37 +823,84 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
         }
       });
     });
-
-    console.log(Object.fromEntries(formData.entries()));
-    fetch(productId?`/admin/products/edit/${productId}`:'/admin/products/add',{
-      method:'PUT',
-      body:formData
-    })
-    .then((response)=>{
-      if(response.ok){
-        return response.json();
+    console.log('before fetch',productId);
+    // console.log(Object.fromEntries(formData.entries()));
+    try{
+      let url=""
+      let method=""
+      if(productId!==null){
+       
+        method="PUT"
+        url=`/admin/products/edit/${productId}`
+  
+      console.log(url,productId);
+      }else{
+        method="POST"
+  
+  
+        url=`/admin/products/add`
+        console.log(url);
       }
-    })
-    .then((data)=>{
-      console.log('Response From server',data);
-      document.getElementById('productAddModal').classList.add('hidden');
-      window.location.reload();
-      setTimeout(()=>{
+      fetch(url,{
+        method:method,
+        body:formData
+      })
+      // fetch(productId?`/admin/products/edit/${productId}`:'/admin/products/add',{
+      //   method:productId?'PUT':'POST',
+      //   body:formData
+      // })
+      .then((response)=>{
+        if(response.ok){
+          console.log('triggered');
+          console.log(response);
+          return response.json();
+        }
+      })
+      .then((data)=>{
+        console.log('Response From server',data);
+        document.getElementById('productAddModal').classList.add('hidden');
+        document.getElementById('loading').classList.add('hidden')
+        form.removeEventListener('submit', handleAddEditProduct);
+        variantBtn.removeEventListener('click', variantHandlerEvent)
+        console.log('yep',productId);
         showToast('success',productId?'Product Edited Successfully':'Product Added Successfully');
-      },1500)
-     
-    })
-    .catch((err)=>{
-      showToast('error',err.message)
-    })
-   })
+          // setTimeout(()=>{
+          //   window.location.reload()
+          // },2000)
+      })
+      .catch((err)=>{
+        document.getElementById('loading').classList.add('hidden')
+        form.removeEventListener('submit', handleAddEditProduct);
+        variantBtn.removeEventListener('click', variantHandlerEvent)
+        showToast('error',productId?'Error in Editing Product':'Error in Adding Product')
+      })
+    }catch(err){
+      console.log(err)
+    }finally{
+
+    }
+
+
+  }
+  // form.removeEventListener('submit', handleAddEditProduct);
+  form.addEventListener('submit',handleAddEditProduct)
 
   // Close modal buttons
   document.getElementById('closeModalBtn').addEventListener('click', () => {
     document.getElementById('productAddModal').classList.add('hidden');
+  form.removeEventListener('submit', handleAddEditProduct);
+  variantBtn.removeEventListener('click', variantHandlerEvent)
+    resetForm();
+    // window.location.reload()
+  
   });
   document.getElementById('cancelBtn').addEventListener('click', () => {
     document.getElementById('productAddModal').classList.add('hidden');
-  });
+    resetForm();
+    form.removeEventListener('submit', handleAddEditProduct);
+  variantBtn.removeEventListener('click', variantHandlerEvent)
 
+    // window.location.reload()
+  });
+ 
 }

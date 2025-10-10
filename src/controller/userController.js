@@ -42,10 +42,12 @@ export const getGoogleAuthCallBack = userAuthentication.getGoogleAuthCallBack;
 
 export const allProducts = productController.allProducts;
 export const singleProduct = productController.singleProduct;
+export const searchProducts = productController.searchProducts;
 export const postFilter = productController.postFilter;
 
 export const searchProductsPage = productController.searchProductsPage;
 
 //cart controler
 export const getCart = cartController.getCart;
+export const postCart = cartController.postCart;
 

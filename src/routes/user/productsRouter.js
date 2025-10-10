@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get('/',userController.allProducts)
 router.get('/singleProduct/:id',userController.singleProduct)
+router.get('/searchProducts',userController.searchProducts)
 router.get('/searchProductsPage',userController.searchProductsPage)
 // router.post('/',userController.postFilter)
 

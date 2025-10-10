@@ -1,25 +1,27 @@
-<div class=" py-5" >
+
+<div class="py-3 px-4">
     <!-- Main Product Container - Large like Hero Carousel -->
-    <div class="carousel-container mx-4 sm:mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem] overflow-hidden relative shadow-2xl">
-        <div class="bg-gray-50 shadow-2xl">
+    <div class="carousel-container bg-white  mx-4 sm:mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem] relative  ">
+        <div>
             <!-- Product Overview Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 p-6 sm:p-10  lg:p-16">
+            <div class=" grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 p-14 sm:p-10 lg:pb-12 lg:pl-12 lg:pr-12 ">
                 
                 <!-- Left Column - Product Images -->
-                <div class="flex justify-center items-start">
-                    <div class="w-full max-w-lg">
+                <div class="flex justify-center items-start rounded-[1.5rem]  sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
+                    <div class="  max-w-lg relative ">
                         <!-- Main Product Image -->
-                        <div class="mb-6 rounded-2xl overflow-hidden shadow-lg bg-gray-50">
+                        <div class="mb-3 rounded-[1.5rem] sm:rounded-[5rem] overflow-visible p-4">
                             <img id="main-image" 
                                  src="<%= product.variants[0].attributes.productImages[0] %>" 
+                                 data-zoom-image="<%= product.variants[0].attributes.productImages[0] %>" 
                                  alt="<%= product.name %>" 
-                                 class="w-full h-auto object-contain p-4 transition-all duration-500 hover:scale-105">
+                                 class="w-full h-auto object-contain pt-2 pl-4 pr-4 transition-all duration-500 rounded-[1.5rem] sm:rounded-[5rem]">
                         </div>
                         
                         <!-- Thumbnail Images -->
-                        <div class="grid grid-cols-5 gap-2">
+                        <div class="grid grid-cols-5 gap-2 mb-3">
                             <% for (let i = 0; i < 5 && i < product.variants[0].attributes.productImages.length; i++) { %>
-                                <div class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-300 transition-all duration-300" 
+                                <div class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-[2rem] sm:rounded-[2rem] overflow-hidden border-2 border-transparent transition-all duration-300" 
                                      onclick="changeImage('<%= product.variants[0].attributes.productImages[i] %>', this)">
                                     <img src="<%= product.variants[0].attributes.productImages[i] %>" 
                                          alt="Thumbnail <%= i + 1 %>" 
@@ -31,62 +33,55 @@
                 </div>
 
                 <!-- Right Column - Product Details -->
-                <div class="flex flex-col justify-center space-y-6">
-                    <!-- Product Header -->
-                    <div>
-                        <span class="text-blue-600 font-semibold text-lg tracking-wide"><%= product.brand %></span>
-                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 leading-tight">
+                <div class="flex flex-col justify-center space-y-3 space-x-9 rounded-[1.5rem] sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
+                    <div class="pl-14">
+                        <p class="text-gray-700 tracking-widest pt-7 pb-4 font-sans text-lg"><%= product.brand %></p>
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 leading-tight tracking-wide">
                             <%= product.name %>
                         </h1>
-                        <p class="text-gray-600 text-lg mt-3">In-Ears With 1 DD + 1 EST Drivers</p>
+                        <p class="text-gray-600 text-lg mt-3"><%= product.productDetails.driverConfiguration %></p>
                     </div>
 
-                    <!-- Pricing -->
-                    <div class="bg-gray-50 rounded-2xl p-6">
-                        <div class="flex items-baseline mb-2">
-                            <span class="text-4xl font-bold text-gray-900">₹1,290</span>
-                            <span class="ml-3 text-xl text-gray-500 line-through"><%=product.variants[0].attributes.price%></span>
-                            <span class="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">35% off</span>
+                    <div class="rounded-2xl pl-6">
+                        <div class="flex items-center mb-2">
+                            <span class="text-4xl font-bold font-sans text-gray-900">
+                                <%= Math.round(product.variants[0].attributes.price * 0.01 * (100 - product.variants[0].attributes.discount)) %> ₹
+                            </span>
+                            <span class="ml-3 text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %></span>
+                            <span class="ml-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
                         </div>
-                        <!-- <div class="text-gray-600 space-y-1">
-                            <p class="text-sm">EMI from ₹63/month</p>
-                            <p class="text-sm">Includes GST of ₹197</p>
-                        </div> -->
                     </div>
 
-                    <!-- Product Variants -->
-                    <div class="space-y-6">
-                        <!-- Color Variant -->
+                    <div class="space-y-6 pl-7">
                         <div>
                             <p class="text-gray-700 font-semibold mb-3 text-lg">
-                                Color: <span id="selected-color" class="text-gray-900">Black</span>
+                                Color: <span id="selected-color" class="text-gray-900"><%= product.variants[0].attributes.color%></span>
                             </p>
                             <div class="flex space-x-3">
                                 <div class="variant-option active cursor-pointer group" data-value="Black" onclick="selectVariant(this, 'color')">
-                                    <div class="w-12 h-12 bg-yellow-300 rounded-full border-4 border-transparent group-hover:border-blue-300 transition-all duration-300 shadow-md"></div>
-                                    <p class="text-sm mt-2 text-center font-medium">Black</p>
+                                    <div class="w-10 h-10 bg-<%= product.variants[0].attributes.color%>-300  rounded-full border-4 border-black/30  group-hover:border-black transition-all duration-300 shadow-md"></div>
+                                    <p class="text-sm mt-2 text-center font-medium"><%= product.variants[0].attributes.color%>/p>
                                 </div>
                                 <div class="variant-option cursor-pointer group" data-value="Graphite" onclick="selectVariant(this, 'color')">
-                                    <div class="w-12 h-12 bg-gray-600 rounded-full border-4 border-transparent group-hover:border-blue-300 transition-all duration-300 shadow-md"></div>
+                                    <div class="w-10 h-10 bg-gray-600 rounded-full border-4 border-transparent group-hover:border-black transition-all duration-300 shadow-md"></div>
                                     <p class="text-sm mt-2 text-center font-medium">Graphite</p>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Type Variant -->
                         <div>
-                            <p class="text-gray-700 font-semibold mb-3 text-lg">
+                            <p class="text-gray-700 font-semibold mb-2 text-lg">
                                 Type: <span id="selected-type" class="text-gray-900">With Mic</span>
                             </p>
                             <div class="flex space-x-4">
                                 <div class="variant-option active cursor-pointer group" data-value="With Mic" onclick="selectVariant(this, 'type')">
-                                    <div class="w-16 h-12 flex items-center justify-center bg-blue-50 rounded-xl border-2 border-blue-200 group-hover:border-blue-400 transition-all duration-300 shadow-sm">
+                                    <div class="w-14 h-10 flex items-center justify-center bg-blue-50 rounded-xl border-2 border-blue-200 group-hover:border-blue-400 transition-all duration-300 shadow-sm">
                                         <i class="fas fa-microphone text-blue-600"></i>
                                     </div>
                                     <p class="text-sm mt-2 text-center font-medium">With Mic</p>
                                 </div>
                                 <div class="variant-option cursor-pointer group" data-value="Without Mic" onclick="selectVariant(this, 'type')">
-                                    <div class="w-16 h-12 flex items-center justify-center bg-gray-50 rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
+                                    <div class="w-14 h-10 flex items-center justify-center bg-gray-50 rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
                                         <i class="fas fa-ban text-gray-600"></i>
                                     </div>
                                     <p class="text-sm mt-2 text-center font-medium">Without Mic</p>
@@ -95,15 +90,13 @@
                         </div>
                     </div>
 
-                    <!-- Stock Status -->
-                    <div class="flex items-center bg-green-50 rounded-xl p-4">
-                        <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full">In Stock</span>
+                    <div class="flex items-center  rounded-xl pl-5">
+                        <span class=" text-green-800 text-sm font-semibold px-3 py-1 rounded-full">In Stock</span>
                         <span class="ml-3 text-gray-700 font-medium"><%= product.variants[0].attributes.stock %> units available</span>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button class="bg-black hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <div class="flex items-center justify-center flex-col sm:flex-row gap-4 pt-2 pb-8">
+                        <button id="addToCartBtn" data-product-id= "<%=product.id %>" class="bg-black hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                             <i class="fas fa-shopping-cart mr-3"></i> 
                             Add to Cart
                         </button>
@@ -116,201 +109,105 @@
             </div>
         </div>
     </div>
-
-    <!-- Product Details Section -->
-    <div class="mx-4 sm:mx-4 my-8">
-        <div class="bg-white rounded-[2rem] shadow-2xl overflow-hidden">
-            <!-- Tab Navigation -->
-            <div class="border-b border-gray-200 bg-gray-50">
-                <div class="flex -mb-px px-6 sm:px-10">
-                    <button class="tab-button active py-4 px-6 text-lg font-semibold border-b-2 border-transparent hover:border-blue-300 transition-all duration-300" 
-                            onclick="changeTab('details')">Product Details</button>
-                    <button class="tab-button py-4 px-6 text-lg font-semibold border-b-2 border-transparent hover:border-blue-300 transition-all duration-300" 
-                            onclick="changeTab('specs')">Specifications</button>
-                    <button class="tab-button py-4 px-6 text-lg font-semibold border-b-2 border-transparent hover:border-blue-300 transition-all duration-300" 
-                            onclick="changeTab('reviews')">Reviews (44)</button>
-                </div>
-            </div>
-            
-            <!-- Product Details Tab -->
-            <div id="tab-details" class="p-6 sm:p-10">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8">Product Details</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="space-y-6">
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Driver</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.driver %></p>
-                        </div>
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Driver Configuration</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.driverConfiguration %></p>
-                        </div>
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Impedance</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.impedance %>Ω</p>
-                        </div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Sound Signature</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.soundSignature %></p>
-                        </div>
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Plug</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.plug %></p>
-                        </div>
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <p class="text-gray-500 font-medium text-sm uppercase tracking-wide">Microphone</p>
-                            <p class="text-gray-900 font-semibold text-lg mt-1"><%= product.productDetails.microphone %></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Specifications Tab -->
-            <div id="tab-specs" class="p-6 sm:p-10 hidden">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8">Specifications</h2>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-b border-gray-100">
-                        <div class="text-gray-500 font-medium">Model</div>
-                        <div class="text-gray-900 font-semibold md:col-span-2"><%= product.name %></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-b border-gray-100">
-                        <div class="text-gray-500 font-medium">Frequency Response</div>
-                        <div class="text-gray-900 font-semibold md:col-span-2">20Hz-40kHz</div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-b border-gray-100">
-                        <div class="text-gray-500 font-medium">Sensitivity</div>
-                        <div class="text-gray-900 font-semibold md:col-span-2">108 ± 3dB</div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-b border-gray-100">
-                        <div class="text-gray-500 font-medium">Cable Length</div>
-                        <div class="text-gray-900 font-semibold md:col-span-2">1.2m</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Reviews Tab -->
-            <div id="tab-reviews" class="p-6 sm:p-10 hidden">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
-                <div class="flex items-center mb-8">
-                    <div class="mr-6">
-                        <span class="text-5xl font-bold">4.3</span>
-                        <span class="text-gray-500 text-xl">/5</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400 text-xl">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                        </div>
-                        <span class="text-gray-600">Based on 44 reviews</span>
-                    </div>
-                </div>
-                <div class="space-y-6">
-                    <div class="bg-gray-50 rounded-xl p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="font-semibold text-lg">Audiophile123</span>
-                            <div class="flex text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-600">Amazing sound quality for the price. The electrostatic driver provides incredible detail in the highs.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="font-semibold text-lg">MusicLover</span>
-                            <div class="flex text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-600">Great value, but the cable could be better. I replaced it with a custom cable and now they're perfect.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Product Description Section -->
-    <div class="mx-4 sm:mx-4 mb-8">
-        <div class="bg-white rounded-[2rem] shadow-2xl overflow-hidden">
-            <div class="p-6 sm:p-10">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8">Description</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8">
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Premium Sound Experience</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            The KZ ZEX features a unique combination of 1 dynamic driver for rich bass and 1 electrostatic driver for precise highs, delivering an exceptional audio experience that rivals earphones twice its price.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            Designed for audiophiles and casual listeners alike, the ZEX provides a balanced sound signature with enhanced clarity across all frequencies.
-                        </p>
-                    </div>
-                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-8">
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Design & Comfort</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            With an ergonomic design that fits comfortably in your ears for extended listening sessions, the ZEX is perfect for daily use, commuting, or immersive music experiences.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            The detachable cable with microphone option makes it versatile for both music listening and hands-free calls, while the durable construction ensures long-lasting performance.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
+<%-//include ('cart')%> //we can remove this
+
 <style>
-/* Thumbnail active state */
 .thumbnail.active {
     border-color: #3B82F6 !important;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
-
-/* Variant option active state */
 .variant-option.active .w-12,
 .variant-option.active .w-16 {
     border-color: #3B82F6 !important;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
-
-/* Tab button active state */
 .tab-button.active {
     color: #3B82F6;
     border-bottom-color: #3B82F6 !important;
     background-color: white;
 }
+.carousel-container {
+    overflow: visible !important;
+    position: relative;
+}
+.mb-3.rounded-[1.5rem].sm\:rounded-[5rem] {
+    overflow: visible !important;
+    position: relative;
+}
 
-/* Smooth transitions */
 * {
     transition: all 0.3s ease;
 }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
 <script>
-// Change main product image
+$(document).ready(function() {
+    console.log("jQuery loaded!");
+    if ($.fn.elevateZoom) {
+        console.log("ElevateZoom loaded!");
+        $("#main-image").elevateZoom({
+            zoomType: "lens",
+            lensShape: "square",
+            lensSize: 200,
+            zIndex: 10000,
+            borderSize: 2,
+            borderColour: "#3B82F6",
+            scrollZoom: false,
+            responsive: true,
+            containLensZoom: true,
+            zoomWindowPosition: 1
+        });
+    } else {
+        console.error("ElevateZoom not loaded!");
+    }
+
+    jQuery.event.special.touchmove = {
+        setup: function(_, ns, handle) {
+            this.addEventListener('touchmove', handle, { passive: true });
+        }
+    };
+});
+
 function changeImage(src, element) {
-    document.getElementById('main-image').src = src;
-    
-    // Update active thumbnail
-    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
-    element.classList.add('active');
+    const mainImage = $("#main-image");
+
+    try {
+        $.removeData(mainImage, 'elevateZoom');
+        $('.zoomContainer').remove();
+
+        mainImage.attr("src", src);
+        mainImage.attr("data-zoom-image", src);
+
+        setTimeout(() => {
+            mainImage.elevateZoom({
+                zoomType: "lens",
+                lensShape: "square",
+                lensSize: 200,
+                zIndex: 10000,
+                borderSize: 2,
+                borderColour: "#3B82F6",
+                scrollZoom: false,
+                responsive: true,
+                containLensZoom: true,
+                zoomWindowPosition: 1
+            });
+        }, 100);
+
+        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+        element.classList.add('active');
+    } catch (error) {
+        console.error("Error in changeImage:", error);
+    }
 }
 
-// Select product variants
+
+
 function selectVariant(element, type) {
     const container = element.parentElement;
     const options = container.querySelectorAll('.variant-option');
@@ -326,20 +223,18 @@ function selectVariant(element, type) {
     }
 }
 
-// Change tabs
 function changeTab(tabId) {
-    // Hide all tabs
     ['details', 'specs', 'reviews'].forEach(tab => {
         const element = document.getElementById('tab-' + tab);
         if (element) element.classList.add('hidden');
     });
     
-    // Show selected tab
     const selectedTab = document.getElementById('tab-' + tabId);
     if (selectedTab) selectedTab.classList.remove('hidden');
     
-    // Update active tab button
     document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
     event.currentTarget.classList.add('active');
 }
 </script>
+
+<!-- <script src="../../../js/user/cart-script.js"></script> -->

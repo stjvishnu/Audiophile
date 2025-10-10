@@ -46,7 +46,10 @@ const getProducts = async (req,res)=>{
 //Add Products
 
 const addProducts = async (req,res)=>{
+  console.log('Call Inside Add');
+
   const formData = req.body;
+  console.log(formData);
   const images = req.files;
   try{
     // Basic Validation
@@ -121,12 +124,12 @@ const addProducts = async (req,res)=>{
     const product = new Products(productData);
     await product.save()
   
-    res.status(200).json({message:'Done'})
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,product:product})
     
 
   }catch(err){
     console.log(err);
-    res.status(400).json({message:'Invalid'})
+    res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
   }
 
 }
@@ -140,6 +143,7 @@ const addProducts = async (req,res)=>{
 //Edit Products
 
 const editProducts = async (req, res) => {
+  console.log('Call Inside edit');
   const formData = req.body;
   const images = req.files;
   const productId=req.params.id;
@@ -168,6 +172,7 @@ const editProducts = async (req, res) => {
 
   
     const imgUrls=Object.keys(formData).filter((key)=>key.includes('image')&&key.startsWith('variant-'));
+    
 
     imgUrls.forEach((key)=>{
       images.push({
@@ -176,7 +181,7 @@ const editProducts = async (req, res) => {
       })
     })
 
-
+console.log('images',images);
 
 
     const variants=[];
@@ -185,7 +190,16 @@ const editProducts = async (req, res) => {
     
     for(let i=1;i<=variantCount;i++){
      
-      const productImages = images.filter((file,ind)=>file.fieldname.startsWith(`variant-${i}-image${ind+1}`)).map(file=>file.path)
+      const productImages = images.filter((file)=>file.fieldname.startsWith(`variant-${i}-image`))
+      .sort((a,b)=>{
+        const numA = parseInt(a.fieldname.split('image')[1]);
+        const numB = parseInt(b.fieldname.split('image')[1]);
+        return numA-numB
+        
+      })
+      .map(file=>file.path)
+
+      console.log('productImagres',productImages);
       
 
       variants.push({
@@ -221,19 +235,18 @@ const editProducts = async (req, res) => {
       },
       variants,
     };
-
     const updatedProduct = await Products.findByIdAndUpdate(productId,productData,{ new: true, runValidators: true });
 
     if(!updatedProduct){
-      res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Error in updating Product'})
+      res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
     }
   
-    res.status(HTTP_STATUS.OK).json({message:'Product Updated Successfully',product:updatedProduct})
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,product:updatedProduct})
     
 
   }catch(err){
     console.log(err);
-    res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Error updating product'})
+    res.status(HTTP_STATUS.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.BAD_REQUEST,error:err})
   }
 
 }

@@ -49,16 +49,17 @@ document.addEventListener('DOMContentLoaded',()=>{
             searchIcon.classList.remove('pointer-events-auto');
             searchIcon.classList.add('pointer-events-none');
           }
+          console.log(searchQuery);
           axios.get(`/user/products/searchProducts?search=${searchQuery}`) //fetches the product
           .then((response)=>{
             if(!response){
               throw new Error ('Search Failed')
             }
             const products=response.data;
+            console.log(products);
             renderSearchProducts(products) // to render the products below search bar
           })
           .catch((err)=>console.log(err))
-
       }
 
         /**
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded',()=>{
             
             searchResultContainer.innerHTML = products.map((product) => (
               `<div class='flex items-center gap-6 p-2 bg-white hover:bg-gray-100 cursor-pointer border border-gray-200 rounded-[2rem]'>
-                <img src='${product.productImages[0]}' alt='${product.name}' class='w-8 h-6 object-contain rounded'>
+                <img src='${product.variants[0].attributes.productImages[0]}' alt='${product.name}' class='w-8 h-6 object-contain rounded'>
                 <span class='text-sm text-gray-800 font-medium'>${product.name}</span>
               </div>`
           )).join('');

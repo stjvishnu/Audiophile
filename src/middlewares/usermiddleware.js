@@ -241,7 +241,6 @@ const setName = (req, res, next) => {
 
 
 const blockedUser = async (req,res,next)=>{
-  console.log('Call inside blocked user');
   let user;
   try{
     const token = req.cookies.token;

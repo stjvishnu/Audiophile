@@ -5,7 +5,7 @@ import Category from "../../models/categoryModel.js"
 const allProducts = async (req, res) => {
 
   
-  
+  console.log('Call inside All products');
       try {
       
         const page = parseInt(req.query.page) || 1;
@@ -14,7 +14,7 @@ const allProducts = async (req, res) => {
         const totalDocuments = await Product.countDocuments();
         const totalPages = Math.ceil(totalDocuments/limit);
 
-        const query={};
+        const query={isActive:true,isDeleted:false};
 
         const {category,subCategory,brand} = req.query;
         if(category){
@@ -46,7 +46,6 @@ const allProducts = async (req, res) => {
         }else{
           sortOption={createdAt:-1}
         }
-
         const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption);
         res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages });
       } catch (err) {
@@ -64,6 +63,17 @@ const searchProductsPage=(req,res)=>{
   res.render('user/searchProductsPage.ejs')
 }
 
+const searchProducts = async (req,res)=>{
+  console.log('CAll inside searchproduct');
+  const productName= req.query.search;
+  console.log(productName);
+  const product=await Product.find({name:{$regex:productName,$options:'i'}});
+  console.log(product);
+  if(product){
+    res.status(200).json(product)
+  }
+ 
+}
 const singleProduct = async (req,res)=>{
   const productId= req.params.id;
   const product=await Product.findById(productId);
@@ -76,5 +86,7 @@ const singleProduct = async (req,res)=>{
 export default {
   allProducts,
   singleProduct,
+  searchProducts,
   searchProductsPage
 };
+

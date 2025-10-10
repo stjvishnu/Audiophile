@@ -121,7 +121,7 @@ const deleteCategory = async(req,res)=>{
 
     
     await Category.findByIdAndUpdate(categoryId,{isDeleted:true})
-    // await Products.deleteMany({category:categoryId})
+    await Products.updateMany({category:categoryId},{isDeleted:true})
     res.status(HTTP_STATUS.OK).json({message:"Category Deleted Successfully"})
   } 
   catch(err){
@@ -143,6 +143,7 @@ const restoreCategory = async(req,res)=>{
       res.json({message:"Category not found"});
     }
     await Category.findByIdAndUpdate(categoryId,{isDeleted:false})
+    await Products.updateMany({category:categoryId},{isDeleted:false})
     res.status(HTTP_STATUS.OK).json({message:"Category Restored Successfully"})
   }
   catch(err){
@@ -171,10 +172,11 @@ const blockCategory = async (req,res)=>{
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Category Doesn't Exist"})
     }
     await Category.findByIdAndUpdate(categoryId,{isActive:false})
+    await Products.updateMany({category:categoryId},{isActive:false})
     res.status(HTTP_STATUS.OK).json({message:'Category blocked successfully'})
   }catch(err){
     console.log('Block Category',err);
-    res.status(400).json({message:"Error in Blocking Category"})
+    res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Error in Blocking Category"})
   }
 }
 
@@ -189,6 +191,7 @@ const unblockCategory = async (req,res)=>{
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Category Doesn't Exist"})
     }
     await Category.findByIdAndUpdate(categoryId,{isActive:true})
+    await Products.updateMany({category:categoryId},{isActive:true})
     res.status(HTTP_STATUS.OK).json({message:'Category blocked successfully'})
   }catch(err){
     console.log('Block Category',err);

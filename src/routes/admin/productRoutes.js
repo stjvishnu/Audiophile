@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/',adminController.getProducts);
 router.get('/getSingleProduct/:id',adminController.getSingleProduct)
-router.put('/add',upload.any(),adminController.addProducts);
+router.post('/add',upload.any(),adminController.addProducts);
 router.put('/edit/:id',upload.any(),adminController.editProducts)
 router.delete('/delete/:id',adminController.deleteProducts)
 router.delete('/soft-delete/:id',adminController.softDeleteProducts)

@@ -498,9 +498,10 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
           console.error('No user found in callback');
           return res.redirect('/user/login');
         }
-    
+        
         const accessToken = jwt.sign(
           {
+            userId: user._id,
             email: user.email,
             name: user.firstName,
             googleId: user.googleID,

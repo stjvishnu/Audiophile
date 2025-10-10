@@ -5,37 +5,37 @@
 
   document.addEventListener('DOMContentLoaded', () => {
 
-    const filterToggle = document.getElementById('filterToggle');
-    const sortDropdown = document.getElementById('sortDropdown');
-    const filterDropdown = document.getElementById('filterDropdown');
+    // const filterToggle = document.getElementById('filterToggle');
+    // const sortDropdown = document.getElementById('sortDropdown');
+    // const filterDropdown = document.getElementById('filterDropdown');
 
 
 
-    filterToggle.addEventListener('click', () => {
-      filterDropdown.classList.toggle('hidden');
-    });
+    // filterToggle.addEventListener('click', () => {
+    //   filterDropdown.classList.toggle('hidden');
+    // });
 
-    filterDropdown.addEventListener('click', (e) => {
-      if (e.target == filterDropdown) {
-        filterDropdown.classList.add('hidden');
-      }
-    });
+    // filterDropdown.addEventListener('click', (e) => {
+    //   if (e.target == filterDropdown) {
+    //     filterDropdown.classList.add('hidden');
+    //   }
+    // });
 
-    sortToggle.addEventListener('click', () => {
-      sortDropdown.classList.toggle('hidden');
-    });
+    // sortToggle.addEventListener('click', () => {
+    //   sortDropdown.classList.toggle('hidden');
+    // });
 
-    document.addEventListener('click', (event) => {
-      if (!filterDropdown.classList.contains('hidden') && !filterDropdown.contains(event.target) && !filterToggle.contains(event.target)) {
-        filterDropdown.classList.add('hidden');
-      }
-    });
+    // document.addEventListener('click', (event) => {
+    //   if (!filterDropdown.classList.contains('hidden') && !filterDropdown.contains(event.target) && !filterToggle.contains(event.target)) {
+    //     filterDropdown.classList.add('hidden');
+    //   }
+    // });
 
-    document.addEventListener('click', (event) => {
-      if (!sortDropdown.classList.contains('hidden') && !sortDropdown.contains(event.target) && !sortToggle.contains(event.target)) {
-        sortDropdown.classList.add('hidden');
-      }
-    });
+    // document.addEventListener('click', (event) => {
+    //   if (!sortDropdown.classList.contains('hidden') && !sortDropdown.contains(event.target) && !sortToggle.contains(event.target)) {
+    //     sortDropdown.classList.add('hidden');
+    //   }
+    // });
 
     
 
