@@ -12,6 +12,9 @@ router.delete('/soft-delete/:id',adminController.softDeleteProducts)
 router.patch('/restore-deleted-product/:id',adminController.restoreSoftDeleteProducts)
 router.patch('/block-product/:id',adminController.blockProducts);
 router.patch('/unblock-product/:id',adminController.unblockProducts);
+router.get('/getCategory',adminController.getCategory)
 
 
 export default router
+
+//remove these delete and all

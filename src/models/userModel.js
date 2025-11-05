@@ -21,12 +21,14 @@ const userSchema = new mongoose.Schema({
     mobile:{
         type:String,
         default:null,
-        
        
     },
     password:{
         type:String,
         default:null,
+    },
+    profileImg:{
+        type:String
     },
     otp:{
         type:String
@@ -42,7 +44,7 @@ const userSchema = new mongoose.Schema({
         type : String,
     }
   
-});
+},{timestamps:true});
 
 const user=mongoose.model("User",userSchema)
 

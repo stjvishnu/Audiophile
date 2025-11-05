@@ -2,6 +2,8 @@
 import userAuthentication from "./userModules/auth.js"
 import productController from "./userModules/products.js"
 import cartController from "./userModules/cart.js"
+import checkoutController from "./userModules/checkout.js"
+import profileController from "./userModules/profile.js"
 
 //testing
 
@@ -42,12 +44,29 @@ export const getGoogleAuthCallBack = userAuthentication.getGoogleAuthCallBack;
 
 export const allProducts = productController.allProducts;
 export const singleProduct = productController.singleProduct;
+export const variantProduct = productController.variantProduct;
 export const searchProducts = productController.searchProducts;
 export const postFilter = productController.postFilter;
 
 export const searchProductsPage = productController.searchProductsPage;
 
-//cart controler
+//cart controller
 export const getCart = cartController.getCart;
 export const postCart = cartController.postCart;
+export const deleteCart = cartController.deleteCart;
+export const updateQuanity = cartController.updateQuanity;
 
+//checkout controller
+
+export const getCheckout = checkoutController.getCheckout;
+
+//profile controller
+
+export const getProfile = profileController.getProfile;
+export const postProfile = profileController.postProfile;
+export const postRequestEmailChange = profileController.postRequestEmailChange;
+export const postRequestPasswordChange = profileController.postRequestPasswordChange;
+export const postVerifyEmailChange = profileController.postVerifyEmailChange;
+export const postVerifyPasswordChange = profileController.postVerifyPasswordChange;
+export const profileGetOtp = profileController.profileGetOtp;
+export const profileResentOtp = profileController.profileResentOtp;

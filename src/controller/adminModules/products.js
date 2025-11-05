@@ -346,6 +346,15 @@ const unblockProducts= async (req,res)=>{
   }
 }
 
+const  getCategory = async (req,res)=>{
+  try{
+    console.log('Call recieved at getCategory');
+    const category=await Category.find()
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,category:category})
+  }catch (err){
+    console.log('Error in Get Category in add Modal',err);
+  }
+}
 
 export default{
   getProducts,
@@ -357,4 +366,6 @@ export default{
   restoreSoftDeleteProducts,
   blockProducts,
   unblockProducts,
+  getCategory
 }
+

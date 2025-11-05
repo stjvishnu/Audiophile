@@ -26,7 +26,12 @@ const app = express();
 dotenv.config();
 
 connectDb()
-  .then(() => debug("✅ Database connected successfully"))
+  .then(() =>{ 
+    console.log("✅ Database connected successfully");
+    app.listen(PORT, () => {
+      console.log(`Server starts to listen at port ${PORT}`)
+    });
+})
   .catch(err => debug("❌ Database connection error:", err));
 
 
@@ -41,6 +46,7 @@ app.use(express.static(path.join(__dirname, '../assets')))
 app.use(nocache())
 app.use(cookieParser())
 app.use(passport.initialize());
+
 app.use(usermiddleware.setName)
 app.use(usermiddleware.setCategories)
 
@@ -55,13 +61,13 @@ app.set("layout", "layouts/user-layout")
 
 
 
-
 //routes
-app.get('/demo', (req, res) => {
-  res.render('user/demo')
-});
+// app.get('/demo', (req, res) => {
+//   res.render('user/demo')
+// });
 
 app.use('/', mainRouter);
+
 app.get('*', (req, res) => {
   res.send('404')
 });
@@ -71,6 +77,3 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server starts to listen at port ${PORT}`)
-});

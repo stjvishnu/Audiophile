@@ -15,11 +15,11 @@ function showToast(type,message){
   }
 
   Toastify({
-    text: `${sign}  ${message}`,
+    text: ` ${sign}    ${message}`,
     duration: 3000,
     close: true,
     gravity: "bottom",
-    position: "right",
+    position: "center",
     stopOnFocus: true,
     style: {
       background: "rgba(0, 0, 0, 0.9)",  // slightly transparent black
@@ -28,7 +28,7 @@ function showToast(type,message){
       border: "1px solid #fff",          // white border
       boxShadow: "0px 4px 12px rgba(255, 255, 255, 0.2)", // soft white shadow
       fontSize: "14px",                   // slightly bigger text
-      padding: "10px 15px"                // extra spacing
+      padding: "12px 15px"                // extra spacing
     }
   }).showToast();
 }

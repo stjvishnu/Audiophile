@@ -48,3 +48,4 @@ export const softDeleteProducts = productController.softDeleteProducts;
 export const restoreSoftDeleteProducts = productController.restoreSoftDeleteProducts
 export const blockProducts = productController.blockProducts;
 export const unblockProducts = productController.unblockProducts;
+export const getCategory = productController.getCategory;

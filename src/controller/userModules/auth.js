@@ -53,9 +53,9 @@ const postSignUp = async (req, res) => {
     const userExist = await User.findOne({
       email,
     });
-    //  if(userExist){
-    //   return res.send("user already exist");
-    //  } //this should be uncomment later
+     if(userExist){
+      return res.send("user already exist");
+     } 
 
     //hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -111,7 +111,12 @@ const getOtp = (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const email = decoded.email;
     res.render("user/otp.ejs", {
-      email,
+      email:email,
+      title:'Verify your Account',
+      formAction :'/user/otp',
+      backLinkHref:'/user/login',
+      backLinkText:'Back to Sign in',
+      resendHref:'/user/resend-otp'
     });
   } catch (err) {
     console.log("Error in get Otp", err);
@@ -197,7 +202,14 @@ const resendOtp = async (req,res)=>{
     let newtempData=jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:'10m'})
     res.clearCookie(token);
     res.cookie('tempData',newtempData)
-    res.status(200).render('user/otp.ejs',{email})
+    res.status(200).render('user/otp.ejs',{
+      email:email,
+      title:'Verify your Account',
+      formAction :'/user/otp',
+      backLinkHref:'/user/login',
+      backLinkText:'Back to Sign in',
+      resendHref:'/user/resend-otp'
+    })
   }catch(err){
     console.log('ResentOtp Controller',err);
   }
@@ -392,27 +404,27 @@ const postLogin = async (req, res) => {
     
     const email = req.body.email;
     const password = req.body.password;
-    const user = await User.findOne({email});
-
+    
+    const user = await User.findOne({email}); 
+    console.log('user',user);
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+      
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'No User Found'});
     }
+
+    console.log('typedpass',password);
+    console.log('userDbPAss',user.password);
 
     if(!user.isActive){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'You are Blocked , Cannot Login'})
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
+    console.log('passwordmatc',isPasswordMatch);
 
     if (!isPasswordMatch) {
 
-      return res.status(400).json({
-        success: false,
-        message: "password is incorrect",
-      });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Password Mismatch'});
     }
 
     //create Tokens
@@ -420,7 +432,7 @@ const postLogin = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
-        name: user.firstName,
+        firstName: user.firstName,
       },
       process.env.JWT_SECRET_KEY,
       {
@@ -432,7 +444,7 @@ const postLogin = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
-        name: user.firstName,
+        firstName: user.firstName,
       },
       process.env.JWT_REFRESH_KEY,
       {
@@ -449,16 +461,11 @@ const postLogin = async (req, res) => {
         httpOnly:true,
         secure: false,
       })
-      .status(200)
-      .json({
-        success:true,
-        message:'Login Successful'
-      })
+      .status(HTTP_STATUS.OK)
+      .json({ message:RESPONSE_MESSAGES.OK,customMessage:"Successfully You have Logged In"})
   } catch (err) {
     console.error("Error in postLogin", err);
-    res.status(500).json({
-      error: "Internal Server error",
-    });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:"Invalid Credentials, Try Again!!"});
   }
 
 };
@@ -493,7 +500,7 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
      (req, res) => {
       try {
         const user = req.user;
-    
+  
         if (!user) {
           console.error('No user found in callback');
           return res.redirect('/user/login');
@@ -503,7 +510,7 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
           {
             userId: user._id,
             email: user.email,
-            name: user.firstName,
+            firstName: user.firstName,
             googleId: user.googleID,
           },
           process.env.JWT_SECRET_KEY,
@@ -512,8 +519,9 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
 
         const refreshToken = jwt.sign(
           {
+            userId: user._id,
             email: user.email,
-            name: user.firstName,
+            firstName: user.firstName,
             googleId: user.googleID,
           },
           process.env.JWT_REFRESH_KEY,

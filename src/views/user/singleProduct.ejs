@@ -1,7 +1,7 @@
 
 <div class="py-3 px-4">
     <!-- Main Product Container - Large like Hero Carousel -->
-    <div class="carousel-container bg-white  mx-4 sm:mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem] relative  ">
+    <div class="carousel-container bg-gray-50  mx-4 sm:mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem] relative  ">
         <div>
             <!-- Product Overview Section -->
             <div class=" grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 p-14 sm:p-10 lg:pb-12 lg:pl-12 lg:pr-12 ">
@@ -19,36 +19,40 @@
                         </div>
                         
                         <!-- Thumbnail Images -->
-                        <div class="grid grid-cols-5 gap-2 mb-3">
+                        <div id="thumbnailContainer" class="grid grid-cols-5 gap-2 mb-3">
                             <% for (let i = 0; i < 5 && i < product.variants[0].attributes.productImages.length; i++) { %>
-                                <div class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-[2rem] sm:rounded-[2rem] overflow-hidden border-2 border-transparent transition-all duration-300" 
-                                     onclick="changeImage('<%= product.variants[0].attributes.productImages[i] %>', this)">
-                                    <img src="<%= product.variants[0].attributes.productImages[i] %>" 
-                                         alt="Thumbnail <%= i + 1 %>" 
-                                         class="w-full h-auto object-cover aspect-square">
-                                </div>
+                              <button 
+                                type="button"
+                                class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-[2rem] overflow-hidden
+                                        border-transparent focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-0 transition-all duration-300"
+                                onclick="changeImage('<%= product.variants[0].attributes.productImages[i] %>', this)">
+                                <img src="<%= product.variants[0].attributes.productImages[i] %>" 
+                                     alt="Thumbnail <%= i + 1 %>" 
+                                     class="w-full h-auto object-cover aspect-square">
+                              </button>
                             <% } %>
-                        </div>
+                          </div>
+                          
                     </div>
                 </div>
 
                 <!-- Right Column - Product Details -->
-                <div class="flex flex-col justify-center space-y-3 space-x-9 rounded-[1.5rem] sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
-                    <div class="pl-14">
-                        <p class="text-gray-700 tracking-widest pt-7 pb-4 font-sans text-lg"><%= product.brand %></p>
+                <div class="flex flex-col justify-center space-y-5 space-x-14 rounded-[1.5rem] sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
+                    <div class="pl-20">
+                        <p class="text-gray-400 tracking-widest pt-2 pb-4 font-sans text-lg"><%= product.brand %></p>
                         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 leading-tight tracking-wide">
                             <%= product.name %>
                         </h1>
-                        <p class="text-gray-600 text-lg mt-3"><%= product.productDetails.driverConfiguration %></p>
+                        <p class="text-gray-600 text-lg mt-3"><%= product.productDetails.driverConfiguration %> driver</p>
                     </div>
 
-                    <div class="rounded-2xl pl-6">
+                    <div class="rounded-2xl pl-6 ">
                         <div class="flex items-center mb-2">
-                            <span class="text-4xl font-bold font-sans text-gray-900">
+                            <span id="discountedPrice" class="text-4xl font-bold font-sans text-gray-900">
                                 <%= Math.round(product.variants[0].attributes.price * 0.01 * (100 - product.variants[0].attributes.discount)) %> ₹
                             </span>
-                            <span class="ml-3 text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %></span>
-                            <span class="ml-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
+                            <span id="price" class="ml-3 text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %> ₹</span>
+                            <span id="discount" class="ml-3 bg-black text-white px-3 py-1 rounded-full text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
                         </div>
                     </div>
 
@@ -57,34 +61,45 @@
                             <p class="text-gray-700 font-semibold mb-3 text-lg">
                                 Color: <span id="selected-color" class="text-gray-900"><%= product.variants[0].attributes.color%></span>
                             </p>
-                            <div class="flex space-x-3">
-                                <div class="variant-option active cursor-pointer group" data-value="Black" onclick="selectVariant(this, 'color')">
-                                    <div class="w-10 h-10 bg-<%= product.variants[0].attributes.color%>-300  rounded-full border-4 border-black/30  group-hover:border-black transition-all duration-300 shadow-md"></div>
-                                    <p class="text-sm mt-2 text-center font-medium"><%= product.variants[0].attributes.color%>/p>
-                                </div>
-                                <div class="variant-option cursor-pointer group" data-value="Graphite" onclick="selectVariant(this, 'color')">
-                                    <div class="w-10 h-10 bg-gray-600 rounded-full border-4 border-transparent group-hover:border-black transition-all duration-300 shadow-md"></div>
-                                    <p class="text-sm mt-2 text-center font-medium">Graphite</p>
-                                </div>
+                            <div class="flex space-x-5">
+                                <% product.variants.forEach((variant,index)=>{ %>
+                                       <div 
+                                        class="variant-option <%= index === 0 ? 'active' : '' %> cursor-pointer group" 
+                                        data-value="<%= variant.attributes.color %>" 
+                                        data-variant-id="<%=product.variants[0].sku%>"
+                                        onclick="selectVariant(this, 'color')">
+
+                                        <!-- Dynamic color circle -->
+                                        <div 
+                                            class="w-14 h-9 rounded-full border-2 
+                                                <%= index === 0 ? 'border-gray-400' : 'border-gray-400' %> 
+                                                group-hover:border-black transition-all duration-300 shadow-xl" 
+                                            style="background-color: <%= variant.attributes.color.toLowerCase() %>">
+                                        </div>
+
+                                      
+                                    </div>
+
+                               <% }) %>
+                               
+
                             </div>
                         </div>
                         
                         <div>
                             <p class="text-gray-700 font-semibold mb-2 text-lg">
-                                Type: <span id="selected-type" class="text-gray-900">With Mic</span>
+                                Type :  <span id="selected-mic" class="text-gray-900">With Mic</span>
                             </p>
                             <div class="flex space-x-4">
-                                <div class="variant-option active cursor-pointer group" data-value="With Mic" onclick="selectVariant(this, 'type')">
-                                    <div class="w-14 h-10 flex items-center justify-center bg-blue-50 rounded-xl border-2 border-blue-200 group-hover:border-blue-400 transition-all duration-300 shadow-sm">
-                                        <i class="fas fa-microphone text-blue-600"></i>
+                                <div id="mic-option" class="variant-option  cursor-pointer group" data-product-id= "<%=product.id %>" data-value="true" onclick="selectVariant(this, 'mic')">
+                                    <div id="mic-btn" class="w-16 h-10 flex items-center justify-center <%= product.variants[0].attributes.mic==true?'bg-black':'bg-white'%> rounded-xl border-2 border-gray-200 group-hover:border-gray-600 transition-all duration-300 shadow-sm">
+                                        <i id="micIcon" class="fas fa-microphone <%= product.variants[0].attributes.mic==true?'text-white':'text-black'%>"></i>
                                     </div>
-                                    <p class="text-sm mt-2 text-center font-medium">With Mic</p>
                                 </div>
-                                <div class="variant-option cursor-pointer group" data-value="Without Mic" onclick="selectVariant(this, 'type')">
-                                    <div class="w-14 h-10 flex items-center justify-center bg-gray-50 rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
-                                        <i class="fas fa-ban text-gray-600"></i>
+                                <div id="mic-option" class="variant-option cursor-pointer group" data-product-id= "<%=product.id %>" data-value="false" onclick="selectVariant(this, 'mic')">
+                                    <div id="mic-btn" class="w-16 h-10 flex items-center justify-center  <%= product.variants[0].attributes.mic==false?'bg-black':'bg-white'%> rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
+                                        <i id="noMicIcon" class="fas fa-ban <%= product.variants[0].attributes.mic==false?'text-white':'text-black'%>"></i>
                                     </div>
-                                    <p class="text-sm mt-2 text-center font-medium">Without Mic</p>
                                 </div>
                             </div>
                         </div>
@@ -92,11 +107,11 @@
 
                     <div class="flex items-center  rounded-xl pl-5">
                         <span class=" text-green-800 text-sm font-semibold px-3 py-1 rounded-full">In Stock</span>
-                        <span class="ml-3 text-gray-700 font-medium"><%= product.variants[0].attributes.stock %> units available</span>
+                        <span id="stock" class="ml-3 text-gray-700 font-medium"><%= product.variants[0].attributes.stock %> units available</span>
                     </div>
 
                     <div class="flex items-center justify-center flex-col sm:flex-row gap-4 pt-2 pb-8">
-                        <button id="addToCartBtn" data-product-id= "<%=product.id %>" class="bg-black hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <button id="addToCartBtn" data-product-id= "<%=product.id %>" data-variant-id="<%=product.variants[0].sku%>" class="bg-gray-800 hover:bg-black text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl ">
                             <i class="fas fa-shopping-cart mr-3"></i> 
                             Add to Cart
                         </button>
@@ -120,10 +135,7 @@
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 .variant-option.active .w-12,
-.variant-option.active .w-16 {
-    border-color: #3B82F6 !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
+
 .tab-button.active {
     color: #3B82F6;
     border-bottom-color: #3B82F6 !important;
@@ -147,94 +159,146 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    console.log("jQuery loaded!");
-    if ($.fn.elevateZoom) {
-        console.log("ElevateZoom loaded!");
-        $("#main-image").elevateZoom({
-            zoomType: "lens",
-            lensShape: "square",
-            lensSize: 200,
-            zIndex: 10000,
-            borderSize: 2,
-            borderColour: "#3B82F6",
-            scrollZoom: false,
-            responsive: true,
-            containLensZoom: true,
-            zoomWindowPosition: 1
-        });
-    } else {
-        console.error("ElevateZoom not loaded!");
-    }
 
-    jQuery.event.special.touchmove = {
-        setup: function(_, ns, handle) {
-            this.addEventListener('touchmove', handle, { passive: true });
-        }
-    };
-});
+function changeImage(imageUrl, thumbnailElement) {
+  const mainImage = document.getElementById('main-image');
+  
+  // Update the main image src and data attributes
+  mainImage.style.opacity = 0;
+    setTimeout(()=>{
+        mainImage.src = imageUrl;
+        mainImage.style.opacity = 1;
+    },150)
 
-function changeImage(src, element) {
-    const mainImage = $("#main-image");
+ 
 
-    try {
-        $.removeData(mainImage, 'elevateZoom');
-        $('.zoomContainer').remove();
-
-        mainImage.attr("src", src);
-        mainImage.attr("data-zoom-image", src);
-
-        setTimeout(() => {
-            mainImage.elevateZoom({
-                zoomType: "lens",
-                lensShape: "square",
-                lensSize: 200,
-                zIndex: 10000,
-                borderSize: 2,
-                borderColour: "#3B82F6",
-                scrollZoom: false,
-                responsive: true,
-                containLensZoom: true,
-                zoomWindowPosition: 1
-            });
-        }, 100);
-
-        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
-        element.classList.add('active');
-    } catch (error) {
-        console.error("Error in changeImage:", error);
-    }
+  // Optional: add active class to clicked thumbnail, remove from others
+  document.querySelectorAll('.thumbnail').forEach(btn => btn.classList.remove('active'));
+  thumbnailElement.classList.add('active');
 }
+
+function updateVariantDetails(variant){
+  
+    const mainImage = document.getElementById('main-image');
+    const addToCartBtn=document.getElementById('addToCartBtn');
+    addToCartBtn.dataset.variantId=variant[0].sku
+    // console.log(variant[0].attributes.productImages[0]);
+    // Fade out main image
+    mainImage.style.opacity = 0;
+    setTimeout(()=>{
+        mainImage.src = variant[0].attributes.productImages[0];
+        mainImage.style.opacity = 1;
+    },150)
+    
+
+    
+    //thumbnail images
+    const thumbnailContainer = document.querySelector('#thumbnailContainer');
+    console.log(thumbnailContainer);
+    thumbnailContainer.innerHTML='';
+    variant[0].attributes.productImages.forEach((img,i)=>{
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className=`thumbnail ${i === 0 ? 'active' : ''} cursor-pointer rounded-[2rem] overflow-hidden border-transparent focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-0 transition-all duration-300`
+        btn.onclick= ()=>changeImage(img,btn);
+
+        const thumbImg = document.createElement('img');
+        thumbImg.src=img;
+        thumbImg.alt = `Thumbnail ${i+1}`;
+        thumbImg.className = 'w-full h-auto object-cover aspect-square';
+        thumbImg.style.opacity=0;
+        thumbImg.style.transition='opacity 0.3 ease-in-out'
+        thumbImg.onload= ()=>{
+            thumbImg.style.opacity=1;
+        }
+        btn.appendChild(thumbImg);
+        thumbnailContainer.appendChild(btn)
+    });
+
+    const price = Math.round(variant[0].attributes.price*0.01*(100-variant[0].attributes.discount))
+    document.querySelector('#discountedPrice').textContent=`${price} ₹`;
+    document.querySelector('#price').textContent=`${variant[0].attributes.price} ₹`;
+    document.querySelector('#discount').textContent=`${variant[0].attributes.discount} % off`;
+    document.querySelector('#selected-color').textContent = variant[0].attributes.color
+
+   const micInput= document.querySelector('#selected-mic');
+   micInput.textContent = variant[0].attributes.mic===true?'With Mic':'Without Mic'
+
+  console.log( document.querySelector('#mic-option'));
+
+  document.querySelectorAll('#mic-btn').forEach(btn=>{
+            btn.classList.remove('bg-black');
+            btn.querySelector('i').classList.remove('text-white');
+            btn.classList.add('bg-white');
+            btn.querySelector('i').classList.add('text-black');
+        })
+
+        if(variant[0].attributes.mic===true){
+            const micIcon=document.querySelector('#micIcon');
+            micIcon.classList.add('text-white')
+            const micBtn = micIcon.closest('#mic-btn')
+            micBtn.classList.add('bg-black')
+        }else{
+            const micIcon=document.querySelector('#noMicIcon');
+            const micBtn = micIcon.closest('#mic-btn')
+            micIcon.classList.add('text-white')
+            micBtn.classList.add('bg-black')
+        }
+
+    document.querySelector('#stock').textContent= `${variant[0].attributes.stock} units availabe`
+
+}
+
 
 
 
 function selectVariant(element, type) {
     const container = element.parentElement;
     const options = container.querySelectorAll('.variant-option');
+    const productId =document.getElementById("mic-option").dataset.productId;
+
+    console.log('setting variant id',productId);
     
     options.forEach(opt => opt.classList.remove('active'));
     element.classList.add('active');
-    
-    const value = element.getAttribute('data-value');
+    const value = element.getAttribute('data-value').toLowerCase();
+    console.log(type);
+    console.log(value);
     if (type === 'color') {
         document.getElementById('selected-color').textContent = value;
-    } else if (type === 'type') {
-        document.getElementById('selected-type').textContent = value;
+    } 
+    if(type === 'mic'){
+        document.querySelectorAll('#mic-btn').forEach(btn=>{
+            btn.classList.remove('bg-black');
+            btn.querySelector('i').classList.remove('text-white');
+            btn.classList.add('bg-white');
+            btn.querySelector('i').classList.add('text-black');
+        })
+
+        element.querySelector('#mic-btn').classList.toggle('bg-black')
+        element.querySelector('i').classList.toggle('text-white')
     }
+ 
+  
+    
+    axios.get(`/user/products/variantProduct`,{
+      params:{
+        productId,
+        type,
+        value
+      }
+    })
+    .then((response)=>{
+        const product=response.data.product;
+        console.log(product);
+        const variant = product.variants;
+        console.log(variant)
+        updateVariantDetails(variant)
+    })
+
 }
 
-function changeTab(tabId) {
-    ['details', 'specs', 'reviews'].forEach(tab => {
-        const element = document.getElementById('tab-' + tab);
-        if (element) element.classList.add('hidden');
-    });
-    
-    const selectedTab = document.getElementById('tab-' + tabId);
-    if (selectedTab) selectedTab.classList.remove('hidden');
-    
-    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-}
+
 </script>
 
 <!-- <script src="../../../js/user/cart-script.js"></script> -->

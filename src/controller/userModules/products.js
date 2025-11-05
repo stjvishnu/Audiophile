@@ -1,5 +1,6 @@
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js"
+import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 
 
 const allProducts = async (req, res) => {
@@ -83,10 +84,33 @@ const singleProduct = async (req,res)=>{
  
 }
 
+const variantProduct = async (req,res)=>{
+  console.log('Call recived at variant product controller');
+  let {productId,type,value} = req.query;
+  console.log(req.query);
+  console.log('trouble shooting',productId);
+  // console.log('Variant id from mic call',variantId);
+  console.log('checking mic',typeof !!value);
+  // if(type=='mic') value= !!value
+  console.log('mic after conversion',  value);
+  console.log('type fdasddf',type);
+  try{
+    const product = await Product.findOne({_id:productId,[`variants.attributes.${type}`]:value},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{[`attributes.${type}`]:value}}})
+  console.log('setting mic',product);
+  console.log('product from variantProduct',product);
+  res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,product:product})
+  }catch(err){
+    console.log('Error in VariantProduct',err);
+    res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
+  }
+  
+}
+
 export default {
   allProducts,
   singleProduct,
   searchProducts,
-  searchProductsPage
+  searchProductsPage,
+  variantProduct
 };
 

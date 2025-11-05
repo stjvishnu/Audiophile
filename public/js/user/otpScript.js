@@ -5,8 +5,10 @@
             );
             const submitBtn = document.getElementById("submitBtn");
             const resendBtn = document.getElementById("resendBtn");
+            const resendHref = document.getElementById('resendHref').value;
+            console.log(document.getElementById('resendHref').value);
             const countdownTimer = document.getElementById("countdownTimer");
-            const email = document.getElementById('email').value
+            const email = document.getElementById('email').value;
             const inDiv = document.getElementById('in')
             let timeLeft = parseInt(localStorage.getItem('otpTimer')) ||  60; //60 seconds
 
@@ -174,13 +176,16 @@
 
 
                 try {
-                    const response = await fetch('/user/resend-otp', {
+                    console.log('Ok alla');
+                    console.log('href',resendHref);
+                    const response = await fetch(resendHref, {
                         method: 'POST',
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email })
                     })
 
                     if (response.ok) {
+                        console.log(response);
                         startTimer();
                         showToast('success', 'Otp send successfully')
                     } else {
@@ -198,25 +203,39 @@
 
 
 
-
+ 
             
 
+        
+        // // Reset submit button on page load
+        // // This ensures it's not stuck in "Verifying..." if the page is reloaded
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "Verify";
+        }   
 
 
 
 
             // Insert at the top
             const container = document.querySelector(".bg-black");
-            container.insertBefore(errorDiv, container.firstChild);
+            const errorDiv = document.querySelector("#errorDiv");
+
+            if(errorDiv && container){
+                container.insertBefore(errorDiv, container.firstChild);
+                 // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+
+            }
+            
 
             // Reset button state
             document.getElementById("submitBtn").disabled = false;
             document.getElementById("submitBtn").innerHTML = "Verify";
 
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 3000);
+           
 
         });
 

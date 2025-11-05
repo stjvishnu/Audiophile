@@ -1,0 +1,64 @@
+<div id="profile-info" class="h-full overflow-y-hidden p-12 shadow-[0_-25px_50px_-12px_rgb(0,0,0,0.5)]">
+  <div class="max-w-2xl mx-auto ">
+      <div class="relative flex justify-center mb-12">
+          <div class="relative">
+              <img id="profilePreview" src="<%= user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png'%>"
+                   alt="Profile"
+                   class="w-36 h-36 rounded-full object-cover ring-4 ring-gray-200 shadow-lg">
+              <button onclick="openEditModal()"
+                      class="absolute -right-2 -bottom-2 bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+              </button>
+          </div>
+      </div>
+
+      <div class="space-y-6">
+          <div class="grid grid-cols-2 gap-6">
+              <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-2">First Name</label>
+                  <div class="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-200">
+                      <p id="firstName" class="text-gray-900 font-medium"><%=user.firstName%> </p>
+                  </div>
+              </div>
+              <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-2">Last Name</label>
+                  <div class="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-200">
+                      <p id="lastName" class="text-gray-900 font-medium"><%=user.lastName%></p>
+                  </div>
+              </div>
+          </div>
+
+          <div>
+              <label class="block text-sm font-medium text-gray-600 mb-2">Email Address</label>
+              <div class="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-200">
+                  <p id="email" class="text-gray-900 font-medium"><%=user.email%></p>
+                  <input id="loginUserEmail" value="<%= user.email %>" class="hidden">
+              </div>
+          </div>
+          <div>
+              <label class="block text-sm font-medium text-gray-600 mb-2">Mobile Number</label>
+              <div class="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-200">
+                  <p id="mobile" class="text-gray-900 font-medium"><%=user.mobile%></p>
+              </div>
+          </div>
+
+          <div>
+              <label class="block text-sm font-medium text-gray-600 mb-2">Password</label>
+              <div class="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-200">
+                  <p class="text-gray-900 font-medium">••••••••••••</p>
+              </div>
+          </div>
+      </div>
+
+      <div class="mt-16 pt-8 border-t border-gray-200 text-center">
+          <p class="text-gray-500 text-sm">
+              Audiophile member since 2025
+          </p>
+      </div>
+  </div>
+</div>
+
+<script src="/js/user/myProfile-script.js"></script>

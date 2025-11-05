@@ -56,7 +56,6 @@ function resetForm(){
 }
 
 async function openAddModal(productId=null) {
-  console.log(productId);
   if(!productId){
     productId=null;
     resetForm();
@@ -75,6 +74,34 @@ async function openAddModal(productId=null) {
     
   }
  
+  //dynamic category Management
+  try {
+    const response = await fetch('/admin/products/getCategory',{method:'GET'})
+    const categories = await response.json()
+    console.log(categories.category);
+    
+    const categorySelect= document.getElementById('category')
+    console.log(categorySelect);
+    categorySelect.innerHTML=''
+    const placeHolder = document.createElement('option');
+    placeHolder.textContent='Select Category';
+    // placeHolder.disabled=true;
+    placeHolder.selected=true;
+    console.log(placeHolder);
+    categorySelect.appendChild(placeHolder);
+
+    categories.category.forEach((cate)=>{
+      console.log(cate);
+      const option = document.createElement('option');
+      option.textContent=cate.name;
+      option.value=cate.name; 
+      categorySelect.appendChild(option)
+    })
+
+  } catch (error) {
+    
+  }
+
   const addModal = document.getElementById('productAddModal');
   addModal.classList.remove('hidden');
   setTimeout(() => {
@@ -726,7 +753,8 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
    
 
     if(!isValid){
-      showToast('warning','Cannot Add Product');
+      showToast('warning',productId?'Cannot Edit Product':'Cannot Add Product');
+      document.getElementById('loading').classList.add('hidden');
       return
     }
 
@@ -873,11 +901,10 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
         form.removeEventListener('submit', handleAddEditProduct);
         variantBtn.removeEventListener('click', variantHandlerEvent)
         showToast('error',productId?'Error in Editing Product':'Error in Adding Product')
+        
       })
     }catch(err){
       console.log(err)
-    }finally{
-
     }
 
 

@@ -39,16 +39,23 @@ const addCategory = async (req,res)=>{
 
   try{
     const {name}= req.body;
-   const categoryExist= await Category.findOne({name});
+    const categoryName = name.toLowerCase().trim();
+
+    if(!name || name.trim() === ''){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Category name Cannot be empty'});
+    }
+
+    const categoryExist= await Category.findOne({name:categoryName});
    if(categoryExist){
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Category Already Exists'});
    }
+
     const category = new Category({name}) //create a new document
     await category.save(); //save the document to collection the tha model is mapped to
-    res.status(HTTP_STATUS.OK).json({message:"New Category Added"})
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED})
   }catch(err){
     console.log('Add Category',err);
-    res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Error in Adding Category"})
+    res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
   }
 
 } 

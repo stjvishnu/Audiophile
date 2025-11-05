@@ -1,0 +1,238 @@
+<style>
+    /* Hide scrollbar but allow scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  </style>
+  
+
+<div id="myProfileEditModal" class="hidden fixed inset-0 top-12 bg-black bg-opacity-50  flex items-center justify-center z-50">
+  <div class="bg-white rounded-[2rem] w-full max-w-3xl max-h-[90vh] mt-5 mx-4 shadow-2xl overflow-y-auto no-scrollbar scroll-smooth">
+      <div class="flex items-center justify-between p-8 border-b border-gray-200">
+          <h2 class="text-2xl font-bold text-gray-900">Edit Profile</h2>
+          <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+      </div>
+
+      <form id="profileForm" enctype="multipart/form-data" class="p-8">
+          <div class="relative flex justify-center mb-8">
+              <div class="relative">
+                  <img id="profilePreview"
+                       src="<%= user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png'%>"
+                       alt="Profile"
+                       class="w-32 h-32 rounded-full object-cover ring-4 ring-gray-200  shadow-lg">
+                  <label for="profileImageInput"
+                         class="absolute -right-2 -bottom-2 bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors cursor-pointer">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                  </label>
+                  <input type="file"
+                         id="profileImageInput"
+                         name="profileImage"
+                         accept="image/*"
+                         class="hidden"
+                         onchange="changeImage(event)">
+              </div>
+          </div>
+
+          <div class="space-y-6">
+              <div class="grid grid-cols-2 gap-6">
+                  <div >
+                      <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                      <input type="text"
+                             id="firstName"
+                             name="firstName"
+                             value="<%= user.firstName %>"
+                             class="w-full px-4 py-3 rounded-2xl text-black border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                             required>
+                             <div id="firstName-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                  </div>
+                  <div>
+                      <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                      <input type="text"
+                             id="lastName"
+                             name="lastName"
+                             value="<%= user.lastName %>"
+                             class="w-full px-4 py-3 rounded-2xl text-black border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                             required>
+                             <div id="lastName-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                  </div>
+              </div>
+
+              <div>
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                  <input type="email"
+                         id="email"
+                         name="email"
+                         value="<%= user.email %>"
+                         class="w-full px-4 py-3 rounded-2xl border border-gray-300 text-black focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                         required>
+                         <div id="email-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                         
+              </div>
+              <div>
+                  <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                  <input type="tel"
+                         id="mobile"
+                         name="mobile"
+                         value="<%= user.mobile %>"
+                         class="w-full px-4 py-3 rounded-2xl border border-gray-300 text-black focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                         >
+                         <div id="mobile-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+              </div>
+
+              <div id="changePassword" class="text-black flex justify-center ">
+                <p>Change Password</p>
+                <i class="fa-solid fa-key pl-2 pt-1 cursor-pointer" style="color: #000000;"></i>
+              </div>
+
+              <div class="pw hidden">
+                  <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-2 ">Current Password</label>
+                  <input type="password"
+                         id="currentPassword"
+                         name="currentPassword"
+                         placeholder="***********"
+                         class="w-full px-4 py-3 rounded-2xl text-black border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                         <div id="currentPassword-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+              </div>
+              <div class="pw hidden">
+                  <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                  <input type="password"
+                         id="newPassword"
+                         name="newPassword"
+                         placeholder="***********"
+                         class="w-full px-4 py-3 rounded-2xl text-black border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                         <div id="newPassword-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+              </div>
+              <div class="pw hidden">
+                  <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <input type="password"
+                         id="confirmPassword"
+                         name="confirmPassword"
+                         placeholder="**********"
+                         class="w-full px-4 py-3 rounded-2xl text-black border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                         <div id="confirmPassword-error" class=" top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+              </div>
+          </div>
+
+          <div class="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+              <button type="button"
+                      onclick="closeEditModal()"
+                      class="flex-1 px-6 py-3 border border-gray-300 rounded-2xl text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                  Cancel
+              </button>
+              <button type="submit"
+                      class="flex-1 px-6 py-3 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 transition-colors">
+                  Save Changes
+              </button>
+          </div>
+          
+      </form>
+
+      <!-- Cropper Modal -->
+      <div id="cropperModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl h-[70vh] flex flex-col">
+          <div class="flex justify-between items-center p-4 border-b">
+            <h2 class="text-xl font-semibold">Crop Image</h2>
+          </div>
+          <div class="flex-1 flex items-center justify-center overflow-auto bg-gray-50">
+            <img id="cropperImage" class="max-w-full max-h-full object-contain" />
+          </div>
+          <div class="flex justify-end gap-3 p-4 border-t">
+            <button id="cancelCrop" type="button" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+            <button id="confirmCrop" type="button" class="px-4 py-2 bg-blue-600 text-white rounded">Crop</button>
+          </div>
+        </div>
+      </div>
+      
+  </div>
+</div>
+
+<script src="/js/user/myProfile-editmodal.js"></script>
+<script src="/js/user/myProfile-validation.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+
+<script>
+
+  const modal = document.getElementById("cropperModal");
+  const cropperImage = document.getElementById("cropperImage");
+  const confirmCropBtn = document.getElementById("confirmCrop");
+  const cancelCropBtn = document.getElementById("cancelCrop");
+
+  let cropper // cropper instance
+  let currentPreview = myProfileEditModal.querySelector('#profilePreview')
+
+
+//   let croppedImg = {};
+
+function changeImage(event) {
+
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+    
+        if (file.size > 10485760) {
+
+          showToast('warning', 'Size is too large');
+          modal.classList.add('hidden')
+          return
+        }
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            cropperImage.src = e.target.result;
+            modal.classList.remove('hidden')
+
+            // If a cropper already exists, destroy it first
+            if (cropper) {
+                cropper.destroy();
+            }
+            
+            cropper = new Cropper(cropperImage, {
+              aspectRatio: 1,
+              viewMode: 1,
+            })
+          }
+
+          reader.readAsDataURL(file)
+    
+}
+
+  //cropper cancel button
+  cancelCropBtn.addEventListener('click', () => {
+    if (cropper) {
+      cropper.destroy();
+      modal.classList.add('hidden')
+      cropper=null;
+    }
+  })
+
+  confirmCropBtn.addEventListener('click', () => {
+    if (cropper) {
+      const canvas = cropper.getCroppedCanvas({imageSmoothingEnabled: false});
+      canvas.toBlob((blob) => {
+        const croppedUrl = URL.createObjectURL(blob);
+        if (currentPreview) {
+          currentPreview.src = croppedUrl;
+        }
+        cropper.destroy();
+        cropper = null;
+        modal.classList.add('hidden')
+      },'image/png',1.0)
+    }
+  }) 
+
+</script>

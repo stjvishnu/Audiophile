@@ -1,4 +1,4 @@
-<% const title="OTP Verification" %>
+<title><%=locals.title%></title>
 
     <div class="bg-white min-h-screen flex items-center justify-center p-4">
         <div
@@ -28,13 +28,13 @@
                 <% } %>
 
                     <div class="text-center">
-                        <h1 class="text-2xl font-semibold text-white mb-2">Verify Your Email</h1>
+                        <h1 class="text-2xl font-semibold text-white mb-2"><%=locals.title%></h1>
                         <p class="text-gray-400 text-sm mb-8">
                             Enter the 6-digit code sent to your email
                         </p>
                     </div>
 
-                    <form action="/user/otp" method="post" id="otpVerificationForm" class="space-y-6">
+                    <form action="<%=locals.formAction%>" method="post" id="otpVerificationForm" class="space-y-6">
                         <input id="email" type="hidden" name="email" value="<%= email %>" />
 
                         <!-- OTP Input Group -->
@@ -62,13 +62,14 @@
                             </button>
                             <span id="in" class="text-white font-medium">in</span>
                             <span id="countdownTimer" class="text-lg text-white font-medium"></span>
+                            <input id="resendHref" type="text" class="hidden " value="<%=locals.resendHref %>" >
                         </div>
 
                         <!-- Back to Login Link -->
                         <div class="text-center mt-6">
-                            <a href="/user/login"
+                            <a href="<%=locals.backLinkHref%>"
                                 class="text-gray-400 text-sm hover:text-white transition-colors duration-200">
-                                Back to Sign in
+                                <%=locals.backLinkText%>
                             </a>
                         </div>
                     </form>

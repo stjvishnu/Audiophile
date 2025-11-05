@@ -19,6 +19,7 @@ dotenv.config();
 
 
 const isLogin =(req,res,next)=>{
+
   const token = req.cookies.token;
   const refreshToken= req.cookies.refreshToken;
   if(!token){
@@ -38,7 +39,7 @@ const isLogin =(req,res,next)=>{
       const newAccessToken = jwt.sign(
         { userId: decoded.userId,
           email: decoded.email,
-          name: decoded.name,
+          firstName: decoded.firstName,
         },process.env.JWT_SECRET_KEY,{expiresIn:'15m'})
       res.cookie('token',newAccessToken,{httpOnly:true})
       req.user=decoded.userId;
@@ -94,7 +95,7 @@ const restrcitedLogin = async (req, res, next) => {
       const newAccessToken = jwt.sign(
         { userId: decoded.userId,
           email: decoded.email,
-          name: decoded.name,
+          firstName: decoded.firstName,
         },process.env.JWT_SECRET_KEY,{expiresIn:'15m'})
       res.cookie('token',newAccessToken,{httpOnly:true})
       req.user=decoded.userId;
@@ -164,7 +165,7 @@ const authLogin = (req, res, next) => {
         const newAccessToken=jwt.sign(
           { userId: decoded.userId,
             email: decoded.email,
-            name: decoded.name,
+            firstName: decoded.firstName,
           },
           process.env.JWT_SECRET_KEY,
           {expiresIn:'15m'}
@@ -217,60 +218,119 @@ const setCategories = async (req, res, next) => {
 
 const setName = (req, res, next) => {
   const token = req.cookies.token;
- 
-  try {
+  const refreshToken=req.cookies.refreshToken;
 
-    //If token exists
-     if (token) {
+  if(token){
+    try{
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      let name = decoded.name;//extracts user name
-      res.locals.user = {
-        name,
-      };
-    } else {
-      res.locals.user = null; // No user
+      console.log('decoded from set name',decoded);
+    let firstName = decoded.firstName;//extracts user name
+    console.log('Troubleshoooot name',firstName);
+    res.locals.user = {
+      firstName,
+    };
+    console.log('jinjnjnjfner',res.locals);
+    return next();
+    }catch(err){
+      console.log('Access Token Invalid',err.message)
     }
-    next(); //after setting res.locals, pass control tpo next middleware
-  } catch (err) {
-    res.locals.user=null;
-    next(); //if jwt verification went wrong,pass control to next middleware
   }
+  if(refreshToken){
+    try{
+      const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
+        let firstName =  decoded.firstName;
+        console.log('Troubleshoooot name',firstName);
+        res.locals.user = {
+          firstName,
+        };
+        return next();
+    }catch(err){
+      console.log('Refresh token invalid')
+    }
+  }
+ 
+    res.locals.user=null;
+    return next(); //if jwt verification went wrong,pass control to next middleware
+  
 };
 
 // --------------------------------------------------------------------------
 
 
 const blockedUser = async (req,res,next)=>{
+  const { token, refreshToken } = req.cookies;
   let user;
+  //If no access token move to next middleware
+  if(!token){
+    return next();
+  }
   try{
-    const token = req.cookies.token;
-    if(!token){
-         return next();
-    }
-    console.log(token);
+    //verify access token
     const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
-    console.log(decoded); 
     const userId=decoded.userId || decoded.email;
     if(typeof userId==='object'){
        user= await Users.findById(userId)
     }else if (typeof userId==='string'){
        user= await Users.findOne({email:userId})
     }
-    console.log(userId);
    
     if(user){
       if(user.isActive==false){
         res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
+        res.clearCookie('refreshToken');
         return res.redirect('/user?msg=blocked');
       }
     }
-
-    next()
+    req.user = user;
+    return next();
+    
   }catch(err){
-    console.log('Blcoked User',err);
-    next();
+    //if no access noken
+    //if no refresh token
+    if(!refreshToken){
+      return next()
+    }
+    try{
+      //verify refresh token
+      const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
+      const userId=decoded.userId || decoded.email;
+    if(typeof userId==='object'){
+       user= await Users.findById(userId)
+    }else if (typeof userId==='string'){
+       user= await Users.findOne({email:userId})
+    }
+  
+   
+    if(user){
+      if(user.isActive==false){
+        res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
+        res.clearCookie('refreshToken');
+        return res.redirect('/user?msg=blocked');
+      }
+    }
+      const newAccessToken = jwt.sign(
+         { userId: decoded.userId,
+          email: decoded.email,
+          firstName: decoded.firstName,
+         },
+        process.env.JWT_SECRET_KEY, 
+        {expiresIn:'15m'}
+      )
+      res.cookie('token',newAccessToken,{httpOnly:true})
+      req.user=user;
+      return next()
+    }catch(err){
+      console.error('Refresh Token error',err.message)
+      res.clearCookie('token');
+      res.clearCookie('refreshToken')
+      console.log('Blcoked User',err);
+      return next()
+    }
+    
   }
 }
+
+
 
 
 

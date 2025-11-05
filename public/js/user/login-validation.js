@@ -84,52 +84,20 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     axios.post('/user/login',{email:email,password:password})
     .then((response)=>{
-
-      //control enter if status code 2XX
-      
-      Toastify({
-        text: response?.data?.message || " ✅ Successfully You have Logged In",
-        duration: 3000,
-        close: true,
-        gravity: "bottom", // top or bottom
-        position: "right", // left, center or right
-        stopOnFocus: true,
-        style: {
-          background: "rgba(0, 0, 0, 0.9)",  // slightly transparent black
-          color: "#fff",                      // white text
-          borderRadius: "10px",               // rounded corners
-          border: "1px solid #fff",           // white border
-          boxShadow: "0px 4px 12px rgba(255, 255, 255, 0.2)", // soft white shadow
-          fontSize: "14px",                   // slightly bigger text
-          padding: "10px 15px"                // extra spacing
-        }
-      }).showToast();
-
+      const message = response.data.customMessage;
+      console.log(message);
+      if(message) showToast('success',message)
       setTimeout(()=>{
         window.location.href='/'
       },2000)
 
 
     })
-    .catch((error)=>{
-      Toastify({
-        text: `❌ ${error.response?.data?.message}` || "❌ Invalid Credentials, Try Again!!",
-        duration: 3000,
-        close: true,
-        gravity: "bottom", // top or bottom
-        position: "right", // left, center or right
-        stopOnFocus: true,
-        style: {
-          background: "rgba(0, 0, 0, 0.9)",  // slightly transparent black
-          color: "#fff",                      // white text
-          borderRadius: "10px",               // rounded corners
-          border: "1px solid #fff",           // white border
-          boxShadow: "0px 4px 12px rgba(255, 255, 255, 0.2)", // soft white shadow
-          fontSize: "14px",                   // slightly bigger text
-          padding: "10px 15px"                // extra spacing
-        }
-      }).showToast();
+    .catch((err)=>{
+      const message = err.response.data.customMessage?err.response.data.customMessage:'Something Went Wrong, Try Again..!';
+      if(message) showToast('error',message);
       
+      console.log('Erron in login',err);
     })
   })
 })
