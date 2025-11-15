@@ -136,7 +136,7 @@ const postOtp = async (req, res) => {
 
     // Validate input
     if (!otp) {
-      return res.status(400).render("user/otp.ejs", {
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("user/otp.ejs", {
         error: "OTP required",
         email,
       });
@@ -144,21 +144,21 @@ const postOtp = async (req, res) => {
 
     // Check OTP status
     if (!decoded.otp) {
-      return res.status(400).render("user/otp.ejs", {
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("user/otp.ejs", {
         error: "OTP not generated for the user",
         email,
       });
     }
 
     if (decoded.otpExpiry < Date.now()) {
-      return res.status(400).render("user/otp.ejs", {
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("user/otp.ejs", {
         error: "OTP expired",
         email,
       });
     }
 
     if (decoded.otp !== otp) {
-      return res.status(400).render("user/otp.ejs", {
+      return res.status(HTTP_STATUS.BAD_REQUEST).render("user/otp.ejs", {
         error: "Invalid OTP",
         email,
       });
@@ -179,7 +179,7 @@ const postOtp = async (req, res) => {
     return res.redirect("/user/otpSuccess");
   } catch (err) {
     console.error("Error in OTP verification:", err);
-    return res.status(500).render("user/otp.ejs", {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render("user/otp.ejs", {
       error: "Internal Server Error",
     });
   }
@@ -202,7 +202,7 @@ const resendOtp = async (req,res)=>{
     let newtempData=jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:'10m'})
     res.clearCookie(token);
     res.cookie('tempData',newtempData)
-    res.status(200).render('user/otp.ejs',{
+    res.status(HTTP_STATUS.OK).render('user/otp.ejs',{
       email:email,
       title:'Verify your Account',
       formAction :'/user/otp',
@@ -249,7 +249,7 @@ const postForgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).render("user/forgot-password.ejs", {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).render("user/forgot-password.ejs", {
         error: "This User doesn't exist",
       }); // will add title later
     }
@@ -277,7 +277,7 @@ const postForgotPassword = async (req, res) => {
       .redirect(`/user/verify-otp`);
   } catch (err) {
     console.log("Error in post forgot password", err);
-    res.status(404).render("user/forgot-password.ejs", {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render("user/forgot-password.ejs", {
       error: "An error occured please try again",
     });
   }

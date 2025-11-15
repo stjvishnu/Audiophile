@@ -115,9 +115,9 @@
                             <i class="fas fa-shopping-cart mr-3"></i> 
                             Add to Cart
                         </button>
-                        <button class="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300">
-                            <i class="fas fa-heart mr-3"></i> 
-                            Wishlist
+                        <button id="wishlistBtn" class="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300" data-variant-id="<%=product.variants[0].sku%>" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>"  onclick="handleWishlist('<%=product.id%>',this.dataset.variantId,this)">
+                            <i class="fas fa-heart mr-2" style='color: <%= product.variants[0].attributes.isWishlisted? '#000000' : '#a3a5a8'  %>; '></i>
+                           <p id="wishlist-text"><%= product.variants[0].attributes.isWishlisted? 'Wishlisted' : 'Wishlist'%> </p> 
                         </button>
                     </div>
                 </div>
@@ -181,7 +181,16 @@ function updateVariantDetails(variant){
   
     const mainImage = document.getElementById('main-image');
     const addToCartBtn=document.getElementById('addToCartBtn');
-    addToCartBtn.dataset.variantId=variant[0].sku
+    const wishlistDiv = document.getElementById('wishlist-text');
+   
+    
+    wishlistDiv.innerText = variant[0].attributes.isWishlisted?'Wishlisted':'Wishlist';
+    const wishlistIcon=wishlistBtn.querySelector('.fas')
+    wishlistIcon.style.color=variant[0].attributes.isWishlisted?'#000000':'#a3a5a8'; 
+    addToCartBtn.dataset.variantId=variant[0].sku;
+    wishlistBtn.dataset.variantId=variant[0].sku;
+
+    // wishlist-text
     // console.log(variant[0].attributes.productImages[0]);
     // Fade out main image
     mainImage.style.opacity = 0;
@@ -235,12 +244,16 @@ function updateVariantDetails(variant){
 
         if(variant[0].attributes.mic===true){
             const micIcon=document.querySelector('#micIcon');
-            micIcon.classList.add('text-white')
             const micBtn = micIcon.closest('#mic-btn')
+            micIcon.classList.add('text-white')
             micBtn.classList.add('bg-black')
+            micIcon.classList.remove('text-black')
+            micBtn.classList.remove('bg-white')
         }else{
             const micIcon=document.querySelector('#noMicIcon');
             const micBtn = micIcon.closest('#mic-btn')
+            micIcon.classList.remove('text-black')
+            micBtn.classList.remove('bg-white')
             micIcon.classList.add('text-white')
             micBtn.classList.add('bg-black')
         }
@@ -267,17 +280,17 @@ function selectVariant(element, type) {
     if (type === 'color') {
         document.getElementById('selected-color').textContent = value;
     } 
-    if(type === 'mic'){
-        document.querySelectorAll('#mic-btn').forEach(btn=>{
-            btn.classList.remove('bg-black');
-            btn.querySelector('i').classList.remove('text-white');
-            btn.classList.add('bg-white');
-            btn.querySelector('i').classList.add('text-black');
-        })
+    // if(type === 'mic'){
+    //     document.querySelectorAll('#mic-btn').forEach(btn=>{
+    //         btn.classList.remove('bg-black');
+    //         btn.querySelector('i').classList.remove('text-white');
+    //         btn.classList.add('bg-white');
+    //         btn.querySelector('i').classList.add('text-black');
+    //     })
 
-        element.querySelector('#mic-btn').classList.toggle('bg-black')
-        element.querySelector('i').classList.toggle('text-white')
-    }
+    //     element.querySelector('#mic-btn').classList.toggle('bg-black')
+    //     element.querySelector('i').classList.toggle('text-white')
+    // }
  
   
     
@@ -293,12 +306,57 @@ function selectVariant(element, type) {
         console.log(product);
         const variant = product.variants;
         console.log(variant)
+        const addToCartBtn = document.getElementById('addToCartBtn')
+        const wishlistBtn = document.getElementById('wishlistBtn')
+        addToCartBtn.disabled=false;
+        addToCartBtn.classList.remove('bg-gray-500')
+        addToCartBtn.classList.add('hover:bg-black')
+        wishlistBtn.classList.remove('bg-gray-100')
+        wishlistBtn.classList.add('hover:bg-gray-50','hover:border-gray-400')
+        wishlistBtn.disabled=false
         updateVariantDetails(variant)
     })
-
+    .catch((err)=>{
+        console.log('Error in selecting variant');
+        const message = err.response.data.customMessage;
+        const mic = err.response.data.mic
+        if(message) showToast('error',message);
+        const addToCartBtn = document.getElementById('addToCartBtn')
+        const wishlistBtn = document.getElementById('wishlistBtn')
+        addToCartBtn.setAttribute('disabled',true)
+        addToCartBtn.classList.add('bg-gray-500')
+        addToCartBtn.classList.remove('hover:bg-black')
+        wishlistBtn.setAttribute('disabled',true)
+        wishlistBtn.classList.add('bg-gray-100')
+        wishlistBtn.classList.remove('hover:bg-gray-50','hover:border-gray-400')
+        
+        
+    })
 }
 
 
+</script>
+<script>
+    //  function addToWishList(){
+
+    //     const addToCartBtn=document.getElementById('addToCartBtn');
+    //     productId=addToCartBtn.dataset.productId;
+    //     variantId=addToCartBtn.dataset.variantId;
+    //     console.log(productId,variantId);
+
+    // axios.post('/user/wishlist',{productId,variantId})
+    // .then((response)=>{
+    //   console.log(response);
+    //   const message = response.data.customMessage;
+    //   showToast('success',message)
+    // })
+    // .catch((err)=>{
+    //   console.log(err)
+    //   const message = err.response.data.customMessage || 'Something Went Wrong';
+    //   showToast('error',message)
+    // })
+    
+  //}
 </script>
 
 <!-- <script src="../../../js/user/cart-script.js"></script> -->

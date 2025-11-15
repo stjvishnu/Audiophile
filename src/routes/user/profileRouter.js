@@ -1,5 +1,6 @@
 import express from "express";
 import * as profileController from "../../controller/userController.js"
+import * as addressController from "../../controller/userController.js"
 import userMiddleware from '../../middlewares/usermiddleware.js'
 import upload from '../../utils/multer.js';
 
@@ -14,5 +15,13 @@ router.post('/verify-password-change',upload.single('profileImg'),profileControl
 router.get('/send-otp',profileController.profileGetOtp)
 router.post('/re-send-otp',profileController.profileResentOtp)
 
+//address routing
 
-export default router   
+router.get('/address/:addressId',addressController.getAddress)
+router.put('/address/:addressId',addressController.editAddress)
+router.post('/address',addressController.postAddress)
+router.delete('/address/:addressId',addressController.deleteAddress)
+router.patch('/address/:addressId',addressController.setDefaultAddress)
+
+
+export default router    

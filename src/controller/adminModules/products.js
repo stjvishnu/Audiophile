@@ -13,11 +13,11 @@ const getSingleProduct = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id).populate('category','name');
     console.log('product in edit backedn ',product);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.status(200).json(product); // send product as JSON for modal
+    if (!product) return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: "Product not found" });
+    res.status(HTTP_STATUS.OK).json(product); // send product as JSON for modal
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Server Error" });
   }
 };
 
@@ -35,11 +35,11 @@ const getProducts = async (req,res)=>{
     const products = await Products.find().populate('category','name').sort({createdAt:-1}).skip(skip).limit(limit);
     
   
-    res.status(200).render('admin/products.ejs',{products,layout:"layouts/admin-dashboard-layout",pageTitle :"Products",currentPage:page,totalPages:totalPages})
+    res.status(HTTP_STATUS.OK).render('admin/products.ejs',{products,layout:"layouts/admin-dashboard-layout",pageTitle :"Products",currentPage:page,totalPages:totalPages})
   }
   catch(err){
     console.error(err)
-    res.status(400).send('Error occured') //later better error handling
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Error occured') //later better error handling
   }
 }
 
@@ -257,14 +257,14 @@ const deleteProducts = async (req,res)=>{
   try{
     const id = req.params.id;
     if(!mongoose.Types.ObjectId.isValid(id)){
-      return res.status(200).json({message:"Invalid Product ID"})
+      return res.status(HTTP_STATUS.OK).json({message:"Invalid Product ID"})
     }
     await Products.findByIdAndDelete(id)
-    res.status(200).json({message:"Product Successfully Deleted"})
+    res.status(HTTP_STATUS.OK).json({message:"Product Successfully Deleted"})
   }
   catch(err){
     console.log("Error in Deleting Products",err)
-    res.status(400).json({message:"Error in deleting product",error:err})
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:"Error in deleting product",error:err})
   }
 }
 
@@ -274,17 +274,17 @@ const softDeleteProducts =  async (req,res)=>{
   try{
     const productId = req.params.id;
     if(!mongoose.Types.ObjectId.isValid(productId)){
-      return res.status(400).json({message:"Invalid ID"})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Invalid ID"})
     }
  const product= await Products.findById(productId)
  if(!product){
-  return res.status(400).json({message:"Product Doesn't Exist"})
+  return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product Doesn't Exist"})
  }
  await Products.findByIdAndUpdate(productId,{isDeleted:true})
  res.json({message:"Product Soft Deleted"})
   }
   catch(err){
-    res.status(400).json({message:"Error in Soft Delete"})
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:"Error in Soft Delete"})
     console.error(err)
   }
 }
@@ -295,15 +295,15 @@ const restoreSoftDeleteProducts = async (req,res)=>{
     const productId = req.params.id;
 
     if(!mongoose.Types.ObjectId.isValid(productId)){
-      return res.status(400).json({message:"Invalid ID"})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:"Invalid ID"})
     }
     const product = await Products.findById(productId);
     if(!product){
-      return res.status(400).json({message:"Product Doesn't Exist"})
+      return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product Doesn't Exist"})
     }
 
     await Products.findByIdAndUpdate(productId,{isDeleted:false})
-    res.status(200).json({message:"Product Restored Successfully"})
+    res.status(HTTP_STATUS.OK).json({message:"Product Restored Successfully"})
   }
   catch(err){
     console.log(err);
@@ -314,15 +314,15 @@ const blockProducts= async (req,res)=>{
   try{
     const productId=req.params.id;
     if(!mongoose.Types.ObjectId.isValid(productId)){
-      return res.status(400).json({message:'Invalid Id'})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Id'})
     }
     const product = Products.findById(productId);
     if(!product){
-      return res.status(400).json({message:"Product doesn't exist"})
+      return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product doesn't exist"})
     }
     
     await Products.findByIdAndUpdate(productId,{isActive:false})
-    res.status(200).json({message:'Product Blocked SuccessFully'})
+    res.status(HTTP_STATUS.OK).json({message:'Product Blocked SuccessFully'})
   }catch(err){
     console.error('Error occured in block product',err);
   }
@@ -332,15 +332,15 @@ const unblockProducts= async (req,res)=>{
   try{
     const productId=req.params.id;
     if(!mongoose.Types.ObjectId.isValid(productId)){
-      return res.status(400).json({message:'Invalid Id'})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Id'})
     }
     const product = Products.findById(productId);
     if(!product){
-      return res.status(400).json({message:"Product doesn't exist"})
+      return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product doesn't exist"})
     }
     
     await Products.findByIdAndUpdate(productId,{isActive:true})
-    res.status(200).json({message:'Product Blocked SuccessFully'})
+    res.status(HTTP_STATUS.OK).json({message:'Product Blocked SuccessFully'})
   }catch(err){
     console.error('Error occured in unblock product',err);
   }

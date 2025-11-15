@@ -223,13 +223,10 @@ const setName = (req, res, next) => {
   if(token){
     try{
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      console.log('decoded from set name',decoded);
     let firstName = decoded.firstName;//extracts user name
-    console.log('Troubleshoooot name',firstName);
     res.locals.user = {
       firstName,
     };
-    console.log('jinjnjnjfner',res.locals);
     return next();
     }catch(err){
       console.log('Access Token Invalid',err.message)
@@ -239,7 +236,6 @@ const setName = (req, res, next) => {
     try{
       const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
         let firstName =  decoded.firstName;
-        console.log('Troubleshoooot name',firstName);
         res.locals.user = {
           firstName,
         };

@@ -83,7 +83,7 @@
 
                 <!-- Wishlist Icon with Counter -->
                 <div class="relative group">
-                    <a href="/wishlist" class="text-gray-700 hover:text-black transition-colors p-1">
+                    <a href="/user/wishlist" class="text-gray-700 hover:text-black transition-colors p-1">
                         <i class="far fa-heart text-xl group-hover:scale-110 transition-transform duration-200"></i>
                         <% if (locals.wishlistCount !==undefined) { %>
                             <span
@@ -265,6 +265,12 @@
         console.log('hello');
         const response = await axios.get('/user/cart');
         const cart = response.data.cart;
+        if (!cart || !cart.items.length) {
+          productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+          console.log('HIHIH');
+          document.getElementById('cartModal').classList.remove('hidden')
+            return
+        }
         console.log('Cart:', cart);
         console.log('hiii');
         // Clear existing items
@@ -421,12 +427,20 @@
           axios.delete(`/user/cart/${variantId}`)
           .then((response)=>{
             const message = response.data.customMessage;
+            const updatedCart = response.data.updatedCart;
+            console.log('Updated Cart',updatedCart);
             if(message){
             showToast('success',message)
             }
             
             updateSubTotal()
             productDiv.remove();
+        
+            if(!(!!updatedCart) || updatedCart.items.length===0){
+                console.log('hijkgky');
+             productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+            }
+            
           })
           .catch((err)=>{
             const message = err.response.data.customMessage;

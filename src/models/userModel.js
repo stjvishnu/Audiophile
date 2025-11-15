@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     profileImg:{
         type:String
     },
+    address:[{
+        type:mongoose.Types.ObjectId,
+        ref:'Address'
+    }],
     otp:{
         type:String
     },

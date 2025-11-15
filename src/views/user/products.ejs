@@ -369,12 +369,8 @@
         class="group relative h-[420px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-300"
         style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.2 %>s; opacity:0; transform: translateY(20px)">
         <div class="absolute top-6 right-6 z-10 flex gap-2">
-          <button class="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-all duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700 hover:text-red-500" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+          <button id="wishlistBtn" class="transition-all duration-200" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>" onclick="handleWishlist('<%=product.id%>','<%= product.variants[0].sku %>',this)">
+            <i class="fa-solid fa-lg fa-heart" style='color: <%= product.variants[0].attributes.isWishlisted? '#000000' : '#a3a5a8'  %>; '></i>
           </button>
         </div>
         <div class="absolute inset-0 flex items-center justify-center p-10 mix-blend-multiply">
@@ -384,10 +380,10 @@
         <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
           <div class="transform translate-y-16 group-hover:translate-y-0 transition-transform duration-300">
             <span class="text-sm font-medium tracking-widest opacity-90">
-              <%= product.name %>
+              <%= product.brand %>
             </span>
             <h3 class="text-2xl font-bold mt-1">
-              <%= product.brand %>
+              <%= product.name %>
             </h3>
             <div class="mt-3 flex items-center gap-2">
               <span class="text-lg text-black font-bold">
@@ -409,7 +405,7 @@
           <div
             class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 flex justify-between items-center">
             <button class="flex items-center text-sm font-medium tracking-wider">
-              <a href="/user/products/singleProduct/<%=product.id%>">EXPLORE DETAILS</a>
+              <a href="/user/products/productPage/<%=product.id%>">EXPLORE DETAILS</a>
               <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
                 </path>
@@ -422,7 +418,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              ADD TO CART
+               ADD TO CART
             </button>
           </div>
         </div>
@@ -499,6 +495,46 @@ window.addEventListener('load', () => {
 
 
  
+</script>
+
+<script>
+  // async function handleWishlist(productId,variantId,element){
+
+  //   let wishlistIcon=element.querySelector('.fa-heart');
+  //   const isWishlisted=element.dataset.iswishlisted==='true'
+  //   console.log(isWishlisted);
+    
+  //   try{
+    
+  //   if(isWishlisted){
+  //    const response= await axios.delete('/user/wishlist',{
+  //     data: {productId,variantId}
+  //   });
+  //    const message = response.data.customMessage;
+  //    if(message){
+  //       showToast('success',message)
+  //     }
+  //     wishlistIcon.style.color='#a3a5a8'
+  //     element.dataset.iswishlisted='false'
+  //   }else{
+  //   const response=await axios.post('/user/wishlist',{productId,variantId});
+  //   console.log(response);
+  //   const message = response.data.customMessage;
+  //    if(message){
+  //       showToast('success',message)
+  //     }
+  //     wishlistIcon.style.color='#000000'
+  //     element.dataset.iswishlisted='true'
+ 
+  //   }
+  //   }catch(err){
+  //   console.log(err);
+  //   const message = err.response.data.customMessage || 'Something went wrong';
+  //   showToast('error', message);
+  //   }
+    
+  // }
+  // handleWishlist(productId,variantId,element)
 </script>
 
 <script src="/js/user-allProducts.js"></script>

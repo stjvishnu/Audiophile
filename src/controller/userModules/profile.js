@@ -1,5 +1,6 @@
 import User from '../../models/userModel.js'
-import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
+import Address from '../../models/addressModel.js'
+ 
 import bcrypt from "bcrypt";
 import otpHelper from "../../utils/otp-helper.js";
 import emailSender from "../../utils/emailSender.js";
@@ -9,10 +10,18 @@ import jwt from "jsonwebtoken";
 const getProfile = async (req,res)=>{ 
   console.log(req.user)
   console.log(res.locals.user.name);
-  const user=await User.findById(req.user);
-  console.log('Usernbjkc',user);
-  res.render('user/profile',{user})
-  // console.log(user);
+
+  try{
+    if(!req.user){
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({message:RESPONSE_MESSAGES.UNAUTHORIZED,customMessage:'Please re-login to continue'})
+    }
+    const addresses = await Address.find({userId:req.user})
+    const user=await User.findById(req.user);
+    res.render('user/profile',{user,addresses})
+  }catch(err){
+    console.log('Error in get profile controller',err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR})
+  }
 }
 
 
@@ -297,7 +306,6 @@ const postVerifyPasswordChange = async (req,res)=>{
 }
 
 
-  
   
 
 

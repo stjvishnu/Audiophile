@@ -54,12 +54,14 @@ const productSchema = new mongoose.Schema({
         discount:{type:Number,required:true},
         isActive:{type:Boolean,default:true},
         isDeleted:{type:Boolean,default:false},
-        productImages :[String]
+        productImages :[String],
+        isWishlisted:{type:Boolean,default:false }
       },
   
       
     }
   ],
+ 
   isDeleted:{
     type:Boolean,
     default:false

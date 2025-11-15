@@ -10,6 +10,7 @@ cancelBtn.addEventListener('click',()=>{
 })
 
 addToCartBtn?.addEventListener('click',(e)=>{
+  console.log('Cll reciebegvvvhjtgyhjklm.mkjhmvg');
   e.preventDefault();
   console.log('letsssss btn',e.currentTarget);
   const productId = e.currentTarget.dataset.productId;
@@ -186,15 +187,12 @@ addToCartBtn?.addEventListener('click',(e)=>{
             }
             productDiv.remove();
             updateSubTotal()
-             axios.get('/user/cart')
-            .then(response=>{
-              const cart = response.data.cart;
-              if (!cart || !cart.items.length) {
-                productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
-
-              }
-            })
-
+            const updatedCart = response.data.updatedCart;
+            if(!(!!updatedCart) || updatedCart.items.length===0){
+              console.log('hijkgky');
+           productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+          }
+             
           })
           .catch((err)=>{
             const message = err.response.data.customMessage;

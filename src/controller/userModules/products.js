@@ -1,3 +1,4 @@
+
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js"
 import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
@@ -67,7 +68,7 @@ const searchProductsPage=(req,res)=>{
 const searchProducts = async (req,res)=>{
   console.log('CAll inside searchproduct');
   const productName= req.query.search;
-  console.log(productName);
+  console.log('search name',productName);
   const product=await Product.find({name:{$regex:productName,$options:'i'}});
   console.log(product);
   if(product){
@@ -76,18 +77,32 @@ const searchProducts = async (req,res)=>{
  
 }
 const singleProduct = async (req,res)=>{
-  const productId= req.params.id;
-  const product=await Product.findById(productId);
+  console.log('Helloits here');
+  console.log(req.query);
+ const {productId,variantId} = req.query;
+  
+ const product = await Product.findOne({_id:productId,[`variants.sku`]:variantId},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{sku:variantId}}})
+  console.log(product);
+
   if(product){
     res.render('user/singleProduct.ejs',{product})
   }
  
 }
 
+const productPage = async (req,res)=>{
+  const productId= req.params.id;
+  const product=await Product.findById(productId);
+  if(product){
+    res.render('user/singleProduct.ejs',{product})
+  }
+}
+
 const variantProduct = async (req,res)=>{
   console.log('Call recived at variant product controller');
   let {productId,type,value} = req.query;
   console.log(req.query);
+  
   console.log('trouble shooting',productId);
   // console.log('Variant id from mic call',variantId);
   console.log('checking mic',typeof !!value);
@@ -96,6 +111,10 @@ const variantProduct = async (req,res)=>{
   console.log('type fdasddf',type);
   try{
     const product = await Product.findOne({_id:productId,[`variants.attributes.${type}`]:value},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{[`attributes.${type}`]:value}}})
+
+    if(!product){
+     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'No Product Avilable In Selected Variant',mic:value})
+    }
   console.log('setting mic',product);
   console.log('product from variantProduct',product);
   res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,product:product})
@@ -109,6 +128,7 @@ const variantProduct = async (req,res)=>{
 export default {
   allProducts,
   singleProduct,
+  productPage,
   searchProducts,
   searchProductsPage,
   variantProduct

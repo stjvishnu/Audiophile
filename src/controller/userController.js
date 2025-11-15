@@ -4,6 +4,9 @@ import productController from "./userModules/products.js"
 import cartController from "./userModules/cart.js"
 import checkoutController from "./userModules/checkout.js"
 import profileController from "./userModules/profile.js"
+import wishlistController from "./userModules/wishlist.js"
+import addressController from "./userModules/address.js"
+
 
 //testing
 
@@ -44,6 +47,7 @@ export const getGoogleAuthCallBack = userAuthentication.getGoogleAuthCallBack;
 
 export const allProducts = productController.allProducts;
 export const singleProduct = productController.singleProduct;
+export const productPage = productController.productPage;
 export const variantProduct = productController.variantProduct;
 export const searchProducts = productController.searchProducts;
 export const postFilter = productController.postFilter;
@@ -55,6 +59,11 @@ export const getCart = cartController.getCart;
 export const postCart = cartController.postCart;
 export const deleteCart = cartController.deleteCart;
 export const updateQuanity = cartController.updateQuanity;
+
+//wishlist controller
+export const getWishlist = wishlistController.getWishlist;
+export const postWishlist = wishlistController.postWishlist;
+export const removeWishlist = wishlistController.removeWishlist;
 
 //checkout controller
 
@@ -70,3 +79,11 @@ export const postVerifyEmailChange = profileController.postVerifyEmailChange;
 export const postVerifyPasswordChange = profileController.postVerifyPasswordChange;
 export const profileGetOtp = profileController.profileGetOtp;
 export const profileResentOtp = profileController.profileResentOtp;
+
+//address controller
+ export const getAddress = addressController.getAddress;
+ export const postAddress = addressController.postAddress;
+ export const editAddress = addressController.editAddress;
+ export const deleteAddress = addressController.deleteAddress;
+ export const setDefaultAddress = addressController.setDefaultAddress;
+

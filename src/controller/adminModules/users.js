@@ -51,7 +51,7 @@ const searchUsers = async (req,res)=>{
     ]
   });
   if(users.length==0){
-    return res.status(200).json([]);
+    return res.status(HTTP_STATUS.OK).json([]);
   }
   res.status(HTTP_STATUS.OK).json(users)
   }

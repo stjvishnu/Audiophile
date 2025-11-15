@@ -1,5 +1,6 @@
 import Products from '../../models/productModel.js'
 import Cart from '../../models/cartModal.js'
+import Wishlist from "../../models/wishlist.js"
 
 import jwt from "jsonwebtoken";
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
@@ -29,6 +30,7 @@ const getCart = async (req,res)=>{
 const postCart = async (req,res)=>{
 
     try{
+      console.log('CGYVHJBKLJVGHJBKNFCGVHJBFCYGVHJKFCGHVJBNFCGHVJBFCGHVJB');
       const token = req.cookies.token;
       if(!token){
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
@@ -55,42 +57,55 @@ const postCart = async (req,res)=>{
         await Cart.findOneAndUpdate({userId},{$pull:{'items':{productId:product._id}}},{new:true})
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is not available at the moment'})
       }
-     
+      let price;
+      let discount;
+       price= product.variants[0].attributes.price;
+       discount = product.variants[0].attributes.discount;
 
 
-      const price= product.variants[0].attributes.price;
-      const discount = product.variants[0].attributes.discount;
-
+   
       const existingItem= cart?.items?.find((item)=>{
         return item?.productId?._id.toString() ===productId && item?.variantId===variantId
       })
-
-      console.log('quantity',quantity);
-      console.log('exisitng item',existingItem)
-
+      
       if(existingItem){
+
+      
+        const specificVariant = existingItem.productId.variants.find(
+          v => v.sku === existingItem.variantId
+        );
+         price=specificVariant.attributes.price;
+         discount=specificVariant.attributes.discount;
+        let stock = specificVariant.attributes.stock;
 
         if(existingItem.quantity+quantity>10){
           return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Reached Maximum Quantity Per Transaction'})
 
         }
-
-        if(existingItem.quantity+quantity>existingItem.productId.variants[0].attributes.stock){
+        console.log(specificVariant);
+        console.log(existingItem.quantity);
+        if(existingItem.quantity+quantity>stock){
           return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Not enough stock available '})
         }
+        
 
         existingItem.quantity+=quantity
-        existingItem.price=existingItem.quantity*price*0.01*(100-discount);
+        existingItem.price=Math.round(existingItem.quantity*price*0.01*(100-discount));
       }else{
         cart.items.push({
        
           productId:productId,
           variantId:variantId,
           quantity:quantity,
-          price:quantity*price*0.01*(100-discount),
+          price:Math.round(quantity*price*0.01*(100-discount)),
         
       })
       }
+
+     //remove item from the wishlist when a product is added to cart that already exists in the wishlist
+      await Wishlist.findOneAndUpdate({user:req.user},{$pull:{items:{variantId}}},{new:true})
+      await Products.updateOne({_id:productId,'variants.sku':variantId},{$set:{'variants.$.attributes.isWishlisted':false}})
+
 
       await cart.save();
 
@@ -112,6 +127,7 @@ const postCart = async (req,res)=>{
 
 const updateQuanity = async (req,res)=>{
   console.log('Call recieved');
+  
   const { productId,variantId,variantColor,type } = req.body; 
   console.log(type);
 
@@ -131,6 +147,7 @@ const updateQuanity = async (req,res)=>{
 
   //  console.log(cart);
 
+ 
 
   if(!cart){
     return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
@@ -138,11 +155,13 @@ const updateQuanity = async (req,res)=>{
 //  console.log('Hello');
   //Find the product in DB
   const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1});
+  
 
-  if(!product.isActive || !product.isDeleted){
+  if(!product.isActive || product.isDeleted){
     await Cart.findOneAndUpdate({userId},{$pull:{'items':{productId:product._id}}},{new:true})
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is unavailable'})
   }
+  
   
   // console.log('Product',product)
   // console.log('HIIII');
@@ -221,7 +240,7 @@ const deleteCart = async (req,res)=>{
       res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Something went wrong !'})
     }
 
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Item removed from the Cart'})
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Item removed from the Cart',updatedCart})
 
   }catch(err){
     console.log('Error in deleteCart controller',err);
