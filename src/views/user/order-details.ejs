@@ -1,0 +1,73 @@
+<style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+   
+      .no-scrollbar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+      }
+      
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE + Edge */
+        scrollbar-width: none;     /* Firefox */
+      }
+      </style>
+    
+
+<div id="orderDetailsSection" class="animate-fade-in p-12 h-full overflow-y-auto no-scrollbar hidden">
+  <div class="max-w-5xl mx-auto">
+  <h1 class="text-4xl font-bold text-gray-900 mb-8">Order Details</h1>
+
+  <!-- ORDER ITEMS LIST -->
+  <div class="orderDetails space-y-6 mb-8">
+
+      
+     
+
+  <!-- ORDER META, SHIPPING, PAYMENT & SUMMARY -->
+  <div class="bg-white border-2 border-black rounded-3xl p-12 text-black">
+
+
+     
+
+  </div>
+</div>
+<!-- Return Modal -->
+<div id="return-cancelModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl border-2 border-black max-w-2xl w-full p-6">
+      <!-- Modal Header -->
+      <h2 class="text-2xl font-semibold text-center text-black mb-6">Write your Concern </h2>
+  
+      <!-- Textarea -->
+      <div class="mb-6">
+        <textarea
+          class="w-full h-40 p-4 border border-gray-300 rounded-2xl bg-gray-50 text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-50 resize-none"
+          placeholder="Enter Additional details........"
+        ></textarea>
+      </div>
+  
+      <!-- Action Buttons -->
+      <div onclick="closeModal()" class="flex gap-4 justify-center">
+        <button
+          type="button"
+          class="px-8 py-2 bg-white border-2 border-black rounded-full text-black font-medium hover:bg-gray-100 transition-colors"
+        >
+          Cancel
+        </button>
+        <button id="submitBtn"
+          type="submit" data-order-id=""
+          class="px-8 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+

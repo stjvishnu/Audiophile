@@ -54,7 +54,7 @@ const postSignUp = async (req, res) => {
       email,
     });
      if(userExist){
-      return res.send("user already exist");
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'User Already Exists'})
      } 
 
     //hash password
@@ -90,10 +90,12 @@ const postSignUp = async (req, res) => {
       .cookie("tempData", tempData, {
         httpOnly: true,
       })
-      .redirect("/user/send-otp");
-    //  res.render('user/login.ejs',{title:'login'})
+
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Otp sent successfully',redirect:'/user/send-otp'})
+
   } catch (err) {
     console.error("Error in user signup", err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Server Error, please try after sometime'})
   }
 };
 

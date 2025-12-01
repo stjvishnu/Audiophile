@@ -1,11 +1,23 @@
 
-document.addEventListener('DOMContentLoaded',()=>{
+
   const emailContainter = document.getElementById('email');
   const passwordContainer = document.getElementById('password');
 
-  emailContainter.addEventListener('blur',()=>{
 
+  /////
+  emailContainter.addEventListener('blur',()=>{
     const email = emailContainter.value.trim();
+    validateEmail(email)
+  })
+  passwordContainer.addEventListener('blur',()=>{
+    const password= passwordContainer.value.trim();
+    validatePassword(password)
+  })
+
+  function validateEmail(email){
+    let isValid=true;
+
+
     if(!email) {
       showError('email', "Email required");
       isValid = false;
@@ -22,43 +34,51 @@ document.addEventListener('DOMContentLoaded',()=>{
       showError('email', 'Invalid dots in email name');
       isValid = false;
   }
-  }) 
+  return isValid;
+  }
+  function validatePassword(password){
+    let isValid=true;
+
+    if(!password) {
+      showError('password', "Password is required");
+      isValid = false;
+  } else {
+      if(password !== password.trim()) {
+          showError("password", "Password cannot contain spaces");
+          isValid = false;
+      } else if(password.length < 8) {
+          showError("password", "Password must be at least 8 characters");
+          isValid = false;
+      } else if(password.length > 64) {
+          showError("password", "Password cannot exceed 64 characters");
+          isValid = false;
+      } else if(!/[A-Z]/.test(password)) {
+          showError("password", "Password must contain at least one uppercase letter (A-Z)");
+          isValid = false;
+      } else if(!/[a-z]/.test(password)) {
+          showError("password", "Password must contain at least one lowercase letter (a-z)");
+          isValid = false;
+      } else if(!/[0-9]/.test(password)) {
+          showError("password", "Password must contain at least one number (0-9)");
+          isValid = false;
+      } else if(!/[^a-zA-Z0-9]/.test(password)) {
+          showError("password", "Password must contain at least one special character (!@#$%^&*)");
+          isValid = false;
+      }
+
+  }
+  return isValid;
+  }
+
+  ////
 
   emailContainter.addEventListener('focus',()=>{
-    removeError('email')
+    removeError('email');
+  })
+  passwordContainer.addEventListener('focus',()=>{
+    removeError('password');
   })
 
-
-  passwordContainer.addEventListener('blur',()=>{
-    const password= passwordContainer.value.trim();
-    if(!password) {
-    showError('password', "Password is required");
-    isValid = false;
-} else {
-    if(password !== password.trim()) {
-        showError("password", "Password cannot contain spaces");
-        isValid = false;
-    } else if(password.length < 8) {
-        showError("password", "Password must be at least 8 characters");
-        isValid = false;
-    } else if(password.length > 64) {
-        showError("password", "Password cannot exceed 64 characters");
-        isValid = false;
-    } else if(!/[A-Z]/.test(password)) {
-        showError("password", "Password must contain at least one uppercase letter (A-Z)");
-        isValid = false;
-    } else if(!/[a-z]/.test(password)) {
-        showError("password", "Password must contain at least one lowercase letter (a-z)");
-        isValid = false;
-    } else if(!/[0-9]/.test(password)) {
-        showError("password", "Password must contain at least one number (0-9)");
-        isValid = false;
-    } else if(!/[^a-zA-Z0-9]/.test(password)) {
-        showError("password", "Password must contain at least one special character (!@#$%^&*)");
-        isValid = false;
-    }
-}
-})
 
   function showError(field_id, message) {
     
@@ -72,16 +92,30 @@ function removeError(errType){
 
 }
 
-})
+function validateFormOnSubmit(email, password) {
+  const emailValid = validateEmail(email);
+  const passwordValid = validatePassword(password);
+
+  return emailValid && passwordValid;
+}
+
 
 document.addEventListener('DOMContentLoaded',()=>{
   const form = document.getElementById('loginForm');
   form.addEventListener('submit',(e)=>{
     e.preventDefault();
     
+
+    //include above validation here through function
+
+    
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
-
+    let isValid = validateFormOnSubmit(email,password)
+    if(!isValid){
+      showToast('error','Recheck your input fields');
+      return
+    }
     axios.post('/user/login',{email:email,password:password})
     .then((response)=>{
       const message = response.data.customMessage;

@@ -18,13 +18,21 @@ const cartSchema = new mongoose.Schema({
       type:String,
       required:true
     },
+    category:{
+      type:String,
+      required:true
+    },
     quantity:{
       type:Number,
       required:true,
       min:1,
       default:1
     },
-    price:{
+    currentPrice:{
+      type:Number,
+      required:true,
+    },
+    totalPrice:{
       type:Number,
       required:true,
     }

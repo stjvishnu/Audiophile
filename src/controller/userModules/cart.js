@@ -1,6 +1,6 @@
 import Products from '../../models/productModel.js'
 import Cart from '../../models/cartModal.js'
-import Wishlist from "../../models/wishlist.js"
+import Wishlist from "../../models/wishlistModel.js"
 
 import jwt from "jsonwebtoken";
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
@@ -28,9 +28,9 @@ const getCart = async (req,res)=>{
 
 
 const postCart = async (req,res)=>{
-
+  console.log('Call recieved in postcart');
     try{
-      console.log('CGYVHJBKLJVGHJBKNFCGVHJBFCYGVHJKFCGHVJBNFCGHVJBFCGHVJB');
+      let count=0;
       const token = req.cookies.token;
       if(!token){
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
@@ -42,12 +42,16 @@ const postCart = async (req,res)=>{
       const { productId, quantity,variantId } = req.body; 
 
       let cart = await Cart.findOne({userId:userId}).populate('items.productId');
+
+       
       if(!cart){
         cart = new Cart({userId:userId,items:[]});
       }
 
-      const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1});
-
+      const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1}).populate('category')
+      console.log('product',product);
+      const category=product.category.name
+      console.log('category',category);
 
       if(!product){
         return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
@@ -57,9 +61,9 @@ const postCart = async (req,res)=>{
         await Cart.findOneAndUpdate({userId},{$pull:{'items':{productId:product._id}}},{new:true})
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is not available at the moment'})
       }
-      let price;
+      let currentPrice;
       let discount;
-       price= product.variants[0].attributes.price;
+       currentPrice= product.variants[0].attributes.price;
        discount = product.variants[0].attributes.discount;
 
 
@@ -70,11 +74,11 @@ const postCart = async (req,res)=>{
       
       if(existingItem){
 
-      
+        existingItem.category = category;
         const specificVariant = existingItem.productId.variants.find(
           v => v.sku === existingItem.variantId
         );
-         price=specificVariant.attributes.price;
+        currentPrice=specificVariant.attributes.price;
          discount=specificVariant.attributes.discount;
         let stock = specificVariant.attributes.stock;
 
@@ -90,29 +94,44 @@ const postCart = async (req,res)=>{
         
 
         existingItem.quantity+=quantity
-        existingItem.price=Math.round(existingItem.quantity*price*0.01*(100-discount));
+        existingItem.totalPrice=Math.round(existingItem.quantity*(currentPrice*0.01*(100-discount)));
       }else{
         cart.items.push({
        
           productId:productId,
           variantId:variantId,
+          category:category,
           quantity:quantity,
-          price:Math.round(quantity*price*0.01*(100-discount)),
+          currentPrice:Math.round(currentPrice*0.01*(100-discount)),
+          totalPrice:Math.round(quantity*(currentPrice*0.01*(100-discount))),
         
       })
       }
-
-     //remove item from the wishlist when a product is added to cart that already exists in the wishlist
-      await Wishlist.findOneAndUpdate({user:req.user},{$pull:{items:{variantId}}},{new:true})
+    //   const alreadyExistInWishList=await Wishlist.findOne({user:req.user,'items.variantId':variantId})
+    //   console.log('alreadyExistInWishList',alreadyExistInWishList);
+    //   if(alreadyExistInWishList){
+    //     console.log('Already listed');
+    //     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product exist in wishlis'})
+    //   }
+    //  //remove item from the wishlist when a product is added to cart that already exists in the wishlist
+    //   await Wishlist.findOneAndUpdate({user:req.user},{$pull:{items:{variantId}}},{new:true})
       await Products.updateOne({_id:productId,'variants.sku':variantId},{$set:{'variants.$.attributes.isWishlisted':false}})
 
 
       await cart.save();
 
-      const populatedCart = await Cart.findById(cart._id).populate('items.productId')
+      console.log('Current Price',currentPrice);
+     
+
+      const populatedCart = await Cart.findOne({userId:req.user}).populate('items.productId').lean()
+       
+      if(populatedCart && populatedCart.items.length){
+       count=populatedCart.items.length
+      }
+      console.log('count',count);
       console.log(populatedCart);
 
-      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:populatedCart}) 
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:populatedCart,cartCount:count}) 
 
     }catch(err){
       console.log('Error in post cart controller',err)
@@ -142,18 +161,12 @@ const updateQuanity = async (req,res)=>{
   const userId=decoded.userId; 
 
 
-  let cart = await Cart.findOne({userId:userId}).populate('items.productId');
-  //  console.log('Cart from update controller',cart);
-
-  //  console.log(cart);
-
- 
+  let cart = await Cart.findOne({userId:userId}).populate('items.productId')
 
   if(!cart){
     return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
   }
-//  console.log('Hello');
-  //Find the product in DB
+
   const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1});
   
 
@@ -162,18 +175,10 @@ const updateQuanity = async (req,res)=>{
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is unavailable'})
   }
   
-  
-  // console.log('Product',product)
-  // console.log('HIIII');
-  
-  
+
   if(!product){
     return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
   }
-
-  
-
-// console.log('Product from update controler',product);
 
 
 
@@ -187,6 +192,7 @@ const updateQuanity = async (req,res)=>{
     ite.variantId===variantId
   )
 
+  
 
   if(!item){
     return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
@@ -208,9 +214,13 @@ console.log('variantId',variantId);
   }
 
   item.quantity+=updateValue;
-  item.price = item.quantity* unitPrice;
+  
+  item.totalPrice = item.quantity* unitPrice;
+
+
 
   await cart.save();
+
 
   res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,updatedItem:item})
 
@@ -222,25 +232,32 @@ console.log('variantId',variantId);
 
 const deleteCart = async (req,res)=>{
   try{
-    console.log('Call at deletecart');
-    console.log(req.params);
+    // console.log('Call at deletecart');
+    // console.log(req.params);
     const variantId = req.params.id;
     const token = req.cookies.token;
+    let count=0;
     if(!token){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
     }
 
     const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
     const userId=decoded.userId;
-    console.log('variantId',variantId);
+    // console.log('variantId',variantId);
     const updatedCart= await Cart.findOneAndUpdate({userId},{$pull:{items:{variantId}}},{new:true})
-    console.log('updatedcart',updatedCart);
+    // console.log('updatedcart',updatedCart);
 
     if(!updatedCart){
       res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Something went wrong !'})
     }
-
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Item removed from the Cart',updatedCart})
+    const populatedCart = await Cart.findOne({userId:req.user}).populate('items.productId').lean()
+       
+      if(populatedCart && populatedCart.items.length){
+       count=populatedCart.items.length
+      }
+      console.log('count',count);
+      // console.log(populatedCart);
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Item removed from the Cart',updatedCart,cartCount:count})
 
   }catch(err){
     console.log('Error in deleteCart controller',err);

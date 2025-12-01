@@ -891,10 +891,11 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
         form.removeEventListener('submit', handleAddEditProduct);
         variantBtn.removeEventListener('click', variantHandlerEvent)
         console.log('yep',productId);
+        console.log(data)
         showToast('success',productId?'Product Edited Successfully':'Product Added Successfully');
-          // setTimeout(()=>{
-          //   window.location.reload()
-          // },2000)
+          setTimeout(()=>{
+            window.location.reload()
+          },2000)
       })
       .catch((err)=>{
         document.getElementById('loading').classList.add('hidden')

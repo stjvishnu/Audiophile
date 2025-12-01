@@ -6,6 +6,7 @@ import checkoutController from "./userModules/checkout.js"
 import profileController from "./userModules/profile.js"
 import wishlistController from "./userModules/wishlist.js"
 import addressController from "./userModules/address.js"
+import ordersController from "./userModules/orders.js"
 
 
 //testing
@@ -68,6 +69,10 @@ export const removeWishlist = wishlistController.removeWishlist;
 //checkout controller
 
 export const getCheckout = checkoutController.getCheckout;
+export const postPlaceOrderInCheckout = checkoutController.postPlaceOrderInCheckout;
+export const getOrderSuccess = checkoutController.getOrderSuccess;
+export const getOrderFailed = checkoutController.getOrderFailed;
+
 
 //profile controller
 
@@ -86,4 +91,11 @@ export const profileResentOtp = profileController.profileResentOtp;
  export const editAddress = addressController.editAddress;
  export const deleteAddress = addressController.deleteAddress;
  export const setDefaultAddress = addressController.setDefaultAddress;
+
+ //orders controller
+
+ export const getOrders = ordersController.getOrders;
+ export const cancelOrder = ordersController.cancelOrder;
+ export const returnOrder = ordersController.returnOrder;
+ export const downloadInvoice = ordersController.downloadInvoice;
 

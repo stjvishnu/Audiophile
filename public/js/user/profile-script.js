@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   
   }
   
+  const show = urlParams.get('show');
+  if(show==='orders'){
+    ordersBtn.click();
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
   
 })
 
@@ -214,7 +219,7 @@ function addNewAddress(newAddress){
  </button>
 </div>
  `
- addressContaner.append(addressCard)
+ addressContaner.appendChild(addressCard)
 }
 
 function updateAddress(updatedAddress,addressId){

@@ -7,13 +7,29 @@ function sweetAlert(type,title,message,cancel=true,confirm=false,timer=null){
     icon : type,
     showCancelButton: cancel,
     showConfirmButton: confirm,
-    confirmButtonColor : '#3085d6',
-    cancelButtonColor : '#d33',
+    confirmButtonColor : '#4ADE80',
+    cancelButtonColor : '#F87171',
     confirmButtonText: `Yes`,
-    background:'#1a1a1a',
-    color: "#fff",
+    background:'linear-gradient( to bottom,#FFFFFF 0%,#F2F2F2 40%,#e5e5e5 75%,#d4d4d4 100%)',
+    color: "#000000",
+    width:'500px',
     timer: timer,          // ⬅️ auto-close after X ms if provided
-    timerProgressBar: timer ? true : false
+    timerProgressBar: timer ? true : false,
+    didOpen: (popup) => {
+      popup.style.borderRadius = "35px";  // ⬅️ Rounded corners
+
+      const confirmBtn = Swal.getConfirmButton();
+      const cancelBtn = Swal.getCancelButton();
+
+      confirmBtn.style.width = "120px";
+      cancelBtn.style.width = "120px";
+
+      confirmBtn.style.textAlign = "center";
+      cancelBtn.style.textAlign = "center"
+
+
+      const actions = Swal.getActions();   // container of both buttons
+      actions.style.gap = "16px"; 
+    }
   })
 }
-

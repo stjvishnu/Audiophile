@@ -2,11 +2,11 @@ import  adminAuthentication from './adminModules/auth.js'
 import  dashboardController from './adminModules/dashboard.js'
 import  adminSplashController from './adminModules/adminSplash.js'
 
-
-//testing controllers
 import usersController from './adminModules/users.js'
 import categoryController from "./adminModules/category.js";
-import productController from "./adminModules/products.js"
+import productController from "./adminModules/products.js";
+import ordersController from "./adminModules/orders.js";
+
 
 
 //Auth controllers
@@ -49,3 +49,8 @@ export const restoreSoftDeleteProducts = productController.restoreSoftDeleteProd
 export const blockProducts = productController.blockProducts;
 export const unblockProducts = productController.unblockProducts;
 export const getCategory = productController.getCategory;
+
+//orders Controller
+
+export const getOrders = ordersController.getOrders;
+export const getOrderDetails = ordersController.getOrderDetails;

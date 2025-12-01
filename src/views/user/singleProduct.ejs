@@ -111,11 +111,11 @@
                     </div>
 
                     <div class="flex items-center justify-center flex-col sm:flex-row gap-4 pt-2 pb-8">
-                        <button id="addToCartBtn" data-product-id= "<%=product.id %>" data-variant-id="<%=product.variants[0].sku%>" class="bg-gray-800 hover:bg-black text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl ">
+                        <button data-product-id= "<%=product._id %>" data-variant-id="<%=product.variants[0].sku%>" class="addToCartBtn bg-gray-800 hover:bg-black text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl ">
                             <i class="fas fa-shopping-cart mr-3"></i> 
                             Add to Cart
                         </button>
-                        <button id="wishlistBtn" class="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300" data-variant-id="<%=product.variants[0].sku%>" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>"  onclick="handleWishlist('<%=product.id%>',this.dataset.variantId,this)">
+                        <button id="wishlistBtn" class="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300" data-variant-id="<%=product.variants[0].sku%>" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>"  onclick="handleWishlist('<%=product._id%>',this.dataset.variantId,this)">
                             <i class="fas fa-heart mr-2" style='color: <%= product.variants[0].attributes.isWishlisted? '#000000' : '#a3a5a8'  %>; '></i>
                            <p id="wishlist-text"><%= product.variants[0].attributes.isWishlisted? 'Wishlisted' : 'Wishlist'%> </p> 
                         </button>
@@ -180,7 +180,7 @@ function changeImage(imageUrl, thumbnailElement) {
 function updateVariantDetails(variant){
   
     const mainImage = document.getElementById('main-image');
-    const addToCartBtn=document.getElementById('addToCartBtn');
+    const addToCartBtn=document.querySelector('.addToCartBtn');
     const wishlistDiv = document.getElementById('wishlist-text');
    
     
@@ -306,7 +306,7 @@ function selectVariant(element, type) {
         console.log(product);
         const variant = product.variants;
         console.log(variant)
-        const addToCartBtn = document.getElementById('addToCartBtn')
+        const addToCartBtn = document.querySelector('.addToCartBtn')
         const wishlistBtn = document.getElementById('wishlistBtn')
         addToCartBtn.disabled=false;
         addToCartBtn.classList.remove('bg-gray-500')
@@ -317,11 +317,11 @@ function selectVariant(element, type) {
         updateVariantDetails(variant)
     })
     .catch((err)=>{
-        console.log('Error in selecting variant');
+        console.log('Error in selecting variant',err);
         const message = err.response.data.customMessage;
         const mic = err.response.data.mic
         if(message) showToast('error',message);
-        const addToCartBtn = document.getElementById('addToCartBtn')
+        const addToCartBtn = document.querySelector('.addToCartBtn')
         const wishlistBtn = document.getElementById('wishlistBtn')
         addToCartBtn.setAttribute('disabled',true)
         addToCartBtn.classList.add('bg-gray-500')

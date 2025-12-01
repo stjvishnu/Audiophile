@@ -1,0 +1,274 @@
+<div id="adminOrderDetailsSection" class=" animate-fade-in w-full p-12 overflow-y-auto min-h-screen">
+  <div class="space-y-8">
+  
+    <div class="border border-white/20 rounded-3xl p-8 bg-black">
+      <h2 class="text-white font-semibold mb-6 text-lg text-center">User Info</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-400 text-sm mb-1">Name</p>
+            <p class="text-white font-medium"><%=orders.userId.firstName%></p>
+          </div>
+
+          <div>
+            <p class="text-gray-400 text-sm mb-1">Email</p>
+            <p class="text-white font-medium break-all"><%=orders.userId.email  %></p>
+          </div>
+
+          <div>
+            <p class="text-gray-400 text-sm mb-1">Mobile No</p>
+            <p class="text-white font-medium"><%=orders.userId.mobile  %></p>
+          </div>
+
+          <div>
+            <p class="text-gray-400 text-sm mb-1">Member Since</p>
+            <p class="text-white font-medium"><%= new Date(orders.userId.createdAt).toLocaleDateString()%></p>
+          </div>
+        </div>
+
+        <div class="space-y-4 border-l border-white/10 pl-8">
+          <div>
+            <p class="text-gray-400 text-sm mb-1">Shipping Address</p>
+            <div class="text-white font-medium space-y-1">
+              <p><%=orders.shippingAddress.fullName%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.mobile%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.houseName%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.streetName%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.locality%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.landmark||''%></p>
+              <p class="text-gray-300"><%=orders.shippingAddress.city%>, <%=orders.shippingAddress.state%> - <%=orders.shippingAddress.pincode%></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center">
+      <div class="relative w-full max-w-2xl">
+        <div id="orderStatusContainer" class="flex items-center justify-between">
+          
+          <input type="" name="" id="currentStatus" value="<%=orders.orderStatus%>" class="hidden">
+          <!-- Processing -->
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
+              <button id="processing" onclick="changeStatus('<%=orders.id%>','processing')" class="w-6 h-6 <%=orders.orderStatus==='processing'||orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'  ? "bg-white":"bg-black" %>  rounded-full">
+                <%if(orders.orderStatus==='processing' || orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'  ){%>
+                  <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
+                  <%}%>
+                
+              </button>
+            </div>
+            <p class="text-white text-sm font-medium mt-3">Processing</p>
+          </div>
+
+          <div class="flex-1 mx-4 h-0.5 bg-white/30 relative top-[-20px]"></div>
+
+          <!-- Shipped -->
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
+              <button id="shipped" onclick="changeStatus('<%=orders.id%>','shipped')" class="w-6 h-6 <%=orders.orderStatus==='shipped'||orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' ? "bg-white":"bg-black" %> rounded-full">
+                <%if(orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+                  <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
+                  <%}%>
+              </button>
+            </div>
+            <p class="text-white text-sm font-medium mt-3">Shipped</p>
+          </div>
+
+          <div class="flex-1 mx-4 h-0.5 bg-white/30 relative top-[-20px]"></div>
+
+            <!-- out for delivery -->
+            <div class="flex flex-col items-center">
+              <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
+                <button id="outfordelivery" onclick="changeStatus('<%=orders.id%>','outfordelivery')" class="w-6 h-6 <%= orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'? "bg-white":"bg-black" %> rounded-full">
+                  <%if(orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+                    <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
+                    <%}%>
+                </button>
+              </div>
+              <p class="text-white text-sm font-medium mt-3">Out for delivery</p>
+            </div>
+  
+            <div class="flex-1 mx-4 h-0.5 bg-white/30 relative top-[-20px]"></div>        
+
+          <!-- Delivered -->
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
+              <button id="delivered" onclick="changeStatus('<%=orders.id%>','delivered')" class="w-6 h-6 <%=orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'? "bg-white":"bg-black" %>  rounded-full">
+                <%if(orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+                  <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
+                  <%}%>
+              </button>
+            </div>
+            <p class="text-white text-sm font-medium mt-3">Delivered</p>
+          </div>
+          
+          <div class="flex-1 mx-4 h-0.5 bg-white/30 relative top-[-20px]"></div> 
+
+          <% if(orders.orderStatus==='cancelled' || orders.orderStatus==='returned' ){ %>
+            <!-- cancelled or returend -->
+            <div class="flex flex-col items-center">
+               <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
+                 <button id="cancelledOrReturned" class="w-6 h-6 bg-white rounded-full">
+                    <% if(orders.orderStatus==='cancelled'){ %>
+                     <i class="fa-regular fa-circle-xmark fa-2xl" style="color: #de1b1b;"></i>
+                     <% } else if(orders.orderStatus==='returned'){%>
+                      <i class="fa-regular fa-rotate-left fa-2xl" style="color: #de1b1b;"></i>
+                     <% } %>
+                 </button>
+               </div>
+               <p class="text-white text-sm font-medium mt-3"><%=orders.orderStatus%></p>
+             </div>
+   
+              
+         <% } %>
+          
+        </div>
+
+        
+      </div>
+    </div>
+
+    
+
+    <div class="border border-white/20 rounded-3xl p-8 bg-black">
+      <h2 class="text-white font-semibold mb-8 text-lg text-center">Order Summary</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-white/20">
+              <th class="text-left text-white font-semibold py-4 px-4">Product Name</th>
+              <th class="text-center text-white font-semibold py-4 px-4">Qty</th>
+              <th class="text-right text-white font-semibold py-4 px-4">Price</th>
+              <th class="text-right text-cyan-400 font-semibold py-4 px-4">SubTotal</th>
+            </tr>
+          </thead>
+
+        <% if(orders && orders.items.length>0){%>
+
+          <% orders.items.forEach((order)=>{ %>
+
+            
+          <tbody>
+            <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+              <td class="py-6 px-4">
+                <div class="flex items-center gap-4">
+                  <img src="<%=order.productImage%>"
+                       class="w-14 h-14 rounded-2xl bg-white object-cover">
+                  <div>
+                    <p class="text-white font-medium"><%=order.productName%></p>
+                    <p class="text-gray-400 text-sm"><%=order.categoryName%></p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center text-white py-6 px-4">
+                <span class="bg-white/10 px-3 py-1 rounded-full text-sm"><%=order.quantity%></span>
+              </td>
+              <td class="text-right text-white py-6 px-4">₹<%=order.priceAtPurchase%></td>
+              <td class="text-right text-cyan-400 font-semibold py-6 px-4">₹<%=order.totalPrice%></td>
+            </tr>
+          </tbody>
+          <% }) %>
+          <%  } %>
+        </table>
+      </div>
+
+      <div class="border-t border-white/20 mt-8 pt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-gray-400 text-sm mb-1">Order ID</p>
+              <p class="text-white font-medium text-lg"><%=orders.orderNumber%></p>
+            </div>
+
+            <div>
+              <p class="text-gray-400 text-sm mb-1">Order Date</p>
+              <p class="text-white font-medium"><%=new Date(orders.createdAt).toLocaleDateString()%></p>
+            </div>
+
+            <div>
+              <p class="text-gray-400 text-sm mb-1">Status</p>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="inline-block w-3 h-3 rounded-full <%=orders.orderStatus==='cancelled'|| orders.orderStatus==='returned'?'bg-red-500' :'bg-green-500'%> "></span>
+                <p class="text-white font-medium capitalize"><%=orders.orderStatus%></p>
+              </div>
+            </div>
+            <% if(orders.reason){%>
+              <div>
+                <p class="text-gray-400 text-sm mb-1">Reason</p>
+                <div class="flex items-center  mt-1">
+                  <p class="text-white text-sm"><%=orders.reason%></p>
+                </div>
+              </div>
+            <% } %>
+           
+          </div>
+
+          <div class="space-y-4 border-l border-white/10 pl-8">
+            <div class="flex justify-between items-center">
+              <p class="text-gray-400">Subtotal</p>
+              <p class="text-white font-medium">₹<%=orders.subTotal%></p>
+            </div>
+            <div class="flex justify-between items-center">
+              <p class="text-gray-400">Discount</p>
+              <p class="text-white font-medium">₹<%=orders.discount%></p>
+            </div>
+            <div class="flex justify-between items-center">
+              <p class="text-gray-400">Delivery Fee</p>
+              <p class="text-white font-medium">₹40</p>
+            </div>
+            <div class="border-t border-white/20 pt-4 flex justify-between items-center">
+              <p class="text-white font-semibold text-lg">Total</p>
+              <p class="text-white font-bold text-2xl">₹<%=orders.total%></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-white/20">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <p class="text-gray-400 text-sm mb-2">Payment Method</p>
+            <p class="text-white font-medium"><%=orders.payment.method  %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm mb-2">Notes</p>
+            <p class="text-white font-medium">No special notes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4 justify-center pb-8">
+      <button onclick="printOrderDetails()" class="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all hover:scale-105">
+        Print Invoice
+      </button>
+      <button onclick="closeAdminOrderDetails()" class="bg-white/10 text-white px-8 py-3 rounded-full font-semibold border border-white/20 hover:bg-white/20 transition-all hover:scale-105">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+</style>
+
+<script src="/js/admin/orderDetailsScript.js"></script>
+ <script>
+function closeAdminOrderDetails() {
+  window.location.href="/admin/orders"
+}
+function printOrderDetails() {
+  window.print();
+}
+</script> 

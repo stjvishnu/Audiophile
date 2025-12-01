@@ -7,7 +7,13 @@ const mainProfileName = document.getElementById('mainProfileName');
 const mainProfileImg = document.getElementById('mainProfileImg');
 const loginUserEmail = document.getElementById('loginUserEmail')
 
-
+const googleAuthUser = document.getElementById('googleAuthUser').value;
+if(googleAuthUser){
+  const emailInput  = myProfileEditModal.querySelector('#email');
+  emailInput.disabled=true;
+  const changePasswordDiv  = myProfileEditModal.querySelector('#changePassword')
+  changePasswordDiv.classList.add('pointer-events: none')
+}
 const changePassword = document.getElementById('changePassword');
 changePassword.addEventListener('click',()=>{
   
@@ -16,11 +22,19 @@ changePassword.addEventListener('click',()=>{
 })
 
 
+
+
 profileForm.addEventListener('submit',(e)=>{
   e.preventDefault();
+
+  document.getElementById('loader').classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
+
   const validation=validationCheckBeforeSubmit()
   if(!validation){
     showToast('error','Recheck your inputs before saving')
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
     return
   }
   
@@ -52,11 +66,10 @@ profileForm.addEventListener('submit',(e)=>{
   }
 
 
-  const imageFile = myProfileEditModal.querySelector('#profileImageInput').files[0]
- 
   
-  if(imageFile){
-    formData.append('profileImg',imageFile)
+  
+  if(croppedImgBlob){
+    formData.append('profileImg',croppedImgBlob)
   }
   // console.log(imageFile);
   console.log('Form Data',Object.fromEntries(formData.entries()));
@@ -71,11 +84,15 @@ profileForm.addEventListener('submit',(e)=>{
     })
     .then((response)=>{
       document.getElementById('profileForm').reset();
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       window.location.href = response.data.redirectUrl;    
     })
     .catch((err)=>{
       console.log('Error in updating email',err);
       const message = err.response.data.customMessage || 'Something went wrong!';
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       showToast('error',message)
     })
     }else{
@@ -104,6 +121,8 @@ profileForm.addEventListener('submit',(e)=>{
 
 ;
       document.body.style.position = '';
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       showToast('success',response.data.customMessage)
   
     })
@@ -113,7 +132,8 @@ profileForm.addEventListener('submit',(e)=>{
       console.log(err);
       const message = err.response?.data?.customMessage || 'Something went wrong!';
       showToast('error',message)
-      document.body.style.position = '';
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
     })
     }
 

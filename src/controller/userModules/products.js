@@ -1,6 +1,7 @@
 
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js"
+import Wishlist from "../../models/wishlistModel.js"
 import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 
 
@@ -48,8 +49,29 @@ const allProducts = async (req, res) => {
         }else{
           sortOption={createdAt:-1}
         }
-        const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption);
-        res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages });
+        
+        const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption).lean();
+        if(req.user){
+          const wishlist = await Wishlist.findOne({userId:req.user}).lean();
+        
+        console.log("wishlist",wishlist);
+        // console.log('products',products)
+
+        const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
+        console.log('wishlistedvariants',wishlistedVariants);
+
+
+        products.forEach((product)=>{
+         const isProductWishlisted= product.variants.some(variant=>{
+            return wishlistedVariants.has(variant.sku)
+          });
+          product.isWishlisted=isProductWishlisted;
+        });
+        }
+        
+
+ 
+        res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages});
       } catch (err) {
         console.error(err);
         res.send("Error occured");
@@ -81,10 +103,15 @@ const singleProduct = async (req,res)=>{
   console.log(req.query);
  const {productId,variantId} = req.query;
   
- const product = await Product.findOne({_id:productId,[`variants.sku`]:variantId},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{sku:variantId}}})
+
+ const product = await Product.findOne({_id:productId,[`variants.sku`]:variantId},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{sku:variantId}}}).lean()
   console.log(product);
 
+  const wishlist = await Wishlist.findOne({userId:req.user}).lean();
+  const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
+
   if(product){
+    product.variants[0].attributes.isWishlisted= wishlistedVariants.has(product.variants[0].sku)
     res.render('user/singleProduct.ejs',{product})
   }
  
@@ -93,7 +120,14 @@ const singleProduct = async (req,res)=>{
 const productPage = async (req,res)=>{
   const productId= req.params.id;
   const product=await Product.findById(productId);
+  const wishlist = await Wishlist.findOne({userId:req.user}).lean();
+  const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
   if(product){
+    console.log(product);
+    product.variants.forEach(variant=>{
+      variant.attributes.isWishlisted= wishlistedVariants.has(variant.sku)
+    });
+    console.log('After edit',product);
     res.render('user/singleProduct.ejs',{product})
   }
 }
@@ -110,13 +144,19 @@ const variantProduct = async (req,res)=>{
   console.log('mic after conversion',  value);
   console.log('type fdasddf',type);
   try{
-    const product = await Product.findOne({_id:productId,[`variants.attributes.${type}`]:value},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{[`attributes.${type}`]:value}}})
+    const product = await Product.findOne({_id:productId,[`variants.attributes.${type}`]:value},{name:1,brand:1,description1:1,description2:1,productDetails:1,variants:{$elemMatch:{[`attributes.${type}`]:value}}}).lean()
+    
 
     if(!product){
      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'No Product Avilable In Selected Variant',mic:value})
     }
   console.log('setting mic',product);
   console.log('product from variantProduct',product);
+  const wishlist = await Wishlist.findOne({userId:req.user}).lean();
+  const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
+    product.variants[0].attributes.isWishlisted= wishlistedVariants.has(product.variants[0].sku)
+    console.log('npkkattu',product.variants[0].attributes.isWishlisted);
+  console.log('hello',product.variants[0].attributes);
   res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,product:product})
   }catch(err){
     console.log('Error in VariantProduct',err);

@@ -5,6 +5,7 @@ import cartRoute from "./cartRouter.js"
 import checkoutRoute from "./checkoutRouter.js"
 import profileRoute from "./profileRouter.js"
 import wishlistRoute from "./wishlistRouter.js"
+import ordersRoute from "./ordersRouter.js"
 import usermiddleware from "../../middlewares/usermiddleware.js";
 
 const router = express.Router();
@@ -15,7 +16,7 @@ router.use('/cart',usermiddleware.restrcitedLogin,cartRoute)
 router.use('/wishlist',usermiddleware.restrcitedLogin,wishlistRoute)
 router.use('/checkout',usermiddleware.restrcitedLogin,checkoutRoute)
 router.use('/profile',usermiddleware.restrcitedLogin,profileRoute)
-
+router.use('/orders',usermiddleware.restrcitedLogin,ordersRoute)
 
 
 export default router

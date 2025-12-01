@@ -1,11 +1,13 @@
 
  async function handleWishlist(productId,variantId,element){
-  console.log('Variant id from wishlist',variantId);
-  let wishlistIcon=element.querySelector('.fa-heart');
-  const isWishlisted=element.dataset.iswishlisted==='true'
-  console.log(isWishlisted);
   
+  console.log('Call inside handle wishlsit');
+  console.log('Variant id from wishlist',variantId);
+  const wishListCountContainer= document.getElementById('wishListCountContainer');
+  let wishlistIcon=element.querySelector('.fa-heart');
+  const isWishlisted=element.dataset.iswishlisted==='true'  
   try{
+    
   
   if(isWishlisted){
    const response= await axios.delete('/user/wishlist',{
@@ -13,8 +15,19 @@
   });
    const message = response.data.customMessage;
    if(message){
-      showToast('success',message)
+    const wishlistCount = Number(response.data.wishlistCount);
+    console.log('WishList count',wishlistCount);
+    wishListCountContainer.innerText=wishlistCount;
+      showToast('success',message);
+      if(response.data.wishlistCount=='0'){
+        wishListCountContainer.classList.add('opacity-50')
+      }
     }
+    console.log(element.dataset)
+   const isInWishlistPage = element.dataset.inwhichpage
+   if(isInWishlistPage==='wishlist'){
+    element.closest('.wishlist-card').remove()
+   }
     wishlistIcon.style.color='#a3a5a8'
     element.dataset.iswishlisted='false'
     const wishlistTextDiv=element.querySelector('#wishlist-text')
@@ -26,7 +39,11 @@
   console.log(response);
   const message = response.data.customMessage;
    if(message){
-      showToast('success',message)
+    const wishlistCount = Number(response.data.wishlistCount);
+    console.log('WishList count',wishlistCount);
+    wishListCountContainer.innerText=wishlistCount;
+      showToast('success',message);
+      wishListCountContainer.classList.remove('opacity-50')
     }
     wishlistIcon.style.color='#000000'
     element.dataset.iswishlisted='true'

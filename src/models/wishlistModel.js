@@ -15,7 +15,11 @@ const wishlistSchema = new mongoose.Schema({
     variantId:{
       type:String,
       required:true
-    }
+    },
+    isWishlisted:{
+      type:Boolean,
+      default:false
+    },
     
   }],
 },{timestamps:true})

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Counter from '../models/counterModal.js'
 
 const orderSchema =  new mongoose.Schema({
   userId:{
@@ -16,8 +17,13 @@ const orderSchema =  new mongoose.Schema({
       type:String,
       required:true
     },
+    categoryName:{
+      type:String,
+      required:true
+    },
     productName:String,
     productImage:String,
+    productColor:String,
     sku:String,
     priceAtPurchase:Number,
     quantity:Number,
@@ -47,16 +53,41 @@ payment:{
     default:'pending'
   }
 },
+orderNumber:{
+  type:String,
+  unique:true
+},
 orderStatus:{
   type:String,
-  enum:['processing','shipped','delivered','cancelled','returned'],
+  enum:['processing','shipped','out for delivery','delivered','cancelled','returned'],
   default:'processing'
+},
+reason:{
+  type:String,
+  default:null
 },
 subTotal:Number,
 discount:Number,
-Total:Number,
+total:Number,
 
 },
 {timestamps:true});
 
+// Pre-save middleware
+orderSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: 'orderId' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    );
+
+    this.orderNumber = `AID-${counter.seq}`;
+  }
+
+  next();
+});
+
 const order = mongoose.model('order',orderSchema)
+
+ export default order

@@ -86,8 +86,8 @@
                     <a href="/user/wishlist" class="text-gray-700 hover:text-black transition-colors p-1">
                         <i class="far fa-heart text-xl group-hover:scale-110 transition-transform duration-200"></i>
                         <% if (locals.wishlistCount !==undefined) { %>
-                            <span
-                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 <%= wishlistCount === 0 ? 'opacity-50' : '' %>">
+                            <span id="wishListCountContainer"
+                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200  <%= wishlistCount === 0 ? 'opacity-50' : '' %>">
                                 <%= wishlistCount %>
                             </span>
                             <% } %>
@@ -99,12 +99,12 @@
                     <btn id="cartBtn"  class="text-gray-700 hover:text-black transition-colors p-1">
                         <i
                             class="fas fa-shopping-cart text-xl group-hover:scale-110 transition-transform duration-200"></i>
-                       <!--₹ <% if (locals.cartCount !==undefined) { %> 
-                            <span
+                        <% if (locals.cartCount !==undefined) { %> 
+                            <span id="cartCountContainer"
                                 class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 <%= cartCount === 0 ? 'opacity-50' : '' %>">
                                 <%= cartCount %>
                             </span>
-                            <% } %> -->
+                            <% } %> 
                             
                             
                         </btn>
@@ -256,6 +256,10 @@
 <script>
     document.getElementById('cartBtn').addEventListener('click', async () => {
       console.log('Cart Btn clicked');
+
+      document.getElementById('loader').classList.remove('hidden')
+      document.body.style.overflow = 'hidden';
+
     
       const productContainer = document.getElementById('productContainer');
       const cartModal = document.getElementById('cartModal');
@@ -268,6 +272,8 @@
         if (!cart || !cart.items.length) {
           productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
           console.log('HIHIH');
+          document.getElementById('loader').classList.add('hidden')
+          document.body.style.overflow = '';
           document.getElementById('cartModal').classList.remove('hidden')
             return
         }
@@ -314,6 +320,7 @@
             </h3>
             <p id='productPrice' class="ml-4">${price} ₹</p>
           </div>
+          <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
           <p class="mt-1 text-sm text-gray-500">${color}</p>
         </div>
         <div class="flex flex-1 items-end justify-between text-sm">
@@ -374,13 +381,15 @@
           const updatedItem = response.data.updatedItem;
 
             targetInput.value=updatedItem.quantity;
-            productPrice.textContent=`${updatedItem.price} ₹`;
+            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
             updateSubTotal()
           
         })
         .catch((err)=>{
           if(err.response.data.customMessage){
             showToast('warning',err.response.data.customMessage)
+            document.getElementById('loader').classList.add('hidden')
+            document.body.style.overflow = '';
           }
           console.log('Error in decreasing the quantity',err)
         })
@@ -407,13 +416,15 @@
           .then((response)=>{
             const updatedItem = response.data.updatedItem;
             targetInput.value=updatedItem.quantity
-            productPrice.textContent=`${updatedItem.price} ₹`;
+            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
             updateSubTotal()
             
           })
           .catch((err)=>{
             if(err.response.data.customMessage){
               showToast('warning',err.response.data.customMessage)
+              document.getElementById('loader').classList.add('hidden')
+              document.body.style.overflow = '';
             }
             console.log(err)
             })
@@ -431,6 +442,12 @@
             console.log('Updated Cart',updatedCart);
             if(message){
             showToast('success',message)
+            const cartCount = Number(response.data.cartCount);
+              console.log('CartCount',cartCount);
+              cartCountContainer.innerText=cartCount;
+              if(response.data.cartCount=='0'){
+                cartCountContainer.classList.add('opacity-50')
+              }
             }
             
             updateSubTotal()
@@ -439,6 +456,8 @@
             if(!(!!updatedCart) || updatedCart.items.length===0){
                 console.log('hijkgky');
              productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+             document.getElementById('loader').classList.add('hidden')
+             document.body.style.overflow = '';
             }
             
           })
@@ -446,25 +465,36 @@
             const message = err.response.data.customMessage;
             showToast('warning',message);
             console.log('Error in deleting Item from the cart',err);
+            document.getElementById('loader').classList.add('hidden')
+            document.body.style.overflow = '';
           })
       })
 
       
+          document.getElementById('loader').classList.add('hidden')
+          document.body.style.overflow = '';
 
           document.getElementById('cartModal').classList.remove('hidden')
         });
     
       } catch (err) {
-        
+        document.getElementById('loader').classList.add('hidden')
+         document.body.style.overflow = '';
+
             const cart = err.response.data.cart;
             
            if (!cart || !cart.items.length) {
           productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+          document.getElementById('loader').classList.add('hidden')
+          document.body.style.overflow = '';
+
           document.getElementById('cartModal').classList.remove('hidden')
           return;
         }
         console.error('Error in fetching cart:', err);
         productContainer.innerHTML = `<p class="text-center text-red-500">Failed to load cart. Please try again.</p>`;
+        document.getElementById('loader').classList.add('hidden')
+        document.body.style.overflow = '';
         document.getElementById('cartModal').classList.remove('hidden')
       }
     });
@@ -475,7 +505,7 @@
         const cart = response.data.cart;
         let subTotal=0
          cart.items.forEach((item)=>{
-          subTotal+=item.price
+          subTotal+=item.totalPrice
         })
         console.log('From updatesubtotal',subTotal);
         document.getElementById('subTotal').textContent=(subTotal ?`${parseInt(subTotal)} ₹` : `0 ₹`);

@@ -49,6 +49,8 @@ app.use(passport.initialize());
 
 app.use(usermiddleware.setName)
 app.use(usermiddleware.setCategories)
+app.use(usermiddleware.wishListCount)
+app.use(usermiddleware.cartCount)
 
 
 //Views settings

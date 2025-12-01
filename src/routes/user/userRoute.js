@@ -16,8 +16,8 @@ import upload from '../../utils/multer.js';
 
 router.get('/',usermiddleware.isLogin,userController.getUserHome)
 
-router.get('/SignUp',userController.getSignUp)
-router.post('/SignUp',userController.postSignUp);
+router.get('/signup',userController.getSignUp)
+router.post('/signup',userController.postSignUp);
 
 router.get('/login',usermiddleware.authLogin,userController.getLogin);
 router.post('/login',usermiddleware.blockedUser,userController.postLogin);

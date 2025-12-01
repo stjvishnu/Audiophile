@@ -1,0 +1,79 @@
+<style>
+  @keyframes logo-pulse-beat {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.08); filter: brightness(1.2); }
+  }
+
+  @keyframes wave-left {
+    0% { transform: translateX(-60px) scaleY(0.3); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  @keyframes wave-right {
+    0% { transform: translateX(60px) scaleY(0.3); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  @keyframes wave-left-alt {
+    0% { transform: translateX(-80px) scaleY(0.2); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  @keyframes wave-right-alt {
+    0% { transform: translateX(80px) scaleY(0.2); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  @keyframes subtle-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 0px rgba(255, 255, 255, 0.3)); }
+    50% { filter: brightness(1.15) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5)); }
+  }
+
+  @keyframes wave-thick {
+    0% { transform: translateX(-100px) scaleY(0.1); opacity: 0; }
+    40% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  @keyframes wave-thick-right {
+    0% { transform: translateX(100px) scaleY(0.1); opacity: 0; }
+    40% { opacity: 1; }
+    100% { transform: translateX(0) scaleY(1); opacity: 0; }
+  }
+
+  .loader-container {
+    min-height: 400px;
+  }
+
+  </style>
+
+<div id="loader" class="bg-black/50 rounded-lg p-8 fixed inset-0 z-50 flex items-center justify-center loader-container hidden">
+  <div class="relative w-72 h-44 flex items-center justify-center">
+    <div class="absolute left-0 top-1/2 -translate-y-1/2 flex gap-1.5">
+      <div class="w-2.5 h-12 bg-white/70 rounded-full" style="animation: wave-left 1.8s ease-in-out infinite;"></div>
+      <div class="w-2.5 h-16 bg-white/60 rounded-full" style="animation: wave-left 1.8s ease-in-out infinite 0.2s;"></div>
+      <div class="w-2.5 h-20 bg-white/50 rounded-full" style="animation: wave-left 1.8s ease-in-out infinite 0.4s;"></div>
+      <div class="w-2.5 h-24 bg-white/40 rounded-full" style="animation: wave-left 1.8s ease-in-out infinite 0.6s;"></div>
+    </div>
+
+    <div class="relative z-10">
+      <img src="/images/white-logo.svg" alt="Loading" class="w-44 h-44 object-contain invert opacity-50" style="animation: glow-pulse 1.8s ease-in-out infinite;">
+    </div>
+
+    <div class="absolute right-0 top-1/2 -translate-y-1/2 flex gap-1.5 flex-row-reverse">
+      <div class="w-2.5 h-12 bg-white/70 rounded-full" style="animation: wave-right 1.8s ease-in-out infinite;"></div>
+      <div class="w-2.5 h-16 bg-white/60 rounded-full" style="animation: wave-right 1.8s ease-in-out infinite 0.2s;"></div>
+      <div class="w-2.5 h-20 bg-white/50 rounded-full" style="animation: wave-right 1.8s ease-in-out infinite 0.4s;"></div>
+      <div class="w-2.5 h-24 bg-white/40 rounded-full" style="animation: wave-right 1.8s ease-in-out infinite 0.6s;"></div>
+    </div>
+  </div>
+</div>

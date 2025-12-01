@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded',()=>{
          */
 
         function renderSearchProducts(products){
+          console.log('product from search',products)
           const searchResultContainer=document.getElementById('searchResult');
           const searchInput=document.getElementById('searchInput');
           const query=searchInput.value.trim();
@@ -102,7 +103,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
           document.addEventListener('click',(e)=>{
             if(!searchInput.contains(e.target) && !searchResultContainer.contains(e.target)){
-                searchResultContainer.classList.add('hidden')
+                searchResultContainer.classList.add('hidden');
+                search.value='';
             }
           })
 

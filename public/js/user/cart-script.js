@@ -1,7 +1,9 @@
 
 const cartmodal=document.getElementById('cartModal');
+const cartCountContainer = document.getElementById('cartCountContainer')
 const cancelBtn = document.getElementById('cancelBtn');
-const addToCartBtn= document.getElementById('addToCartBtn')
+const addToCartBtn= document.querySelectorAll('.addToCartBtn')
+console.log('Addtocartbrtn',addToCartBtn);
 const productContainer = document.getElementById('productContainer')
 let quantity;
 
@@ -9,9 +11,16 @@ cancelBtn.addEventListener('click',()=>{
   document.getElementById('cartModal').classList.add('hidden')
 })
 
-addToCartBtn?.addEventListener('click',(e)=>{
-  console.log('Cll reciebegvvvhjtgyhjklm.mkjhmvg');
+addToCartBtn?.forEach((btn)=>{
+
+btn.addEventListener('click',(e)=>{
+  console.log('Call recieved in add to cart btn inside cart script');
   e.preventDefault();
+
+  //enabling loader
+  document.getElementById('loader').classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
+
   console.log('letsssss btn',e.currentTarget);
   const productId = e.currentTarget.dataset.productId;
   const variantId = e.currentTarget.dataset.variantId;
@@ -28,6 +37,12 @@ addToCartBtn?.addEventListener('click',(e)=>{
     const cart=response.data.cart;
     if(cart){
       showToast('success','Product Added To Cart Successfully')
+      console.log('CartCantainercpunt',cartCountContainer);
+      const cartCount = Number(response.data.cartCount);
+      console.log(cartCount);
+      cartCountContainer.innerText=cartCount; 
+        cartCountContainer.classList.remove('opacity-50')
+      
     }
     console.log('Product',cart);
     productContainer.innerHTML='';
@@ -59,8 +74,9 @@ addToCartBtn?.addEventListener('click',(e)=>{
             <h3>
               <a href="#">${item.productId.name}</a>
             </h3>
-            <p id='productPrice' class="ml-4">${price} ₹</p>
+            <p id='productPrice' class="ml-1">${price} ₹</p>
           </div>
+          <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
           <p class="mt-1 text-sm text-gray-500">${color}</p>
         </div>
         <div class="flex flex-1 items-end justify-between text-sm">
@@ -119,7 +135,7 @@ addToCartBtn?.addEventListener('click',(e)=>{
         .then((response)=>{
           const updatedItem = response.data.updatedItem;
             targetInput.value=updatedItem.quantity;
-            productPrice.textContent=`${updatedItem.price} ₹`;
+            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
             updateSubTotal()
           
         })
@@ -140,7 +156,7 @@ addToCartBtn?.addEventListener('click',(e)=>{
     })
 
       incrementButton.addEventListener('click',()=>{
-        // console.log(incrementButton);
+        console.log(incrementButton);
         const targetInput=productDiv.querySelector('#counter-input');
         const productPrice=productDiv.querySelector('#productPrice');
         const productId = incrementButton.dataset.productId;
@@ -157,8 +173,9 @@ addToCartBtn?.addEventListener('click',(e)=>{
           })
           .then((response)=>{
             const updatedItem = response.data.updatedItem;
+            console.log('updatedItem',updatedItem);
             targetInput.value=updatedItem.quantity
-            productPrice.textContent=`${updatedItem.price} ₹`;
+            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
             updateSubTotal()
             
           })
@@ -182,8 +199,17 @@ addToCartBtn?.addEventListener('click',(e)=>{
           axios.delete(`/user/cart/${variantId}`)
           .then((response)=>{
             const message = response.data.customMessage;
+            console.log('HI its ro48',response);
             if(message){
+              
+              const cartCount = Number(response.data.cartCount);
+              console.log('CartCount',cartCount);
+              cartCountContainer.innerText=cartCount;
+              if(response.data.cartCount=='0'){
+                cartCountContainer.classList.add('opacity-50')
+              }
               showToast('success',message)
+              
             }
             productDiv.remove();
             updateSubTotal()
@@ -207,7 +233,7 @@ addToCartBtn?.addEventListener('click',(e)=>{
         const cart = response.data.cart;
         let subTotal=0
          cart.items.forEach((item)=>{
-          subTotal+=item.price
+          subTotal+=item.totalPrice
         })
         console.log('From updatesubtotal',subTotal);
         document.getElementById('subTotal').textContent=(subTotal ?`${parseInt(subTotal)} ₹` : `0 ₹`);
@@ -215,7 +241,11 @@ addToCartBtn?.addEventListener('click',(e)=>{
       }
       
     })
-  
+
+    //disabling loader
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
+
     document.getElementById('cartModal').classList.remove('hidden')
 
   
@@ -223,11 +253,15 @@ addToCartBtn?.addEventListener('click',(e)=>{
   })
   .catch(err=>{
     console.log('Error in Cart',err)
-    const message=err.response.data.customMessage;
+    const message=err.response.data.customMessage || 'Some thing Went Wrong';
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
     showToast('warning',message)
   })
 
   
+})
+
 })
 
 

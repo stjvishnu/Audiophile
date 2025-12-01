@@ -1,6 +1,6 @@
 import User from '../../models/userModel.js'
 import Address from '../../models/addressModel.js'
- 
+import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
 import bcrypt from "bcrypt";
 import otpHelper from "../../utils/otp-helper.js";
 import emailSender from "../../utils/emailSender.js";
@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 
 const getProfile = async (req,res)=>{ 
   console.log(req.user)
-  console.log(res.locals.user.name);
+  
 
   try{
     if(!req.user){
@@ -17,7 +17,12 @@ const getProfile = async (req,res)=>{
     }
     const addresses = await Address.find({userId:req.user})
     const user=await User.findById(req.user);
-    res.render('user/profile',{user,addresses})
+    console.log('user',user);
+    let googleAuthUser=null;
+    if(user.googleID){
+       googleAuthUser=true;
+    }
+    res.render('user/profile',{user,addresses,googleAuthUser})
   }catch(err){
     console.log('Error in get profile controller',err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR})
@@ -49,6 +54,11 @@ console.log('Call inside postProfil controller');
 
       if (!isPasswordMatch) {
         return res.status(400).json({ message: RESPONSE_MESSAGES.BAD_REQUEST, customMessage: 'Incorrect current password' });
+      }
+
+      if(currentPassword===newPassword){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.BAD_REQUEST, customMessage: 'Current password and New password can"t be the same' });
+
       }
 
       if (newPassword !== confirmPassword) {
@@ -102,6 +112,10 @@ const postRequestEmailChange = async (req,res)=>{
   
         if (!isPasswordMatch) {
           return res.status(400).json({ message: RESPONSE_MESSAGES.BAD_REQUEST, customMessage: 'Incorrect current password' });
+        }
+
+        if (profileInformation.currentPassword === profileInformation.newPassword) {
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.BAD_REQUEST, customMessage: 'Current password and New password can"t be the same' });
         }
   
         if (profileInformation.newPassword !== profileInformation.confirmPassword) {

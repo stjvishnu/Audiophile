@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 import Category from "../models/categoryModel.js";
+import Cart from "../models/cartModal.js"
 import Users from "../models/userModel.js"
+import Wishlist from '../models/wishlistModel.js'
+import {HTTP_STATUS,RESPONSE_MESSAGES} from '../utils/constants.js'
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -223,13 +226,15 @@ const setName = (req, res, next) => {
   if(token){
     try{
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.user=decoded.userId;
     let firstName = decoded.firstName;//extracts user name
     res.locals.user = {
       firstName,
     };
     return next();
     }catch(err){
-      console.log('Access Token Invalid',err.message)
+      // console.log('Access Token Invalid',err.message)
+      //there is a correction here
     }
   }
   if(refreshToken){
@@ -326,9 +331,65 @@ const blockedUser = async (req,res,next)=>{
   }
 }
 
+const wishListCount = async (req,res,next)=>{
+  try {
+    let count=0;
+    if(req.user){
+      
+      const wishlist = await Wishlist.findOne({user:req.user},'items')
+      if(wishlist && wishlist.items){
+        count=wishlist.items.length;
+      }
+    }
+    res.locals.wishlistCount=count
+    return next()
+  } catch (error) {
+    return next()
+  }
+}
+
+const cartCount = async (req,res,next)=>{
+  try {
+    let count=0;
+    if(req.user){
+      
+     const cart = await Cart.findOne({userId:req.user},'items');
+     if(cart && cart.items.length){
+      count=cart.items.length
+     }
+    }
+    res.locals.cartCount=count;
+    return next()
+  } catch (error) {
+    return next()
+  }
+}
 
 
+//will do aon 10th week one main middleware
+// const loadUserAuth =  async (req,res,next)=>{
+//   try{
+//     const token = req.cookies.token;
+//     const refreshToken = req.cookies.refreshToken;
 
+//   } catch(error){
+
+//   }
+// }
+
+
+// const validateCAart = async (req,res,next)=>{
+//   try {
+//     const cart = await Cart.findOne({userId:req.user}).populate('productId')
+//     cart.items.forEach((item)=>{
+//       if(!item.productId.isActive || item.productId.isDeleted){
+//         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:"Product is not available"})
+//       }
+//     })
+//   } catch (error) {
+//     console.log('error in validatecart middleware',error);
+//   }
+// }
 
 
 
@@ -338,5 +399,7 @@ export default {
   restrcitedLogin,
   setCategories,
   setName,
-  blockedUser
+  blockedUser,
+  wishListCount,
+  cartCount,
 };
