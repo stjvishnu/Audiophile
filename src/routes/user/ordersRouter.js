@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post('/cancel',ordersController.cancelOrder)
 router.post('/return',ordersController.returnOrder)
+router.patch('/return-item/:itemId',ordersController.returnSingleItem)
 router.get('/download-invoice/:orderId',ordersController.downloadInvoice)
 
 export default router

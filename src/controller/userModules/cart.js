@@ -1,6 +1,9 @@
 import Products from '../../models/productModel.js'
 import Cart from '../../models/cartModal.js'
 import Wishlist from "../../models/wishlistModel.js"
+import calculateCart from '../../utils/cartCalculator.js'
+import Address from '../../models/addressModel.js';
+
 
 import jwt from "jsonwebtoken";
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
@@ -8,18 +11,17 @@ import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
 const getCart = async (req,res)=>{
   console.log('Call Recieved at getCart controller');
   try{
-    const token = req.cookies.token;
-      if(!token){
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
-      }
 
-      const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-      const userId=decoded.userId;
-      let cart = await Cart.findOne({userId:userId}).populate('items.productId');
-      if(!cart){
-        return  res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND,cart})
+      if(!req.user){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Please login !'})
       }
-      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart})
+      let cart = await Cart.findOne({userId:req.user}).populate('items.productId');
+      if(!cart){
+        return  res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
+      }
+      console.log('cart before calculatecart',cart);
+      const calculatedCart = await calculateCart(cart);
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:calculatedCart})
 
   }catch(err){
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
@@ -30,35 +32,33 @@ const getCart = async (req,res)=>{
 const postCart = async (req,res)=>{
   console.log('Call recieved in postcart');
     try{
-      let count=0;
-      const token = req.cookies.token;
-      if(!token){
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
+      
+      if(!req.user){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Please login !'})
       }
 
-      const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-      const userId=decoded.userId;
+   
       console.log(req.body);
       const { productId, quantity,variantId } = req.body; 
 
-      let cart = await Cart.findOne({userId:userId}).populate('items.productId');
+      let cart = await Cart.findOne({userId:req.user}).populate('items.productId');
 
        
       if(!cart){
-        cart = new Cart({userId:userId,items:[]});
+        cart = new Cart({userId:req.user,items:[]});
       }
 
       const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1}).populate('category')
-      console.log('product',product);
+
       const category=product.category.name
-      console.log('category',category);
+     
 
       if(!product){
         return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
       }
 
       if(!product.isActive || product.isDeleted){
-        await Cart.findOneAndUpdate({userId},{$pull:{'items':{productId:product._id}}},{new:true})
+        await Cart.findOneAndUpdate({userId:req.user},{$pull:{'items':{productId:product._id}}},{new:true})
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is not available at the moment'})
       }
       let currentPrice;
@@ -81,13 +81,15 @@ const postCart = async (req,res)=>{
         currentPrice=specificVariant.attributes.price;
          discount=specificVariant.attributes.discount;
         let stock = specificVariant.attributes.stock;
+        console.log('specificVariant',specificVariant);
+        
 
         if(existingItem.quantity+quantity>10){
           return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Reached Maximum Quantity Per Transaction'})
 
         }
-        console.log(specificVariant);
-        console.log(existingItem.quantity);
+        // console.log(specificVariant);
+        // console.log(existingItem.quantity);
         if(existingItem.quantity+quantity>stock){
           return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Not enough stock available '})
         }
@@ -96,42 +98,47 @@ const postCart = async (req,res)=>{
         existingItem.quantity+=quantity
         existingItem.totalPrice=Math.round(existingItem.quantity*(currentPrice*0.01*(100-discount)));
       }else{
-        cart.items.push({
+        let cartProduct = await Products.findOne({_id:productId,'variants.sku':variantId},{'variants.$':1})
+
+        const stock=cartProduct.variants[0].attributes.stock;
+        if(stock>0){
+          cart.items.push({
        
-          productId:productId,
-          variantId:variantId,
-          category:category,
-          quantity:quantity,
-          currentPrice:Math.round(currentPrice*0.01*(100-discount)),
-          totalPrice:Math.round(quantity*(currentPrice*0.01*(100-discount))),
+            productId:productId,
+            variantId:variantId,
+            category:category,
+            quantity:quantity,
+            currentPrice:Math.round(currentPrice*0.01*(100-discount)),
+            totalPrice:Math.round(quantity*(currentPrice*0.01*(100-discount))),
+          
+        })
+        }else{
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Not enough stock available '})
+        }
         
-      })
+
       }
-    //   const alreadyExistInWishList=await Wishlist.findOne({user:req.user,'items.variantId':variantId})
-    //   console.log('alreadyExistInWishList',alreadyExistInWishList);
-    //   if(alreadyExistInWishList){
-    //     console.log('Already listed');
-    //     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product exist in wishlis'})
-    //   }
-    //  //remove item from the wishlist when a product is added to cart that already exists in the wishlist
+    
     //   await Wishlist.findOneAndUpdate({user:req.user},{$pull:{items:{variantId}}},{new:true})
       await Products.updateOne({_id:productId,'variants.sku':variantId},{$set:{'variants.$.attributes.isWishlisted':false}})
 
-
+      console.log('Hello Cart',cart);
       await cart.save();
 
       console.log('Current Price',currentPrice);
      
 
-      const populatedCart = await Cart.findOne({userId:req.user}).populate('items.productId').lean()
+      // const populatedCart = await Cart.findOne({userId:req.user}).populate('items.productId').lean()
        
-      if(populatedCart && populatedCart.items.length){
-       count=populatedCart.items.length
-      }
-      console.log('count',count);
-      console.log(populatedCart);
+      // if(populatedCart && populatedCart.items.length){
+      //  count=populatedCart.items.length
+      // }
+      // console.log('count',count);
+      // console.log(populatedCart);
 
-      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:populatedCart,cartCount:count}) 
+      const calculatedCart = await calculateCart(cart);
+
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:calculatedCart}) 
 
     }catch(err){
       console.log('Error in post cart controller',err)
@@ -145,29 +152,25 @@ const postCart = async (req,res)=>{
   
 
 const updateQuanity = async (req,res)=>{
-  console.log('Call recieved');
-  
-  const { productId,variantId,variantColor,type } = req.body; 
-  console.log(type);
+  console.log('Call recieved in update quantity');
+
+  const { productId,variantId,type } = req.body; 
+
+  console.log(req.body);
 
   try{
 
-   const token = req.cookies.token;
-   if(!token){
-    return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
-   }
+    if(!req.user){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Please login !'})
+    }
 
-  const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY)
-  const userId=decoded.userId; 
-
-
-  let cart = await Cart.findOne({userId:userId}).populate('items.productId')
+  let cart = await Cart.findOne({userId:req.user}).populate('items.productId')
 
   if(!cart){
     return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
   }
 
-  const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,'variants.$':1});
+  const product = await Products.findOne({_id:productId,'variants.sku':variantId},{isActive:1,isDeleted:1,variants:{$elemMatch:{sku:variantId}}});
   
 
   if(!product.isActive || product.isDeleted){
@@ -222,7 +225,10 @@ console.log('variantId',variantId);
   await cart.save();
 
 
-  res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,updatedItem:item})
+ const calculatedCart = await calculateCart(cart);
+ console.log('calculated cart',calculateCart);
+
+  res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,cart:calculatedCart})
 
   }catch(err){
     console.log('Error in Update Quantity',err);

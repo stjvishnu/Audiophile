@@ -3,6 +3,6 @@ import express from "express";
 import usermiddleware from "../../middlewares/usermiddleware.js";
 const router = express.Router();
 
-router.get('/',usermiddleware.isLogin,homeController.getHome)
+router.get('/',homeController.getHome)
 
 export default router

@@ -33,7 +33,7 @@
 </style>
 
 <div class="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 md:p-8 antialiased">
-    <div class="flex flex-col md:flex-row bg-white shadow-[0_12px_20px_rgba(0,0,0,0.25)] rounded-3xl border border-gray-100 overflow-hidden md:min-h-[550px] w-full max-w-4xl transition-all duration-300 hover-scale  ">
+    <div class="flex flex-col md:flex-row bg-white shadow-[0_12px_20px_rgba(0,0,0,0.25)] rounded-[3rem] border border-gray-100 overflow-hidden md:min-h-[550px] w-full max-w-4xl transition-all duration-300 hover-scale  ">
         
         <!-- Left Side - Logo (Hidden on mobile) -->
         <div class="hidden md:flex md:w-2/4 bg-gradient-to-br from-black to-gray-900 items-center justify-center p-12 relative overflow-hidden">
@@ -46,7 +46,7 @@
             <img 
                 src="/images/white-logo.svg"
                 alt="Audiophile Logo" 
-                class="w-50 h-50 object-contain relative z-10 animate-float transition-all duration-700 hover:scale-110 hover:brightness-110"
+                class="w-50 h-50 object-contain p-8 relative z-10 animate-float transition-all duration-700 hover:scale-110 hover:brightness-110"
             >
         </div>
 
@@ -66,13 +66,13 @@
                                 id="email" 
                                 name="email" 
                                 type="email" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[1.4rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
                                        group-hover:border-gray-300" 
                                 placeholder="Enter your email"
                             >
                         </div>
-                        <div id="email-error" class="absolute top-full left-0 text-red-500 text-xs mt-0 h-4 invisible"></div>
+                        <div id="email-error" class="absolute top-full left-0 text-red-500 text-xs h-2 invisible !mt-0"></div>
                     </div>
 
                     <!-- Password -->
@@ -82,14 +82,14 @@
                                 id="password" 
                                 name="password" 
                                 type="password" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[1.4rem] text-gray-900 transition-all duration-200
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
                                        group-hover:border-gray-300" 
                                 placeholder="Enter your password"
                             >
                         </div>
 
-                        <div id="password-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                        <div id="password-error" class="absolute top-full left-0 text-red-500 text-xs  h-4 invisible !mt-0"></div>
                     </div>
 
                     <!-- Remember Me & Forgot Password -->
@@ -111,7 +111,7 @@
                     <div class="pt-2">
                         <button 
                             type="submit" 
-                            class="w-full py-3 px-4 bg-black text-white rounded-xl font-medium
+                            class="w-full py-3 px-4 bg-black text-white rounded-[1.4rem] font-medium
                                    transform transition-all duration-200
                                    hover:bg-gray-900 hover:shadow-lg hover:-translate-y-0.5
                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
@@ -124,7 +124,7 @@
                     <!-- Sign Up Link -->
                     <p class="text-center text-sm text-gray-500">
                         Don't have an account?
-                        <a href="/user/SignUp" class="font-medium text-gray-500 hover:text-gray-900 transition-colors duration-200 ml-1">
+                        <a href="/user/signup" class="font-medium text-gray-500 hover:text-gray-900 transition-colors duration-200 ml-1">
                             Sign up
                         </a>
                     </p>

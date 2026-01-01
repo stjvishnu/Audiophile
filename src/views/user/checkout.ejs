@@ -9,24 +9,25 @@
   }
 </style>
 
-<div id="checkoutPage" class="bg-gray-100 min-h-screen p-6">
-  <div class="bg-white rounded-[2rem] shadow-lg max-w-7xl mx-auto p-12">
-    <h1 class="text-4xl font-bold text-center text-gray-900 mb-12">Checkout</h1>
+<div id="checkoutPage" class="bg-transparent min-h-screen px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+  <div class="bg-transparent rounded-[2rem] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 md:py-12 pt-2 md:pt-3">
+    <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8 md:mb-12">Checkout</h1>
 
-    <div class="flex gap-12">
-      <div class="w-3/5">
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-6">
-          <div class="flex items-center gap-4">
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+      <!-- Left column - main content -->
+      <div class="w-full lg:w-3/5 order-2 lg:order-1">
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8 mb-6">
+          <div class="flex items-center gap-3 sm:gap-4">
             <img src="<%= user.profileImg || 'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=100&h=100' %>"
                  alt="Profile"
-                 class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200">
-            <p class="text-gray-700 font-medium"><%= user.email %></p>
+                 class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover ring-2 ring-gray-200">
+            <p class="text-gray-700 font-medium text-sm sm:text-base break-all"><%= user.email %></p>
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-6">
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8 mb-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-gray-900">Delivery Address</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900">Delivery Address</h2>
             <button onclick="openAddressModal()" class="text-gray-400 hover:text-black transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -35,15 +36,16 @@
             </button>
           </div>
 
-          <div id="selectedAddress" data-address-id="<%=address?._id || '' %>" class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div id="selectedAddress" data-address-id="<%=address?._id || '' %>" 
+               class="bg-transparent rounded-lg p-4 border border-gray-200 text-sm sm:text-base">
             <% if (address) { %>
               <p class="fullName font-semibold text-gray-900"><%= address.name %></p>
-              <p class="mobile text-sm text-gray-600"><%= address.mobile %></p>
-              <p class="houseName text-gray-700 mt-2"><%= address.houseName %></p>
-              <p class="streetName  text-gray-700"><%= address.streetName %></p>
-              <p class="locality text-sm text-gray-700"><%= address.locality %></p>
+              <p class="mobile text-gray-600"><%= address.mobile %></p>
+              <p class="houseName text-gray-700 mt-1.5"><%= address.houseName %></p>
+              <p class="streetName text-gray-700"><%= address.streetName %></p>
+              <p class="locality text-gray-700"><%= address.locality %></p>
               <% if (address.landmark) { %>
-                <p class="landmark text-sm text-gray-600">Near <%= address.landmark %></p>
+                <p class="landmark text-gray-600 mt-0.5">Near <%= address.landmark %></p>
               <% } %>
               <p class="text-sm font-medium text-gray-900 mt-2">
                 <span class="city"><%= address.city %></span>,
@@ -56,203 +58,211 @@
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Shipping Method</h2>
-          <div class="space-y-4">
-            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-black transition-all">
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8 mb-6">
+          <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-5 sm:mb-6">Shipping Method</h2>
+          <div class="space-y-3 sm:space-y-4">
+            <label class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-[1.6rem] cursor-pointer hover:border-black transition-all text-sm sm:text-base">
               <input type="radio" name="shipping" value="standard" class="w-4 h-4" checked>
-              <span class="ml-4 text-gray-900 font-medium">Standard Delivery - 5-7 days</span>
+              <span class="ml-3 sm:ml-4 text-gray-900 font-medium">Standard Delivery - 5-7 days</span>
               <span class="ml-auto text-gray-600 font-semibold">Free</span>
-            </label>
-
-            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-black transition-all">
-              <input type="radio" name="shipping" value="express" class="w-4 h-4">
-              <span class="ml-4 text-gray-900 font-medium">Express Delivery - 2-3 days</span>
-              <span class="ml-auto text-gray-600 font-semibold">₹99</span>
             </label>
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-4">Available Offers</h2>
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8 mb-6">
+          <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Available Coupons</h2>
 
-          <% if (offers && offers.length > 0) { %>
-            <div class="space-y-3">
-              <% offers.forEach(function(offer) { %>
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
-                  <p class="text-gray-900 font-medium"><%= offer.message %></p>
-                  <p class="text-sm text-gray-600 mt-1">Discount: <%= offer.discount %></p>
+          <% if (coupons && coupons.length > 0) { %>
+            <div id="couponContainer" class="space-y-3 sm:space-y-4">
+              <% coupons.forEach(function(coupon) { %>
+                <div class="bg-transparent border border-gray-200 rounded-[1.6rem] px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+
+                  <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                    <p class="text-gray-900 font-semibold text-sm sm:text-base"><%= coupon.description %></p>
+                    <span class="text-xs sm:text-sm font-semibold text-green-700 bg-green-50 px-2.5 sm:px-3 py-1 rounded-full whitespace-nowrap">
+                      OFF <%= coupon.discountValue %><%= coupon.discountType === 'percentage' ? '%' : '₹' %>
+                    </span>
+                  </div>
+
+                  <button
+                    class="bg-black text-white text-xs sm:text-sm font-mono
+                           w-full sm:w-auto min-w-[180px] sm:min-w-[210px] px-4 py-2
+                           rounded-[1rem] hover:bg-gray-900 transition
+                           flex items-center justify-between gap-2 whitespace-nowrap"
+                    onclick="navigator.clipboard.writeText('<%= coupon.code %>')"
+                  >
+                    <span><%= coupon.code %></span>
+                    <span class="text-xs opacity-70">COPY</span>
+                  </button>
                 </div>
               <% }) %>
             </div>
           <% } else { %>
-            <p class="text-gray-500 text-sm">No offers available at the moment.</p>
+            <p class="text-gray-500 text-sm">No coupons available at the moment.</p>
           <% } %>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl p-8">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Payment Method</h2>
-          <div class="space-y-4">
-            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-black transition-all">
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8">
+          <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Payment Method</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <label class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-[1.7rem] cursor-pointer hover:border-black transition-all text-sm sm:text-base">
               <input type="radio" name="payment" value="razorpay" class="w-4 h-4">
-              <span class="ml-4 text-gray-900 font-medium">Razorpay</span>
+              <span class="ml-3 sm:ml-4 text-gray-900 font-medium">Razorpay</span>
             </label>
 
-            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-black transition-all">
+            <label class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-[1.7rem] cursor-pointer hover:border-black transition-all text-sm sm:text-base">
               <input type="radio" name="payment" value="cod" class="w-4 h-4" checked>
-              <span class="ml-4 text-gray-900 font-medium">Cash on Delivery (COD)</span>
+              <span class="ml-3 sm:ml-4 text-gray-900 font-medium">COD</span>
             </label>
 
-            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-black transition-all">
+            <label class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-[1.7rem] cursor-pointer hover:border-black transition-all text-sm sm:text-base">
               <input type="radio" name="payment" value="wallet" class="w-4 h-4">
-              <span class="ml-4 text-gray-900 font-medium">Wallet</span>
+              <span class="ml-3 sm:ml-4 text-gray-900 font-medium">Wallet</span>
             </label>
           </div>
         </div>
       </div>
 
-      <% let subTotal = 0 %>
+      <!-- Right column - Order Summary -->
+      <div class="w-full lg:w-2/5 order-1 lg:order-2 lg:sticky lg:top-6 h-fit mb-8 lg:mb-0">
+        <div id="orderSummaryContainer" class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8">
+          <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-5 sm:mb-6">Order Summary</h2>
 
-      <div class="w-2/5">
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-
-          <div  class="space-y-4 mb-8 max-h-[300px] overflow-y-auto no-scrollbar">
+          <div id="productsContainer" class="space-y-4 sm:space-y-6 mb-6 sm:mb-8 max-h-[340px] sm:max-h-[420px] overflow-y-auto no-scrollbar">
             <% if (cart && cart.items.length > 0) { %>
-              <ul role="list" class="-my-6 divide-y divide-gray-200">
+              <ul id="cartItemsList" role="list" class="-my-4 sm:-my-6 divide-y divide-gray-200">
                 <% cart.items.forEach((item)=> { %>
-                  <% const productVariant = item.productId.variants.find(variant => variant.sku===item.variantId ) %>
-                  <% const imgUrl = productVariant.attributes.productImages[0] %>
-                  <% const color = productVariant.attributes.color || 'Default' %>
-                  <% const price = item.totalPrice %>
-                  <% subTotal += item.totalPrice %>
-
-                  <li  class="flex py-6">
-                    <div  class="size-20 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
-                      <img src="<%= imgUrl %>"
-                           alt="<%= item.productId.name %>"
+                  <li class="flex py-4 sm:py-6">
+                    <div class="size-20 sm:size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
+                      <img src="<%= item.imgUrl %>"
+                           alt="<%= item.name %>"
                            class="size-full object-cover" />
                     </div>
 
-                    <div class="ml-4 flex flex-1 flex-col">
+                    <div class="ml-3 sm:ml-4 flex flex-1 flex-col">
                       <div>
-                        <div class="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
-                            <a href="#" class="text-md"><%= item.productId.name %></a>
+                        <div class="flex flex-col sm:flex-row sm:justify-between text-base font-medium text-gray-900 gap-1 sm:gap-0">
+                          <h3 class="text-sm sm:text-base">
+                            <a href="#" class="line-clamp-2"><%= item.name %></a>
                           </h3>
-                          <p  class="item-price ml-4 text-sm">₹<%= price %></p>
+                          <p class="item-price text-sm sm:text-base whitespace-nowrap">₹<%= item.itemTotal %></p>
                         </div>
 
-                        <p class="mt-1 text-sm text-gray-500"><%= color %></p>
+                        <p class="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500"><%= item.color %></p>
+                        <% if (item.appliedOffer) { %>
+                          <p class="text-xs text-green-600 mt-0.5"><%= item.appliedOffer %> offer applied</p>
+                        <% } %>
                       </div>
 
-                      <div class="flex flex-1 items-end justify-between text-sm">
+                      <div class="flex flex-1 items-end justify-between text-sm mt-2 sm:mt-3">
                         <div class="flex items-center space-x-2">
-                          <p class="text-gray-500 text-md">Qty</p>
+                          <p class="text-gray-500 text-sm">Qty</p>
                           
                           <form class="max-w-xs">
                             <div class="relative flex items-center">
-                              <button type="button" onclick="decrementItem(this)"
-
-                                      data-input-counter-decrement="counter-input-<%= item.productId.id %>"
-                                      data-product-id="<%= item.productId.id %>"
-                                      data-product-color="<%= color %>"
-                                      data-variant-id="<%= productVariant.sku %>"
-                                      class="decBtn shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M1 1h16" />
+                              <button type="button" 
+                                      data-input-counter-decrement="counter-input-<%= item.productId %>"
+                                      data-product="<%= item.productId %>"
+                                      data-product-color="<%= item.color %>"
+                                      data-variant="<%= item.variantId %>"
+                                      class="decrement shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
+                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 2">
+                                  <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
                                 </svg>
                               </button>
 
                               <input type="text"
-                                     
                                      data-input-counter
-                                     class="qtyInput shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+                                     class="qtyInput shrink-0 text-gray-900 border-0 bg-transparent text-sm sm:text-base font-normal focus:outline-none focus:ring-0 max-w-[2.8rem] sm:max-w-[3.2rem] text-center"
                                      value="<%= item.quantity %>"
                                      readonly />
 
-                              <button type="button" onclick="incrementItem(this)"
-                                    
-                                      data-input-counter-increment="counter-input-<%= item.productId.id %>"
-                                      data-product-id="<%= item.productId.id %>"
-                                      data-product-color="<%= color %>"
-                                      data-variant-id="<%= productVariant.sku %>"
-                                      class="incBtn shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                                <svg class="w-2 h-2 text-gray-900 dark:text-white"
-                                     xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 18 18">
-                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 1v16M1 9h16" />
+                              <button type="button" 
+                                      data-input-counter-increment="counter-input-<%= item.productId %>"
+                                      data-product="<%= item.productId%>"
+                                      data-product-color="<%= item.color %>"
+                                      data-variant="<%= item.variantId %>"
+                                      class="increment shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
+                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 18">
+                                  <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
                                 </svg>
                               </button>
                             </div>
                           </form>
                         </div>
 
-                        <div class="flex">
-                          <button 
-                                  onclick="removeItem(this)"
-                                  data-variant-id="<%= productVariant.sku %>"
-                                  type="button"
-                                  class="removeBtn  font-medium text-indigo-600 hover:text-indigo-500">
-                            Remove
-                          </button>
-                        </div>
+                        <button 
+                                data-variant="<%= item.variantId %>"
+                                type="button"
+                                class="remove font-medium text-indigo-600 hover:text-indigo-500 text-sm sm:text-base">
+                          Remove
+                        </button>
                       </div>
                     </div>
                   </li>
-
-                  
                 <% }) %>
               </ul>
             <% } else { %>
-              <p class="text-gray-500 text-sm">Your cart is empty.</p>
+              <p class="text-gray-500 text-sm sm:text-base text-center py-6">Your cart is empty.</p>
             <% } %>
           </div>
 
           <div class="mb-6 pb-6 border-b border-gray-200">
-            <div class="flex gap-2">
-              <input type="text"
-                     id="couponCode"
-                     placeholder="Enter coupon code"
-                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent transition-all">
-
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="relative flex-1 flex items-center group">
+                <input type="text"
+                       id="couponCode"
+                       placeholder="Enter coupon code"
+                       class="w-full pl-4 pr-10 py-2.5 border border-gray-300 text-black rounded-[1.2rem] text-sm focus:outline-none focus:border-gray-500 transition-all">
+                
+                <button type="button" onclick="removeCoupon()"
+                        id="clearCoupon"
+                        class="absolute right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                        > <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+          
               <button onclick="applyCoupon()"
-                      class="px-6 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                      class="px-6 py-2.5 bg-black text-white rounded-[1.2rem] text-sm font-medium hover:bg-gray-800 transition-colors sm:w-auto w-full">
                 Apply
               </button>
             </div>
           </div>
 
-          <div class="space-y-3 mb-8">
+          <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8 text-sm sm:text-base">
             <div class="flex justify-between text-gray-700">
               <span>Subtotal</span>
-              <span id="subTotal" class="font-medium">₹ <%=subTotal%></span>
+              <span id="subTotal" class="font-medium">₹ <%=cart.subTotal%></span>
             </div>
 
             <div class="flex justify-between text-gray-700">
               <span>Delivery Fee</span>
-              <span class="font-medium" id="deliveryFeeDisplay">0</span>
+              <span class="font-medium" id="deliveryFeeDisplay">₹ <%=cart.charge%></span>
             </div>
 
-            <div class="flex justify-between text-gray-700" id="discountRow" style="display: none;">
+            <div class="flex justify-between text-gray-700" id="discountRow">
               <span>Discount</span>
-              <span class="font-medium text-green-600" id="discountAmount">0</span>
+              <span class="font-medium text-green-600" id="discountAmount">₹ <%=cart.totalDiscount%></span>
+            </div>
+
+            <div class="flex justify-between text-gray-700 hidden" id="couponAppliedRow">
+              <span class="text-green-500">coupon discount</span>
+              <span class="font-medium text-green-600" id="couponDiscount">₹ <%=cart.couponDiscount%></span>
             </div>
           </div>
 
-          <div class="border-t border-gray-300 pt-4 mb-8">
-            <div class="flex justify-between text-lg">
+          <div class="border-t border-gray-300 pt-4 mb-6 sm:mb-8">
+            <div class="flex justify-between text-base sm:text-lg">
               <span class="font-bold text-gray-900">Total</span>
-              <span id="total" class="font-bold text-gray-900">₹ <%=subTotal%></span>
-              <input type="hidden" name="totalAmount" id="totalAmount" value="<%=subTotal%>">
+              <span id="total" class="font-bold text-gray-900">₹ <%=cart.total%></span>
+              <input type="hidden" name="totalAmount" id="totalAmount" value="<%=cart.total%>">
             </div>
           </div>
 
           <button id="placeOrder"
-                  class="w-full bg-black text-white py-4 rounded-lg font-bold text-lg hover:bg-gray-800 transition-colors shadow-lg">
+                  class="w-full bg-black text-white py-3.5 sm:py-3.5 rounded-[1.7rem] font-bold text-base sm:text-lg hover:bg-gray-800 transition-colors shadow-lg">
             Place Order
           </button>
         </div>
@@ -260,8 +270,36 @@
     </div>
   </div>
 
+  <!-- Address Modal remains mostly unchanged (just slight padding adjustments) -->
+  <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-[2rem] w-full max-w-lg sm:max-w-2xl mx-auto shadow-2xl">
+      <!-- rest of modal code unchanged -->
+      <div class="flex items-center justify-between p-6 sm:p-8 border-b border-gray-200">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Select Delivery Address</h2>
+        <button onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 sm:p-8 max-h-[55vh] sm:max-h-[60vh] overflow-y-auto">
+        <!-- ... rest unchanged ... -->
+      </div>
+
+      <div class="border-t border-gray-200 p-6 sm:p-8 flex gap-4">
+        <button onclick="closeAddressModal()"
+                class="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-2xl">
+    <div class="bg-white rounded-[2rem] w-full max-w-2xl mx-4 shadow-2xl">
       <div class="flex items-center justify-between p-8 border-b border-gray-200">
         <h2 class="text-2xl font-bold text-gray-900">Select Delivery Address</h2>
         <button onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -326,18 +364,7 @@ function selectAddress(address) {
   closeAddressModal();
 }
 
-// function updateQuantity(itemId, change) {
-//   console.log(`Update item ${itemId} by ${change}`);
-// }
 
-// function removeItem(itemId) {
-//   console.log(`Remove item ${itemId}`);
-// }
-
-// function applyCoupon() {
-//   const couponCode = document.getElementById('couponCode').value;
-//   console.log(`Apply coupon: ${couponCode}`);
-// }
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
@@ -345,83 +372,179 @@ document.addEventListener('keydown', function(e) {
   }
 });
 </script>
-<script>
-  async function decrementItem(btn) {
-    const li = btn.closest('li');
-    const qtyInput = li.querySelector('.qtyInput');
-    const priceEl = li.querySelector('.item-price');
-  
-    const productId = btn.dataset.productId;
-    const variantId = btn.dataset.variantId;
-    const productColor = btn.dataset.productColor;
-  
-    try {
-      const res = await axios.post('/user/cart/update-quantity', {
-        productId,
-        variantId,
-        variantColor: productColor,
-        type: 'decrement'
-      });
-  
-      qtyInput.value = res.data.updatedItem.quantity;
-      priceEl.textContent = `₹${res.data.updatedItem.totalPrice}`;
-  
-      updateSubTotal();
-    } catch (err) {
-      console.log(err);
-    }
+
+
+  <script>
+    const orderSummaryContainer = document.getElementById('orderSummaryContainer')
+    const productsContainer = document.getElementById('productsContainer')
+    const cartItemsListContainer = document.getElementById('cartItemsList')
+    productsContainer.addEventListener('click',async (e)=>{
+      const btn = e.target.closest('button');
+if(btn.classList.contains('increment')){
+  try {
+    const response = await axios.post('/user/cart/update-quantity',{
+    productId: btn.dataset.product,
+    variantId: btn.dataset.variant,
+    type: 'increment'
+  })
+  await refreshCheckoutCart();
+  await applyCoupon()
+  await getCoupons()
+  } catch (error) {
+    console.log('Error in incrementing quantity',error);
+    const message = error?.response?.data?.customMessage || 'Something went wrong';
+    if(message) showToast('error',message)
   }
   
-  async function incrementItem(btn) {
-    const li = btn.closest('li');
-    const qtyInput = li.querySelector('.qtyInput');
-    const priceEl = li.querySelector('.item-price');
-  
-    const productId = btn.dataset.productId;
-    const variantId = btn.dataset.variantId;
-    const productColor = btn.dataset.productColor;
-  
-    try {
-      const res = await axios.post('/user/cart/update-quantity', {
-        productId,
-        variantId,
-        variantColor: productColor,
-        type: 'increment'
-      });
-  
-      qtyInput.value = res.data.updatedItem.quantity;
-      priceEl.textContent = `₹${res.data.updatedItem.totalPrice}`;
-  
-      updateSubTotal();
-    } catch (err) {
-      console.log(err);
-    }
+}
+
+if (btn.classList.contains('decrement')) {
+  try {
+    const response= await axios.post('/user/cart/update-quantity', {
+    productId: btn.dataset.product,
+    variantId: btn.dataset.variant,
+    type: 'decrement'
+  });
+  await refreshCheckoutCart();
+  await applyCoupon()
+  await getCoupons()
+  } catch (error) {
+    console.log('Error in incrementing quantity',error);
+    const message = error?.response?.data?.customMessage || 'Something went wrong';
+    if(message) showToast('error',message)
   }
-  
-  async function removeItem(btn) {
-    const li = btn.closest('li');
-    const variantId = btn.dataset.variantId;
-  
-    try {
-      await axios.delete(`/user/cart/${variantId}`);
-      li.remove();
-      updateSubTotal();
-    } catch (err) {
-      console.log(err);
-    }
+
+}
+
+if (btn.classList.contains('remove')) {
+  try {
+   const response = await axios.delete(`/user/cart/${btn.dataset.variant}`);
+  await refreshCheckoutCart();
+  await applyCoupon()
+  await getCoupons()
+  } catch (error) {
+    console.log('Error in incrementing quantity',error);
+    const message = error?.response?.data?.customMessage || 'Something went wrong';
+    if(message) showToast('error',message)
   }
-  
-  async function updateSubTotal() {
-    const res = await axios.get('/user/cart');
-    let total = 0;
-    console.log(res.data.cart.items);
-    res.data.cart.items.forEach(item => total += item.totalPrice);
-    console.log(total);
-    console.log(document.getElementById('subTotal'))
-    document.getElementById('subTotal').textContent = `₹ ${total}`;
-    document.getElementById('total').textContent = `₹ ${total}`;
+
+}
+
+})
+
+async function refreshCheckoutCart(){
+try {
+  const res = await axios.get('/user/cart')
+  if(res.data.cart){
+    renderCheckoutCart(res.data.cart);
+    cartCountContainer.textContent = res.data.cart.cartCount;
+    cartCountContainer.classList.toggle(
+    'opacity-50',
+    res.data.cart.cartCount === 0
+);
   }
+} catch (error) {
+  console.log('Error in refreshing cart',error);
+}
+}
+
+async function renderCheckoutCart(cart){
+  console.log('ji');
+  console.log('inside renderCheckoutCart',cart);
+  console.log('hello');
+  console.log('cartItemsListContainer',cartItemsListContainer);
+  cartItemsListContainer.innerHTML='';
+
+  if (!cart || !cart.items.length) {
+    cartItemsListContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+    subTotalEl.textContent = `0 ₹`
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
+    document.getElementById('cartModal').classList.remove('hidden')
+      return
+  }
+     console.log('cart',cart);
+      cart.items.forEach((item)=>{
+      console.log('item',item);
+      
+  
+      let productDiv = document.createElement('div');
+      productDiv.innerHTML=`
+      <li class="flex py-6">
+      <div class="size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
+          <img src="${item.imgUrl}" alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt." class="size-full object-cover" />
+      </div>
+  
+      <div class="ml-4 flex flex-1 flex-col">
+          <div>
+          <div class="flex justify-between text-base font-medium text-gray-900">
+              <h3>
+              <a href="#">${item.name}</a>
+              </h3>
+              <p id='productPrice' class="ml-1">${item.itemTotal} ₹</p>
+          </div>
+          <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
+          <p class="mt-1 text-sm text-gray-500">${item.color}</p>
+          ${
+              item.appliedOffer
+              ? `<p class="text-xs text-green-600">${item.appliedOffer} offer applied</p>`
+              : ``
+          }
+          </div>
+          <div class="flex flex-1 items-end justify-between text-sm">
+          <div class="flex items-center space-x-2">
+              <p class="text-gray-500 text-md">Qty</p>
+              <form class="max-w-xs">
+                  <div class="relative flex items-center">
+                      <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId}   class="decrement shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
+                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 2">
+                                  <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
+                                </svg>
+                      </button>
+                      <input type="text" id="counter-input" data-input-counter class="shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value=${item.quantity} required />
+                      <button type="button" id="increment-button" data-input-counter-increment="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId}  class="increment shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
+                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 18">
+                                  <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
+                                </svg>
+                      </button>
+                  </div>
+              </form>
+          </div>
+      
+          <div class="flex">
+          <button id='remove-Button' data-variant=${item.variantId} type="button" class="remove font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+          </div>
+      </div>
+      </div>
+      </li>
+      `
+
+      cartItemsListContainer.appendChild(productDiv)
+      orderSummaryContainer.querySelector('#subTotal').textContent=cart.subTotal
+      orderSummaryContainer.querySelector('#discountAmount').textContent=cart.totalDiscount;
+      if(cart.couponDiscount){
+        document.getElementById('couponAppliedRow').classList.remove('hidden');
+        couponAppliedRow.querySelector('#couponDiscount').textContent=cart.couponDiscount;
+        orderSummaryContainer.querySelector('#total').textContent=cart.finalPayableAmount;
+      }else{
+        orderSummaryContainer.querySelector('#total').textContent=cart.total;
+        document.getElementById('couponAppliedRow').classList.add('hidden');
+        couponAppliedRow.querySelector('#couponDiscount').textContent='';
+        
+      }
+      
+      
+})
+
+}
+
+
   </script>
-  
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="/js/user/checkout-script.js"></script>
+<script src="/js/user/checkout-coupon-script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
 

@@ -1,11 +1,96 @@
 import jwt from "jsonwebtoken";
 import Category from "../models/categoryModel.js";
+import Products from '../models/productModel.js'
 import Cart from "../models/cartModal.js"
 import Users from "../models/userModel.js"
 import Wishlist from '../models/wishlistModel.js'
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../utils/constants.js'
 import dotenv from "dotenv";
 dotenv.config();
+
+
+// ----------------------- main Auth Middleware -----------------------
+/**
+ * This middleware runs on every request
+ * Identify the user from the access token 
+ * checks for a access token, If invalid proceeds checks for valid refresh token.
+ * If refresh token is valid,guse the refresh token to get a new one.
+ * @param {Object} req -Express request object, contains cookies with access and refresh token
+ * @param {Object} res -Express response object, used to redirect to login page or route.
+ * @param {Function} next - Express next function to pass control to next middleware
+ * @returns {void} -generate new access token else redirects ti next middleware
+ */
+
+const loadUserAuth = async (req, res, next) => {
+  const token = req.cookies.token;
+  const refreshToken = req.cookies.refreshToken;
+
+  req.user = null;
+  res.locals.userName = null;
+
+  if (!token && !refreshToken) return next();
+
+  try {
+    // 1. Try verifying Access Token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await Users.findById(decoded.userId);
+
+    if (user && user.isActive) {
+      req.user = user._id;
+      res.locals.userName = { firstName: user.firstName };
+      return next();
+    }
+    
+    // If user exists but is blocked
+    if (user && !user.isActive) {
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
+      return res.redirect('/user/login?msg=blocked');
+    }
+
+    throw new Error('Invalid User'); // Fallback to refresh logic if user not found
+
+  } catch (error) {
+    // 2. Access Token expired/invalid, try Refresh Token
+    if (!refreshToken) return next();
+
+    try {
+      const decodedRef = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
+      const user = await Users.findById(decodedRef.userId);
+
+      if (!user || !user.isActive) {
+        res.clearCookie('token');
+        res.clearCookie('refreshToken');
+        return user && !user.isActive 
+          ? res.redirect('/user/login?msg=blocked') 
+          : next();
+      }
+
+      // 3. Issue NEW Access Token
+      const newAccessToken = jwt.sign(
+        { userId: user._id, email: user.email, firstName: user.firstName },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: '15m' }
+      );
+
+      res.cookie('token', newAccessToken, { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax'
+      });
+
+      req.user = user._id;
+      res.locals.userName = { firstName: user.firstName };
+      return next();
+
+    } catch (refreshError) {
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
+      return next();
+    }
+  }
+};
+
 
 // ----------------------- isLogin Middleware -----------------------
 
@@ -21,40 +106,40 @@ dotenv.config();
  */
 
 
-const isLogin =(req,res,next)=>{
+// const isLogin =(req,res,next)=>{
 
-  const token = req.cookies.token;
-  const refreshToken= req.cookies.refreshToken;
-  if(!token){
-    return next();
-  }
-  try{
-    const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-    req.user = decoded.userId;
-    return next();    
-  }catch(err){
-    if(!refreshToken){
-      return next();
-    }
+//   const token = req.cookies.token;
+//   const refreshToken= req.cookies.refreshToken;
+//   if(!token){
+//     return next();
+//   }
+//   try{
+//     const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
+//     req.user = decoded.userId;
+//     return next();    
+//   }catch(err){
+//     if(!refreshToken){
+//       return next();
+//     }
 
-    try{
-      const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
-      const newAccessToken = jwt.sign(
-        { userId: decoded.userId,
-          email: decoded.email,
-          firstName: decoded.firstName,
-        },process.env.JWT_SECRET_KEY,{expiresIn:'15m'})
-      res.cookie('token',newAccessToken,{httpOnly:true})
-      req.user=decoded.userId;
-      return next()
-    }catch(err){
-      console.error('Refresh Token error',err.message)
-      res.clearCookie('token');
-      res.clearCookie('refreshToken')
-      return next()
-    }
-  }
-}
+//     try{
+//       const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
+//       const newAccessToken = jwt.sign(
+//         { userId: decoded.userId,
+//           email: decoded.email,
+//           firstName: decoded.firstName,
+//         },process.env.JWT_SECRET_KEY,{expiresIn:'15m'})
+//       res.cookie('token',newAccessToken,{httpOnly:true})
+//       req.user=decoded.userId;
+//       return next()
+//     }catch(err){
+//       console.error('Refresh Token error',err.message)
+//       res.clearCookie('token');
+//       res.clearCookie('refreshToken')
+//       return next()
+//     }
+//   }
+// }
 
 // -------------------------------------------------------------------------
 
@@ -64,54 +149,31 @@ const isLogin =(req,res,next)=>{
 // ----------------------- restrictedLogin Middleware -----------------------
 
 /**
- * Middleware to protect routes by verifying user authentication
- * checks for a valid access token, It valid proceeds to the next middleware.
- * If the token is missing or invalid, redirects to login page.
- * 
- * @param {Object} req -Express request object, contains cookies with access and refresh token
- * @param {Object} res -Express response object, used to redirect to login page or route.
- * @param {Function} next - Express next function to pass control to next middleware
- * @returns {void} -directs to route if logged in, else redirect to login page
- * @throws {Error} -  If verification fails, redirects to login page
- */
-
-
+*Protects a route
+*Only allows logged-in users to proceed
+*/
 
 const restrcitedLogin = async (req, res, next) => {
+console.log('call inside restricted login');
+  if(req.user){
+    return next()
 
-  const token = req.cookies.token;
-  const refreshToken= req.cookies.refreshToken;
-  if (!token) {
-    return res.status(401).redirect("/user/login"); //No tokens -> Redirect to login page
+    
   }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = decoded.userId;
-    return next(); //Valid token ->Pass control to next middleware
-  } catch (err) {
-    if(!refreshToken){
-      return res.status(401).redirect("/user/login");
-    }
+    // Detect AJAX / Axios request
+    const isAjax =
+    req.xhr ||
+    req.headers.accept?.includes('application/json') ||
+    req.headers['x-requested-with'] === 'XMLHttpRequest';
 
-    try{
-      const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
-      const newAccessToken = jwt.sign(
-        { userId: decoded.userId,
-          email: decoded.email,
-          firstName: decoded.firstName,
-        },process.env.JWT_SECRET_KEY,{expiresIn:'15m'})
-      res.cookie('token',newAccessToken,{httpOnly:true})
-      req.user=decoded.userId;
-        return next();
-    }catch(err){
-      console.error('Refresh Token error',err.message)
-      console.log("Error occured while user authentcating middleware", err);
-      res.clearCookie('token');
-      res.clearCookie('refreshToken')
-    console.log("Error occured while user authentcating middleware", err);
-    return res.status(401).redirect("/user/login"); //invalid token ->Redirect to login page
-    }
+  if (isAjax) {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      success: false,
+      redirectTo: '/user/login'
+    });
   }
+  
+  return res.status(HTTP_STATUS.UNAUTHORIZED).redirect('/user/login')
 };
 
 // -------------------------------------------------------------------------
@@ -122,70 +184,17 @@ const restrcitedLogin = async (req, res, next) => {
 // ----------------------- Authentication Middleware -----------------------
 
 /**
- * Middleware to prevent access to the login route if the user is already authenticated.
- * verifies the access token in the request cookies.If valid, redirectes to homepage.
- * If the access token is invalid or missing, attempts to use the refresh token to generate new access token.
- * If the refresh token is valid or missing, proceeds to the login route.
- * 
- * @param {Object} req - Express request object, contains cookies with access and refresh token
- * @param {Object} res - Express response object, used to set cookies and redirect 
- * @param {Function} next -Express next function to pass control to the next middleware
- * @returns {void} - Redirects to '/' if authenticated , call next() if unauthenticated or sets new token
- * @throws {Error} -If token verification fails,logs the error and clear invalide cookies
+ *Protects login/register route
+ *Only allows logout user to procees
  */
 
 
-
-
-
-
 const authLogin = (req, res, next) => {
-  const token = req.cookies.token;
-  const refreshToken = req.cookies.refreshToken;
-
-    //If token doesn't exist
-    if(!token){
-      return next() //proceed to login
-    }
-
-    try{
-      //verify access token
-      const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-      req.user=decoded.userId
-      res.status(401).redirect('/') //Token is valid, redirect to home
-    }catch(err){
-
-      //Access token invalid,try refresh token
-      if(!refreshToken){
-        return next() //No refresh token -> Procees to login
+      if(req.user){
+        return res.redirect('/')
       }
 
-      try{
-        //Verify refresh token
-        const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
-
-        //valid and generate new Access Token
-        const newAccessToken=jwt.sign(
-          { userId: decoded.userId,
-            email: decoded.email,
-            firstName: decoded.firstName,
-          },
-          process.env.JWT_SECRET_KEY,
-          {expiresIn:'15m'}
-        )
-
-        res.cookie('token',newAccessToken,{httpOnly:true}) //set new access token in cookies
-        req.user=decoded.userId;
-        
-      }catch(err){
-        //refresh token invalid -> clear cookies and proceed to login
-        console.error('Refresh Token error',err.message)
-        res.clearCookie('token');
-        res.clearCookie('refreshToken')
-        return next()
-      }
-    }
-
+      return next();
 };
 
 // -----------------------------------------------------------------------------
@@ -258,78 +267,78 @@ const setName = (req, res, next) => {
 // --------------------------------------------------------------------------
 
 
-const blockedUser = async (req,res,next)=>{
-  const { token, refreshToken } = req.cookies;
-  let user;
-  //If no access token move to next middleware
-  if(!token){
-    return next();
-  }
-  try{
-    //verify access token
-    const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
-    const userId=decoded.userId || decoded.email;
-    if(typeof userId==='object'){
-       user= await Users.findById(userId)
-    }else if (typeof userId==='string'){
-       user= await Users.findOne({email:userId})
-    }
+// const blockedUser = async (req,res,next)=>{
+//   const { token, refreshToken } = req.cookies;
+//   let user;
+//   //If no access token move to next middleware
+//   if(!token){
+//     return next();
+//   }
+//   try{
+//     //verify access token
+//     const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
+//     const userId=decoded.userId || decoded.email;
+//     if(typeof userId==='object'){
+//        user= await Users.findById(userId)
+//     }else if (typeof userId==='string'){
+//        user= await Users.findOne({email:userId})
+//     }
    
-    if(user){
-      if(user.isActive==false){
-        res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
-        res.clearCookie('refreshToken');
-        return res.redirect('/user?msg=blocked');
-      }
-    }
-    req.user = user;
-    return next();
+//     if(user){
+//       if(user.isActive==false){
+//         res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
+//         res.clearCookie('refreshToken');
+//         return res.redirect('/user?msg=blocked');
+//       }
+//     }
+//     req.user = user;
+//     return next();
     
-  }catch(err){
-    //if no access noken
-    //if no refresh token
-    if(!refreshToken){
-      return next()
-    }
-    try{
-      //verify refresh token
-      const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
-      const userId=decoded.userId || decoded.email;
-    if(typeof userId==='object'){
-       user= await Users.findById(userId)
-    }else if (typeof userId==='string'){
-       user= await Users.findOne({email:userId})
-    }
+//   }catch(err){
+//     //if no access noken
+//     //if no refresh token
+//     if(!refreshToken){
+//       return next()
+//     }
+//     try{
+//       //verify refresh token
+//       const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_KEY);
+//       const userId=decoded.userId || decoded.email;
+//     if(typeof userId==='object'){
+//        user= await Users.findById(userId)
+//     }else if (typeof userId==='string'){
+//        user= await Users.findOne({email:userId})
+//     }
   
    
-    if(user){
-      if(user.isActive==false){
-        res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
-        res.clearCookie('refreshToken');
-        return res.redirect('/user?msg=blocked');
-      }
-    }
-      const newAccessToken = jwt.sign(
-         { userId: decoded.userId,
-          email: decoded.email,
-          firstName: decoded.firstName,
-         },
-        process.env.JWT_SECRET_KEY, 
-        {expiresIn:'15m'}
-      )
-      res.cookie('token',newAccessToken,{httpOnly:true})
-      req.user=user;
-      return next()
-    }catch(err){
-      console.error('Refresh Token error',err.message)
-      res.clearCookie('token');
-      res.clearCookie('refreshToken')
-      console.log('Blcoked User',err);
-      return next()
-    }
+//     if(user){
+//       if(user.isActive==false){
+//         res.clearCookie('token'); //clearCookie expect the cookie name in string not the token value
+//         res.clearCookie('refreshToken');
+//         return res.redirect('/user?msg=blocked');
+//       }
+//     }
+//       const newAccessToken = jwt.sign(
+//          { userId: decoded.userId,
+//           email: decoded.email,
+//           firstName: decoded.firstName,
+//          },
+//         process.env.JWT_SECRET_KEY, 
+//         {expiresIn:'15m'}
+//       )
+//       res.cookie('token',newAccessToken,{httpOnly:true})
+//       req.user=user;
+//       return next()
+//     }catch(err){
+//       console.error('Refresh Token error',err.message)
+//       res.clearCookie('token');
+//       res.clearCookie('refreshToken')
+//       console.log('Blcoked User',err);
+//       return next()
+//     }
     
-  }
-}
+//   }
+// }
 
 const wishListCount = async (req,res,next)=>{
   try {
@@ -391,15 +400,62 @@ const cartCount = async (req,res,next)=>{
 //   }
 // }
 
+const validateCheckoutItems = async (req,res,next)=>{
+  try {
+    const cart = await Cart.findOne({userId:req.user}).lean()
+    
+    if (!cart || !cart.items.length) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND,customMessage:'Cart is empty'})
+    }
 
+    for(let item of cart.items){
+      const product = await Products.findById(item.productId)
+        .populate('category')
+        .lean();
+
+        if(!product) return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND,customMessage:'Product not found '})
+
+        if(!product.isActive || product.isDeleted){
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product is Unavailable'})
+
+        }
+
+        if ( !product.category || !product.category.isActive || product.category.isDeleted){
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Category is Unavailable'})
+        }
+
+        const variant = product.variants.find((v)=>{
+          return v.sku===item.variantId && v.attributes.isActive && !v.attributes.isDeleted
+        })
+
+        // }=>v.sku==item.variantId && v.isActive)
+
+        if(!variant){
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Product variant is Unavailable'})
+        }
+
+        if(variant.attributes.stock<item.quantity){
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:`Not enough stock avilable,only ${variant.attributes.stock} left for ${product.name} ${variant.attributes.color}`})
+
+        }
+
+       
+    }
+    next()
+
+  } catch (error) {
+    console.log('Checkout validation error:', error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Checkout validation failed'})
+  }
+}
 
 export default {
-  isLogin,
+  loadUserAuth,
   authLogin,
   restrcitedLogin,
   setCategories,
   setName,
-  blockedUser,
   wishListCount,
   cartCount,
+  validateCheckoutItems
 };

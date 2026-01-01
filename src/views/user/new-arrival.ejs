@@ -4,102 +4,52 @@
   <div class="container mx-auto px-6 mb-16 text-center">
     <span class="inline-block px-4 py-1 text-xs font-medium tracking-widest text-gray-900 bg-gray-100 rounded-full mb-4 ">NEW ARRIVALS</span>
     <h2 class="text-4xl font-bold text-gray-600">Experience The Latest <span class="text-black">Audio Innovation</span></h2>
-    <div class="w-24 h-1 bg-blue-600 mx-auto mt-6"></div>
   </div>
 
   <!-- Product Cards Grid -->
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
       <!-- Card 1 -->
-      <div class="group relative h-[420px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-500">
-        <!-- NEW Tag -->
-        <div class="absolute top-6 right-6 z-10">
-          <span class="px-3 py-1 text-xs font-bold tracking-wider text-white bg-black rounded-full shadow-md">NEW</span>
-        </div>
-        
-        <!-- Product Image -->
-        <div class="absolute inset-0 flex items-center justify-center p-10 mix-blend-multiply">
-          <img src="/images/warner.png" alt="Warner SG" 
-               class="h-72 w-72 object-contain transition-all duration-700 group-hover:scale-105 group-hover:rotate-1">
-        </div>
-        
-        <!-- Product Info -->
-        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
-          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            <span class="text-sm font-medium tracking-widest opacity-90">TANGZU</span>
-            <h3 class="text-2xl font-bold mt-1">WARNER SG</h3>
-            <p class="text-sm font-light mt-2 opacity-90">Entry Level IEM</p>
+     <% if(newProducts && newProducts.length>0){ %>
+       <% newProducts.forEach((product)=>{ %>
+        <div class="group relative h-[420px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-500">
+          <!-- NEW Tag -->
+          <div class="absolute top-6 right-6 z-10">
+            <span class="px-3 py-1 text-xs font-bold tracking-wider text-white bg-black rounded-full shadow-md">NEW</span>
           </div>
           
-          <!-- Buy Now Button (appears on hover) -->
-          <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <button class="flex items-center text-sm font-medium tracking-wider">
-              EXPLORE NOW
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-              </svg>
-            </button>
+          <!-- Product Image -->
+          <div class="absolute inset-0 flex items-center justify-center p-10 mix-blend-multiply">
+            <img src="<%=product.variants[0].attributes.productImages[0]%>" alt="Warner SG" 
+                 class="h-72 w-72 object-contain transition-all duration-700 group-hover:scale-105 group-hover:rotate-1">
+          </div>
+          
+          <!-- Product Info -->
+          <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
+            <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <span class="text-sm text-gray-500 font-medium tracking-widest opacity-90"><%=product.brand%></span>
+              <h3 class="text-3xl text-gray-400 font-bold mt-1"><%=product.name%></h3>
+              <p class="text-sm text-gray-600 font-light mt-2 opacity-90"><%=product.description1%></p>
+            </div>
+            
+            <!-- Buy Now Button (appears on hover) -->
+            <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <button  class="flex items-center text-sm font-medium tracking-wider">
+                <a href="/user/products/productPage/<%=product._id%>">EXPLORE NOW</a>
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+        <%}) %>
+     <% } %>
+      
 
-      <!-- Card 2 -->
-      <div class="group relative h-[420px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-500">
-        <div class="absolute top-6 right-6 z-10">
-          <span class="px-3 py-1 text-xs font-bold tracking-wider text-white bg-black rounded-full shadow-md">NEW</span>
-        </div>
-        
-        <div class="absolute inset-0 flex items-center justify-center p-10 mix-blend-multiply">
-          <img src="/images/Focal-bathys.png" alt="Focal Bathys" 
-               class="h-72 w-72 object-contain transition-all duration-700 group-hover:scale-105 group-hover:-rotate-1">
-        </div>
-        
-        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
-          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            <span class="text-sm font-medium tracking-widest opacity-90">FOCAL</span>
-            <h3 class="text-2xl font-bold mt-1">BATHYS</h3>
-            <p class="text-sm font-light mt-2 opacity-90">Premium Noise Cancelling</p>
-          </div>
-          
-          <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <button class="flex items-center text-sm font-medium tracking-wider">
-              EXPLORE NOW
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+      
 
-      <!-- Card 3 -->
-      <div class="group relative h-[420px] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-500">
-        <div class="absolute top-6 right-6 z-10">
-          <span class="px-3 py-1 text-xs font-bold tracking-wider text-white bg-black rounded-full shadow-md">NEW</span>
-        </div>
-        
-        <div class="absolute inset-0 flex items-center justify-center p-10 mix-blend-multiply">
-          <img src="/images/Audio-Technica.png" alt="Audio Technica" 
-               class="h-72 w-72 object-contain transition-all duration-700 group-hover:scale-105">
-        </div>
-        
-        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
-          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            <span class="text-sm font-medium tracking-widest opacity-90">AUDIO TECHNICA</span>
-            <h3 class="text-2xl font-bold mt-1">ATH-R70X</h3>
-            <p class="text-sm font-light mt-2 opacity-90">Feel It Inside</p>
-          </div>
-          
-          <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <button class="flex items-center text-sm font-medium tracking-wider">
-              EXPLORE NOW
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+     
     </div>
   </div>
 </section>

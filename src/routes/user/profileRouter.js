@@ -2,6 +2,7 @@ import express from "express";
 import * as profileController from "../../controller/userController.js"
 import * as addressController from "../../controller/userController.js"
 import * as ordersController from "../../controller/userController.js"
+import * as walletController from "../../controller/userController.js"
 import userMiddleware from '../../middlewares/usermiddleware.js'
 import upload from '../../utils/multer.js';
 
@@ -27,6 +28,9 @@ router.patch('/address/:addressId',addressController.setDefaultAddress)
 //orders routing
 
 router.get('/orders',ordersController.getOrders)
+
+//wallet routing
+router.get('/wallet',walletController.getWallet)
 
 
 export default router    

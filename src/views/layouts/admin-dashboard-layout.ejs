@@ -8,8 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!--  Toastify CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 <!-- Toastify JS -->
 
@@ -86,7 +88,7 @@
         }
     </style>
 </head>
-<body class="bg-darker-gray text-gray-200 font-sans flex flex-col min-h-screen">
+<body class=" bg-darker-gray text-gray-200 font-sans flex flex-col h-screen overflow-hidden">
     <!-- Mobile Sidebar Overlay -->
     <div class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
     
@@ -165,7 +167,7 @@
                 </div>
                 <div class="flex flex-col flex-grow px-4 py-6 overflow-y-auto">
                     <nav class="flex-1 space-y-1">
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-item bg-black text-white">
+                        <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-item bg-black text-white">
                             <i class="fas fa-tachometer-alt mr-3 text-gray-300"></i>
                             Dashboard
                         </a>
@@ -185,7 +187,7 @@
                             <i class="fa-solid fa-clipboard-list mr-3"></i>
                             Orders
                         </a>
-                        <a href="/admin/sales-analytics" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-item text-gray-400 hover:text-white">
+                        <a href="/admin/sales-report" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-item text-gray-400 hover:text-white">
                             <i class="fas fa-chart-line mr-3"></i>
                             Sales Analytics
                         </a>
@@ -217,7 +219,7 @@
         </div>
 
         <!-- Main content -->
-        <div class="flex flex-col flex-1 overflow-hidden">
+        <div class="h-screen flex flex-col flex-1 overflow-hidden">
             <!-- Pure Black Navbar -->
             <header class="flex items-center justify-between px-6 py-4 bg-pure-black border-b border-gray-800">
                 <div class="flex items-center">
@@ -250,9 +252,13 @@
                 </div>
             </header>
 
-            <!-- Main content area -->
+
+            <main class=" flex-1 overflow-auto">
+                <%- body %>
+            </main>
+                 
+             
            
-            <%- body %>
 
             <!-- Pure Black Footer -->
             <footer class="px-6 py-4 bg-pure-black border-t border-gray-800 text-center text-gray-400 text-sm">

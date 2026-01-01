@@ -214,12 +214,14 @@
       
 
 
-
+    if(modal){
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
           closeModal();
         }
       });
+    }
+      
 
       editModal.addEventListener('click', (e) => {
         if (e.target === editModal) {
@@ -246,3 +248,143 @@
           }
         }
       });
+
+     //seach management
+     
+     const searchInput= document.getElementById('searchInput');
+     searchInput.addEventListener('input',debounce(handleSearch,500))
+
+     function debounce(fn,wait){
+      let timerId=null;
+      return function(...args){
+        clearTimeout(timerId);
+        timerId=setTimeout(()=>{
+          fn.apply(this, args)
+        },wait)
+      }
+     }
+
+     let previousCategories = [];
+
+     async function loadCategories() {
+      console.log('hello loadCategories');
+      const res = await fetch('/admin/category/loadCategories');
+      const data = await res.json();
+      previousCategories = data.categories;
+      console.log('previous categories',previousCategories);
+    }
+    loadCategories();
+
+     async function handleSearch(){
+      try {
+        let searchTerm = document.getElementById('searchInput').value.trim();
+        const categoriesContainer=document.getElementById('categoriesContainer');
+
+        categoriesContainer.innerHTML = '<div class="text-center py-8" > Searching... </div> '
+
+        if (searchTerm === '') {
+          console.log(previousCategories);
+          renderUsers(previousCategories);
+          return;
+        }
+
+         //avoid special characters that may crash the server
+        if(/[*%$?\\]/.test(searchTerm)){ 
+          searchTerm=searchTerm.replaceAll(/[*%$?\\]/g,'').trim()
+        }
+
+        const response = await fetch(`/admin/category/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+
+        if (!response.ok) {
+          throw new Error('Search Failed')
+        }
+        
+        const data = await response.json();
+        const categories = data.categories;
+        renderUsers(categories);
+
+
+
+      } catch (error) {
+        console.log('Error in get handleSearch: ', error);
+        usersContainer.innerHTML = '<div class="text-center py-8 text-red-500" > Error Loading Results </div>'
+      }
+     }
+
+     async function renderUsers(categories){
+      console.log('Render users');
+      try {
+       const categoriesContainer = document.getElementById('categoriesContainer');
+
+       console.log('categoriesContainer',categoriesContainer);
+       
+       if(!categories || categories.length==0){
+        categoriesContainer.innerHTML = '<div class="text-center py-8 text-gray-400">No users found</div>';
+        return
+       }
+       console.log('categories svdsv',categories);
+       categoriesContainer.innerHTML='';
+
+       categories.forEach((category,index)=>{
+        console.log('Hi bbe');
+        console.log('category',category);
+        const categoryRow = document.createElement('div');
+        categoryRow.id = `category-${category._id}`
+        categoryRow.className = `${category.isDeleted}?
+        "bg-gray-600 backdrop-blur-sm text-gray-400 rounded-[1.5rem] p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 border border-gray-500 border-opacity-30 opacity-50 cursor-not-allowed"
+        :
+        "bg-black backdrop-blur-sm text-white rounded-[1.2rem] p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40`
+
+        categoryRow.style.animation = `slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards ${index * 0.1}s`;
+
+        categoryRow.innerHTML = `
+        
+        <div class="col-span-1">${index + 1}</div>
+        <div class="col-span-6 text-center ${category.isDeleted ? 'line-through' : '' }">
+          ${category.name}
+        </div>
+
+        <div class="col-span-2">
+           ${category.isDeleted 
+            ? '<span class="text-red-500">Deleted</span>'
+           : !category.isActive 
+            ?'<span class="text-orange-500">Inactive</span>'
+            :'<span class="text-green-500">Active</span>'
+           }
+        </div>
+
+
+        <div class="col-span-3 space-x-3">
+          <i id="editBtn" class="fa-solid fa-pen cursor-pointer 
+            ${category.isDeleted ? 'pointer-events-none':''}"
+            style="color: #ffffff;"
+            onclick="openEditModal('${category.id}', '${category.name}')"></i>
+
+      
+          <i id="blockBtn" class="fa-solid fa-lock cursor-pointer
+            ${category.isDeleted ? 'pointer-events-none':''}
+            ${category.isActive ? '' : 'hidden'}"
+            style="color: #cc2424;" onclick="blockCategory('${category._id}')"></i>
+
+     
+          <i id="${category._id}" class="fa-solid fa-lock-open cursor-pointer 
+            ${category.isActive ? 'hidden':''}"
+            style="color: #04a978;" onclick="unblockCategory('${category._id}')"></i>
+
+          <i class="fa-solid fa-trash cursor-pointer ${category.isDeleted ? 'hidden' : ''}"
+            style="color: #ffffff;" onclick="deleteCategory('${category._id }')"></i>
+
+
+          <i class="fa-solid fa-trash-arrow-up cursor-pointer ${category.isDeleted ? '' : 'hidden'}"
+            style="color: #ff0000;" onclick="restoreCategory('${category._id}')"></i>
+
+        </div>
+  
+        `;
+
+        categoriesContainer.appendChild(categoryRow)
+       })
+      } catch (error) {
+        
+      }
+     }

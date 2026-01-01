@@ -1,0 +1,296 @@
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('got inside offer validation');
+
+  const offerModal = document.getElementById('offerModal');
+
+  const titleContainer = offerModal.querySelector('#title');
+  const descriptionContainer = offerModal.querySelector('#description');
+  const offerTypeContainer = offerModal.querySelector('#offerType');
+  const targetIdContainer = offerModal.querySelector('#targetId');
+  const discountTypeContainer = offerModal.querySelector('#discountType');
+  const discountValueContainer = offerModal.querySelector('#discountValue');
+  const validFromContainer = offerModal.querySelector('#validFrom');
+  const validToContainer = offerModal.querySelector('#validTo');
+
+  let isValid = true;
+
+
+  // ===================== TITLE =====================
+  titleContainer.addEventListener('blur', () => {
+    const title = titleContainer.value.trim();
+
+    if (!title) {
+      showError('title', "Offer title is required");
+      isValid = false;
+    } else if (title.length < 3) {
+      showError('title', "Title must be at least 3 characters");
+      isValid = false;
+    } else if (title.length > 40) {
+      showError('title', "Maximum length is 40 characters");
+      isValid = false;
+    }
+  });
+
+  titleContainer.addEventListener('focus', () => removeError('title'));
+
+
+
+  // ===================== DESCRIPTION =====================
+  descriptionContainer.addEventListener('blur', () => {
+    const description = descriptionContainer.value.trim();
+
+    if (!description) {
+      showError('description', "Description required");
+      isValid = false;
+    } else if (description.length < 5) {
+      showError('description', "Minimum 5 characters required");
+      isValid = false;
+    } else if (description.length > 300) {
+      showError('description', "Maximum length is 300 characters");
+      isValid = false;
+    }
+  });
+
+  descriptionContainer.addEventListener('focus', () => removeError('description'));
+
+
+
+  // ===================== OFFER TYPE (scope) =====================
+  offerTypeContainer.addEventListener('blur', () => {
+    const scope = offerTypeContainer.value.trim();
+
+    if (!scope) {
+      showError('offerType', "Offer type required");
+      isValid = false;
+    }
+  });
+
+  offerTypeContainer.addEventListener('focus', () => removeError('offerType'));
+
+
+  // ===================== DISCOUNT TYPE (scope) =====================
+
+  discountTypeContainer.addEventListener('blur',()=>{
+    const discountType = discountTypeContainer.value.trim();
+
+    if (!discountType) {
+      showError('discountType', "Discount type required");
+      isValid=false
+    }
+  })
+
+  discountTypeContainer.addEventListener('focus', () => removeError('discountType'));
+
+
+  // ===================== TARGET ID (product/category) =====================
+  targetIdContainer.addEventListener('blur', () => {
+    const scope = offerTypeContainer.value;
+    const targetId = targetIdContainer.value.trim();
+
+    if (scope === 'festival') {
+      removeError('targetId');
+      return;
+    }
+
+    if (!targetId) {
+      showError('targetId', "ID required");
+      isValid = false;
+    }
+  });
+
+  targetIdContainer.addEventListener('focus', () => removeError('targetId'));
+
+
+
+  // ===================== DISCOUNT VALUE =====================
+  discountValueContainer.addEventListener('blur', () => {
+    const value = discountValueContainer.value.trim();
+
+    if (!value) {
+      showError('discountValue', "Discount value required");
+      isValid = false;
+    } else if (isNaN(value)) {
+      showError('discountValue', "Must be a number");
+      isValid = false;
+    } else if (value <= 0) {
+      showError('discountValue', "Value must be greater than 0");
+      isValid = false;
+    }
+  });
+
+  discountValueContainer.addEventListener('focus', () => removeError('discountValue'));
+
+
+
+  // ===================== VALID FROM =====================
+  validFromContainer.addEventListener('blur', () => {
+    const validFrom = new Date(validFromContainer.value.trim());
+
+    if (!validFromContainer.value.trim()) {
+      showError('validFrom', "Please select a date");
+      isValid = false;
+      return;
+    }
+
+    if (isNaN(validFrom.getTime())) {
+      showError('validFrom', "Invalid date");
+      isValid = false;
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (validFrom < today) {
+      showError('validFrom', "Start date cannot be before today");
+      isValid = false;
+      return;
+    }
+  });
+
+  validFromContainer.addEventListener('focus', () => removeError('validFrom'));
+
+
+
+  // ===================== VALID TO =====================
+  validToContainer.addEventListener('blur', () => {
+    const start = new Date(validFromContainer.value.trim());
+    const end = new Date(validToContainer.value.trim());
+
+    if (!validToContainer.value.trim()) {
+      showError('validTo', "Please select a date");
+      isValid = false;
+      return;
+    }
+
+    if (isNaN(end.getTime())) {
+      showError('validTo', "Invalid expiry date");
+      isValid = false;
+      return;
+    }
+
+    if (end <= start) {
+      showError('validTo', "End date must be AFTER start date");
+      isValid = false;
+      return;
+    }
+  });
+
+  validToContainer.addEventListener('focus', () => removeError('validTo'));
+
+
+
+  // ===================== ERROR HANDLING =====================
+  function showError(field_id, message) {
+    console.log('Call inside show error');
+    const error_div = document.getElementById(field_id + '-error');
+    error_div.textContent = message;
+    error_div.classList.replace('invisible', 'visible');
+  }
+
+  function removeError(errType) {
+    const error_div = document.getElementById(errType + '-error');
+    error_div.classList.replace('visible', 'invisible');
+  }
+});
+
+
+
+// ===================== FINAL VALIDATION BEFORE SUBMIT =====================
+function validationCheckBeforeSubmit() {
+  console.log('Call inside Validation check before submit');
+
+  const title = document.querySelector('#title').value.trim();
+  const description = document.querySelector('#description').value.trim();
+  const offerType = document.querySelector('#offerType').value.trim();
+  const targetId = document.querySelector('#targetId').value.trim();
+  const discountType = offerModal.querySelector('#discountType').value.trim();
+  const discountValue = document.querySelector('#discountValue').value.trim();
+  const validFrom = document.querySelector('#validFrom').value.trim();
+  const validTo = document.querySelector('#validTo').value.trim();
+
+  clearErrors();
+  let isValid = true;
+
+  // Title
+  if (!title) {
+    showError('title', "Offer title required");
+    isValid = false;
+  }
+
+  // Description
+  if (!description) {
+    showError('description', "Description required");
+    isValid = false;
+  }
+
+
+  // Scope
+  if (!offerType) {
+    showError('offerType', "Offer type required");
+    isValid = false;
+  }
+
+  // Target ID check
+  if (offerType !== 'festival') {
+    if (!targetId) {
+      showError('targetId', "ID required");
+      isValid = false;
+    } 
+  }
+
+  if(!discountType){
+    showError('discountType', "Discount Type required");
+    isValid = false;
+  }
+
+  // Discount Value
+  if (!discountValue) {
+    showError('discountValue', "Discount value required");
+    isValid = false;
+  }
+
+  if(discountType=='percentage'){
+    if(Number(discountValue)<=0){
+      showError('discountValue','Discount value cannot be less than 0')
+    }else if(Number(discountValue)>30){
+      showError('discountValue','Discount percentage value cannot be greater than than 30')
+
+    }
+  }
+
+  // Dates
+  if (!validFrom) {
+    showError('validFrom', "Start date required");
+    isValid = false;
+  }
+
+  if (!validTo) {
+    showError('validTo', "End date required");
+    isValid = false;
+  }
+
+  const start = new Date(validFrom);
+  const end = new Date(validTo);
+
+  if (end <= start) {
+    showError('validTo', "End date must be after start");
+    isValid = false;
+  }
+
+  function clearErrors() {
+    const errorElements = document.querySelectorAll('[id$="-error"]');
+    errorElements.forEach(el => {
+      el.textContent = '';
+      el.classList.replace('visible', 'invisible');
+    });
+  }
+
+  function showError(field_id, message) {
+    const error_div = document.getElementById(field_id + '-error');
+    error_div.textContent = message;
+    error_div.classList.replace('invisible', 'visible');
+  }
+
+  return isValid;
+}

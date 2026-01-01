@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema({
   },
   subCategory:{
     type: String,
-    enum:["Beginner","Intermediate","Advanced"],
+    enum:["beginner","intermediate","advanced"],
     required:true,
   },
   isActive:{

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+    }
+  
+    /* 1. Floating Animation for the Digits */
+    .digit-404 {
+      font-size: clamp(8rem, 25vw, 20rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      display: inline-block;
+      animation: float 6s ease-in-out infinite;
+    }
+  
+    /* Stagger the animation for each digit */
+    .digit-4:first-child { animation-delay: 0s; }
+    .digit-0 { animation-delay: 0.5s; }
+    .digit-4:last-child { animation-delay: 1s; }
+  
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+  
+    /* 2. Glitch Effect on Hover for "ERROR" */
+    .glitch-text:hover {
+      animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+    }
+  
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-3px, 3px); }
+      40% { transform: translate(-3px, -3px); }
+      60% { transform: translate(3px, 3px); }
+      80% { transform: translate(3px, -3px); }
+      100% { transform: translate(0); }
+    }
+  
+    /* 3. Smooth Fade-in for the whole container */
+    .fade-in-up {
+      animation: fadeInUp 1s ease-out forwards;
+    }
+  
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  
+    .home-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+  
+    .home-button:hover {
+      transform: scale(1.05);
+      background-color: #333;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  </head>
+  <div class="bg-white min-h-screen flex items-center justify-center">
+    <div class="text-center px-6 fade-in-up">
+      <div class="flex items-center justify-center gap-4 mb-8">
+        <span class="digit-404 digit-4 text-black">4</span>
+        <span class="digit-404 digit-0 text-black">0</span>
+        <span class="digit-404 digit-4 text-black">4</span>
+      </div>
+  
+      <h1 class="glitch-text text-black text-6xl md:text-7xl font-bold tracking-wider mb-4 cursor-default">
+        ERROR
+      </h1>
+  
+      <p class="text-black text-2xl md:text-3xl font-light mb-12 opacity-80">
+        Page Not Found
+      </p>
+  
+      <a id="homeBtn"
+        href="#"
+        class="home-button inline-block bg-black text-white px-8 py-4 rounded-lg text-lg font-semibold"
+      >
+        Go to Home Page
+      </a>
+    </div>
+  </div>
+
+  </html>
+
+  <script>
+    document.getElementById('homeBtn').addEventListener('click',()=>{
+        console.log('homebtn clicked');
+        const url = new URL(window.location.toString())
+        const pathName = url.pathname.split('/')[1]
+        const redirectUrl = `${url.origin}/${pathName}` 
+        window.location.href=redirectUrl
+    })
+  </script>

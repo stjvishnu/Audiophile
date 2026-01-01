@@ -54,6 +54,13 @@
   }
   }catch(err){
   console.log(err);
+  if(err.response?.status===401){
+    showToast('error','Please login to wishlist a product')
+    setTimeout(()=>{
+      window.location.href = '/user/login'
+    },2000)
+    return
+  }
   const message = err.response.data.customMessage || 'Something went wrong';
   showToast('error', message);
   }

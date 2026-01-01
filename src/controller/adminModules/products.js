@@ -70,7 +70,7 @@ const addProducts = async (req,res)=>{
   
 
     //validate subCategory
-    const validSubCategories = ['Beginner','Intermediate','Advanced'];
+    const validSubCategories = ['beginner','intermediate','advanced'];
     if(!validSubCategories.includes(formData.subCategory)){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({success:false,message:'Invalid Subcategory, Must be Beginner,Intermediate,Advanced'})
     }
@@ -123,6 +123,8 @@ const addProducts = async (req,res)=>{
     };
     const product = new Products(productData);
     await product.save()
+
+    console.log('hit here')
   
     res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,product:product})
     
@@ -144,17 +146,22 @@ const addProducts = async (req,res)=>{
 
 const editProducts = async (req, res) => {
   console.log('Call Inside edit');
+  console.log('req.body',req.body);
   const formData = req.body;
+  console.log('formdata');
   const images = req.files;
   const productId=req.params.id;
+  console.log('before try');
   try{
     // Basic Validation
 
     // validate Product exist or not
+    console.log('1');
     const productExits = await Products.findById(productId)
     if(!productExits){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Product not found'});
     }
+    console.log('2');
 
     //validate category
     const categoryDoc = await Category.findOne({name:formData.category});
@@ -163,14 +170,14 @@ const editProducts = async (req, res) => {
        }
       const categoryId=categoryDoc._id;
   
-
+    console.log('3');
     //validate subCategory
-    const validSubCategories = ['Beginner','Intermediate','Advanced'];
+    const validSubCategories = ['beginner','itermediate','advanced'];
     if(!validSubCategories.includes(formData.subCategory)){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({success:false,message:'Invalid Subcategory, Must be Beginner,Intermediate,Advanced'})
     }
 
-  
+    console.log('4');
     const imgUrls=Object.keys(formData).filter((key)=>key.includes('image')&&key.startsWith('variant-'));
     
 
@@ -183,13 +190,13 @@ const editProducts = async (req, res) => {
 
 console.log('images',images);
 
-
+    console.log('5');
     const variants=[];
 
     const variantCount = Math.max(...images.map(file => parseInt(file.fieldname.split('-')[1])));
-    
+    console.log('6');
     for(let i=1;i<=variantCount;i++){
-     
+     console.log('7');
       const productImages = images.filter((file)=>file.fieldname.startsWith(`variant-${i}-image`))
       .sort((a,b)=>{
         const numA = parseInt(a.fieldname.split('image')[1]);
@@ -201,7 +208,7 @@ console.log('images',images);
 
       console.log('productImagres',productImages);
       
-
+      console.log('8');
       variants.push({
         sku:formData[`variant-${i}-sku`],
         attributes : {
@@ -216,6 +223,9 @@ console.log('images',images);
         }
       })
     }
+
+    console.log('hello');
+    console.log('variants',variants);
 
     const productData = {
       name: formData.name,
@@ -235,10 +245,11 @@ console.log('images',images);
       },
       variants,
     };
+    console.log('9');
     const updatedProduct = await Products.findByIdAndUpdate(productId,productData,{ new: true, runValidators: true });
 
     if(!updatedProduct){
-      res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
+     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
     }
   
     res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,product:updatedProduct})

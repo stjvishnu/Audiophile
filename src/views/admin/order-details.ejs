@@ -107,8 +107,8 @@
           
           <div class="flex-1 mx-4 h-0.5 bg-white/30 relative top-[-20px]"></div> 
 
-          <% if(orders.orderStatus==='cancelled' || orders.orderStatus==='returned' ){ %>
-            <!-- cancelled or returend -->
+          <% if(orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='partial-return' ){ %>
+            <!-- cancelled or returnend -->
             <div class="flex flex-col items-center">
                <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
                  <button id="cancelledOrReturned" class="w-6 h-6 bg-white rounded-full">
@@ -121,7 +121,6 @@
                </div>
                <p class="text-white text-sm font-medium mt-3"><%=orders.orderStatus%></p>
              </div>
-   
               
          <% } %>
           
@@ -151,9 +150,17 @@
 
           <% orders.items.forEach((order)=>{ %>
 
-            
           <tbody>
-            <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+            <tr 
+            class="border-b <%=order.itemStatus=='return-requested'?'bg-red-500':''%> border-white/10 hover:bg-white/5 transition-colors"
+            <% if(order.itemStatus === 'return-requested') { %>
+              data-order-id="<%= orders._id %>"
+              data-item-id="<%= order._id %>"
+              data-reason="<%- order.itemReturnReason %>"
+              onclick="returnItem(this)"
+            <% } %>
+        
+              >
               <td class="py-6 px-4">
                 <div class="flex items-center gap-4">
                   <img src="<%=order.productImage%>"
@@ -215,7 +222,7 @@
             </div>
             <div class="flex justify-between items-center">
               <p class="text-gray-400">Discount</p>
-              <p class="text-white font-medium">₹<%=orders.discount%></p>
+              <p class="text-white font-medium">₹<%=orders.totalDiscount%></p>
             </div>
             <div class="flex justify-between items-center">
               <p class="text-gray-400">Delivery Fee</p>

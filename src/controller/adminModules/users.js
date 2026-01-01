@@ -2,7 +2,7 @@ import User from '../../models/userModel.js'
 import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js';
 
 const getUsers = async (req,res)=>{
-
+console.log('call inside get userws');
   try{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -61,8 +61,23 @@ const searchUsers = async (req,res)=>{
   }
 }
 
+const loadUsers = async (req,res)=>{
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await User.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const users = await User.find({}).sort({createdAt:-1}).skip(skip).limit(limit);
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,users})
+  } catch (error) {
+    console.log('Error in load Users',error);
+  }
+}
+
 export default {
   getUsers,
   blockUsers,
   searchUsers,
+  loadUsers
 }

@@ -7,6 +7,10 @@ import profileController from "./userModules/profile.js"
 import wishlistController from "./userModules/wishlist.js"
 import addressController from "./userModules/address.js"
 import ordersController from "./userModules/orders.js"
+import walletController from './userModules/wallet.js'
+import couponsController from './userModules/coupons.js'
+import referralController from './userModules/referral.js'
+import categoryController from './userModules/category.js'
 
 
 //testing
@@ -61,6 +65,11 @@ export const postCart = cartController.postCart;
 export const deleteCart = cartController.deleteCart;
 export const updateQuanity = cartController.updateQuanity;
 
+//category controller
+
+export const getIems = categoryController.getIems;
+export const getIemSubcategory = categoryController.getIemSubcategory;
+
 //wishlist controller
 export const getWishlist = wishlistController.getWishlist;
 export const postWishlist = wishlistController.postWishlist;
@@ -70,8 +79,13 @@ export const removeWishlist = wishlistController.removeWishlist;
 
 export const getCheckout = checkoutController.getCheckout;
 export const postPlaceOrderInCheckout = checkoutController.postPlaceOrderInCheckout;
+export const createRazorpayOrder = checkoutController.createRazorpayOrder;
 export const getOrderSuccess = checkoutController.getOrderSuccess;
-export const getOrderFailed = checkoutController.getOrderFailed;
+export const  getOrderFailed = checkoutController.getOrderFailed;
+export const verifyPayment = checkoutController.verifyPayment;
+export const cancelRpzOrder = checkoutController.cancelRpzOrder;
+export const retryRpzPayment = checkoutController.retryRpzPayment;
+export const applyCoupon = checkoutController.applyCoupon;
 
 
 //profile controller
@@ -97,5 +111,18 @@ export const profileResentOtp = profileController.profileResentOtp;
  export const getOrders = ordersController.getOrders;
  export const cancelOrder = ordersController.cancelOrder;
  export const returnOrder = ordersController.returnOrder;
+ export const returnSingleItem = ordersController.returnSingleItem;
  export const downloadInvoice = ordersController.downloadInvoice;
+
+ //wallet controller
+
+ export const getWallet = walletController.getWallet;
+
+ //coupons router
+
+ export const getCoupons = couponsController.getCoupons
+
+ //referral controler
+
+ export const getReferral=referralController.getReferral
 

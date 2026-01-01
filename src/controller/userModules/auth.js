@@ -1,71 +1,149 @@
 import User from "../../models/userModel.js";
+import Wallet from '../../models/walletModel.js'
+import WalletTransaction from '../../models/walletTransaction.js'
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 import otpHelper from "../../utils/otp-helper.js";
 import emailSender from "../../utils/emailSender.js";
 import passport from "../../utils/googleAuth.js";
+import Products from '../../models/productModel.js'
+import Orders from '../../models/orderModel.js'
 import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 
 
 
-const getUserHome = (req,res)=>{
+const getUserHome = async (req,res)=>{
+
   try{ 
-    return res.status(HTTP_STATUS.OK).render("user/home.ejs",{msg:req.query || null});
+
+   //Newly added products 
+
+  const newProducts = await Products.find({isActive:true,isDeleted:false,'variants.attributes.isActive':true,'variants.attributes.isDeleted':false},{name:1,brand:1,category:1,subCategory:1,description1:1,'variants.$':1}).sort({createdAt:-1}).limit(3)
+
+  //Top selling products
+
+  const topSellingProducts = await Orders.aggregate([
+    {$match:{orderStatus:{$in:['delivered','partial-return']}}},
+    {$unwind:'$items'},
+    {$match:{'items.itemStatus':'delivered'}},
+    {$group:{_id:{productId:'$items.productId',variantId:'$items.variantId'},totalSold:{$sum:'$items.quantity'}}},
+    {$sort:{totalSold:-1}},
+    {$limit:3},
+    {$lookup:{from:'products',let:{productId:'$_id.productId',variantId:'$_id.variantId'},
+  pipeline:[
+    {$match:{$expr:{$eq:['$_id','$$productId']},isActive:true,isDeleted:false}},
+    {$addFields:{variants:{$filter:{input:'$variants',as:'variant',cond:
+    {$and:[
+      {$eq:['$$variant.sku','$$variantId']},
+      {$eq:['$$variant.attributes.isActive',true]},
+      {$ne:['$$variant.attributes.isDeleted',true]}
+    ]
+    }}}}}, 
+  ],
+  as:'product'}},
+  {$unwind:'$product'},
+  {$project:{_id:0,product:1}}
+  ])
+
+  console.log('topSellingProducts',topSellingProducts[0]);
+
+  return res.status(HTTP_STATUS.OK).render("user/home.ejs",{title:'home',newProducts,topSellingProducts,msg:req.query || null});
   }catch(err){
-    console.error('Error in Getting Home',err)
+    console.error('Error in Getting Home',err);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('404.ejs')
   }
 } 
 
-/*╔══════════════════════╗
-  ║    SIGNUP-LOGIC      ║
-  ╚══════════════════════╝*/
+
+/* ===============================
+   SIGNUP LOGIC
+   =============================== */
+
 
 
 //------------- SignUp_Get ------------//
 
+/**
+ * Renders signup page
+ * @route GET /user/signup 
+ * @access Public
+ */
+
 const getSignUp = (req, res) => {
   try {
-    res.render("user/signup.ejs", {
-      title: "SignUP",
+    res.status(HTTP_STATUS.OK).render("user/signup.ejs", {
+      title: "Sign Up",
       layout: "layouts/user-layout",
     });
   } catch (err) {
-    console.error("Error in getLogin", err);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
+    console.error("Error in getSignup", err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('404.ejs');
   }
 };
-// ------------------------------------------
-// SignUp - Post
-// ------------------------------------------
+
+
+//------------- SignUp_Post ------------//
+
+/**
+ * Handles user signup and sends OTP for verification
+ * @route POST /user/signup
+ * @access Public
+ */
 
 const postSignUp = async (req, res) => {
-  const { firstName, lastName, email, mobile, password, confirmPassword } =
-    req.body;
+  
+
   try {
-    //check if password and confirm password matches
-    if (password !== confirmPassword) {
-      return res.send("Password Miss matches");
+
+    const { firstName, lastName, email, mobile, password, confirmPassword , referralCode } =
+    req.body;
+
+    //Basic validation
+    if (!firstName || !lastName ||  !email || !mobile || !password || !confirmPassword) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message: RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage: "All required fields must be provided"
+      });
     }
 
-    //check if a user already exist using email id
+    
+    if (password !== confirmPassword) {
+      return res.send("Password miss-matches");
+    }
 
-    const userExist = await User.findOne({
-      email,
-    });
+    //User existence check
+
+    const userExist = await User.findOne({email});
      if(userExist){
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'User Already Exists'})
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'User Already Exists'
+      })
      } 
 
-    //hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+     //Referral validation
 
+     if(referralCode){
+      const referredUser = await User.findOne({referralCode:referralCode})
+      if(!referredUser){
+       return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Invalid referral code'
+      })
+      }
+     }
+
+     //______ Password & OTP ______
+
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
     const otp = otpHelper.generateOtp();
     const otpExpiry = otpHelper.otpExpiry();
 
-    //create new user
+    //Temporary Signup payload
+
     const payLoad = {
-      //create a instance of user model and save temparory in memory
       firstName,
       lastName,
       email,
@@ -73,43 +151,60 @@ const postSignUp = async (req, res) => {
       password: hashedPassword,
       otp,
       otpExpiry,
+      referralCode
     };
 
+    const tempData = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
+      expiresIn: "10m",
+    });
+  
+    //Send otp OTP Email
     await emailSender.sendOtpMail(email, otp);
 
-    let tempData;
-    try {
-      tempData = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
-        expiresIn: "10m",
-      });
-    } catch (err) {
-      console.log("Error in genrating token", err);
-    }
-
-    res
-      .cookie("tempData", tempData, {
+    res.cookie("tempData", tempData, {
         httpOnly: true,
-      })
+        sameSite:'strict',
+        maxAge: 10 * 60 * 1000
+    })
 
-      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Otp sent successfully',redirect:'/user/send-otp'})
+    return res.status(HTTP_STATUS.OK).json({
+      message:RESPONSE_MESSAGES.OK,
+      customMessage:'Otp sent successfully',
+      redirect:'/user/send-otp'
+    })
 
   } catch (err) {
     console.error("Error in user signup", err);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Server Error, please try after sometime'})
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Server Error, please try after sometime'
+    })
   }
 };
 
-/*╔══════════════════════╗
-  ║      OTP-LOGIC       ║
-  ╚══════════════════════╝*/
 
-// ------------------------------------------
-// OTP - Get
-// ------------------------------------------
+/* ===============================
+   OTP LOGIC
+   =============================== */
+
+
+
+//------------- OTP_Get ------------//
+
+/**
+ * Renders OTP verification page
+ * @route GET /user/otp 
+ * @access Public
+ */
 
 const getOtp = (req, res) => {
   try {
-    const token = req.cookies.tempData;
+    const token = req.cookies?.tempData;
+
+    if (!token) {
+      return res.redirect("/user/signup");
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const email = decoded.email;
     res.render("user/otp.ejs", {
@@ -122,7 +217,7 @@ const getOtp = (req, res) => {
     });
   } catch (err) {
     console.log("Error in get Otp", err);
-    res.redirect('/user/SignUp')
+    res.redirect('/user/signup')
   }
 };
 
@@ -166,15 +261,41 @@ const postOtp = async (req, res) => {
       });
     }
 
+    let referredUser=null;
+
+    if(decoded.referralCode){
+      referredUser = await User.findOne({referralCode:decoded.referralCode})
+    }
+
+
     const newUser = new User({
       firstName: decoded.firstName,
       lastName: decoded.lastName,
       email: decoded.email,
       mobile: decoded.mobile,
       password: decoded.password,
+      referredBy: referredUser ? referredUser._id : null,
     });
-
+  
     await newUser.save();
+    const newReferralCode = decoded.firstName.slice(0,3).toUpperCase()+newUser._id.toString().slice(-5).toUpperCase();
+    newUser.referralCode=newReferralCode;
+    await newUser.save();
+
+    const wallet = await Wallet.findOne({userId:req.user})
+    if(!wallet){
+      const wallet=await Wallet.create({
+        userId:newUser._id,
+        balance:0
+      })
+    }
+    
+
+    if (referredUser) {
+      creditWallet(referredUser._id,100,'Referral',referredUser._id)
+      referredUser.referralCount = (referredUser.referralCount || 0) + 1;
+      await referredUser.save();
+    }
     res.clearCookie("tempData");
 
     // Successful verification
@@ -546,9 +667,42 @@ const getGoogleAuthCallBack =[ passport.authenticate('google', {
 
 
 // ------------------------------------------
-// Exporting All The Auth Controller Logics
+//  Helper functions
 // ------------------------------------------
 
+async function creditWallet(userId,amount,reason,orderId){
+  console.log('Call recieved in credit wallet helper function');
+  try {
+      let userName;
+      try {
+        const user=await User.findOne({_id:orderId});
+        if(user){
+          userName=user.firstName;
+        }
+      } catch (error) {
+        console.log('this is not a refereral');
+      }
+    const wallet = await Wallet.findOne({userId})
+    if(!wallet){
+      throw new Error('Wallet Not Found, Login Again')
+    }
+    const newBalance = wallet.balance+amount;
+    wallet.balance=newBalance;
+    await wallet.save();
+
+    await WalletTransaction.create({
+      walletId: wallet._id,
+      type: "credit",
+      amount,
+      reason,
+      userName,
+      orderId,
+      balanceAfter: newBalance
+    })
+  } catch (error) {
+    console.log('Error in creditWallet helper function',error);
+  }
+}
 
 
 

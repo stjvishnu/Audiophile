@@ -8,8 +8,9 @@ import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 const allProducts = async (req, res) => {
 
   
-  console.log('Call inside All products');
+  console.log('Call inside products');
       try {
+        console.log('hijijiji');
       
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -18,7 +19,6 @@ const allProducts = async (req, res) => {
         const totalPages = Math.ceil(totalDocuments/limit);
 
         const query={isActive:true,isDeleted:false};
-
         const {category,subCategory,brand} = req.query;
         if(category){
           const categoryDoc=await Category.findOne({name:category})
@@ -53,12 +53,8 @@ const allProducts = async (req, res) => {
         const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption).lean();
         if(req.user){
           const wishlist = await Wishlist.findOne({userId:req.user}).lean();
-        
-        console.log("wishlist",wishlist);
-        // console.log('products',products)
 
         const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
-        console.log('wishlistedvariants',wishlistedVariants);
 
 
         products.forEach((product)=>{
@@ -68,10 +64,71 @@ const allProducts = async (req, res) => {
           product.isWishlisted=isProductWishlisted;
         });
         }
+
+        // const categoryList = await Category.find({isActive:true,isDeleted:false})
+        // const categoryNames = categoryList.map((category)=>category.name)
+        // console.log('category list',categoryNames);
+        // const productList = await Product.find({isActive:true,isDeleted:false}).populate('category')
+        // const productCategoryNames =  productList.map((product)=>product.category.name)
+        // console.log('productList',productCategoryNames);
+
+        const categoryList = await Category.aggregate([
+          {
+            $match: {
+              isActive: true,
+              isDeleted: false
+            }
+          },
+        
+          // LEFT JOIN with filtering
+          {
+            $lookup: {
+              from: "products",
+              let: { categoryId: "$_id" },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ["$category", "$$categoryId"] },
+                        { $eq: ["$isActive", true] },
+                        { $eq: ["$isDeleted", false] }
+                      ]
+                    }
+                  }
+                }
+              ],
+              as: "products"
+            }
+          },
+        
+          {
+            $addFields: {
+              count: { $size: "$products" }
+            }
+          },
+        
+          {
+            $project: {
+              _id: 0,
+              category: { $toLower: { $trim: { input: "$name" } } },
+              count: 1
+            }
+          }
+        ]);
+        
+
+        console.log(categoryList)
+
+        const brandList = await Product.aggregate([{$group:{_id:'$brand',count:{$sum:1}}},{$project:{_id:0,brand:'$_id',count:1}}])
+        console.log(brandList)
+        const subCategoryList = await Product.aggregate([{$group:{_id:'$subCategory',count:{$sum:1}}},{$project:{_id:0,subCategory:'$_id',count:1}}])
+        console.log(subCategoryList)
+
         
 
  
-        res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages});
+        res.status(200).render("user/products.ejs", { products,currentPage:page,totalPages:totalPages,categoryList,subCategoryList,brandList});
       } catch (err) {
         console.error(err);
         res.send("Error occured");

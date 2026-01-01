@@ -5,5 +5,6 @@ const router = express.Router();
 router.get('/',ordersController.getOrders)
 router.get('/:orderId',ordersController.getOrderDetails)
 router.post('/change-order-status',ordersController.changeOrderStatus)
+router.post('/return-item',ordersController.returnItem)
 
 export default router

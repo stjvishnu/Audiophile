@@ -1,3 +1,4 @@
+
 const ordersSection=document.getElementById('ordersSection')
 const ordersBtn= document.getElementById('ordersBtn');
 const orderDetailsSectionContainer = document.getElementById('orderDetailsSection');
@@ -11,6 +12,7 @@ ordersBtn.addEventListener('click', async (e)=>{
   profileInfo.classList.add('hidden')
   addressPage.classList.add('hidden');
   ordersSection.classList.remove('hidden')
+  walletPage.classList.add('hidden')
   try{
 
     const response  = await axios.get('/user/profile/orders');
@@ -92,7 +94,7 @@ async function viewDetails(orderId){
     
     const orderCard = document.createElement('div');
     orderCard.innerHTML=`
-      <div class="bg-white border-2 border-black rounded-3xl p-8 text-shadow-black">
+      <div class="bg-white border-2 border-black rounded-3xl p-6 text-shadow-black">
       <div class="flex items-start justify-between">
           <div class="flex-1">
               <h2 class="text-xl text-black font-bold mb-2">${item.productName}</h2>
@@ -101,17 +103,25 @@ async function viewDetails(orderId){
               <p class="text-gray-700">category : ${item.categoryName || ''}</p>
               <p class="text-gray-700 mt-3">orderId: #${order.orderNumber } </p>
           </div>
-          <div class="flex flex-col items-end gap-4">
+          <div class="flex flex-col items-end gap-3">
               <img src="${item.productImage}"
                   alt="${item.productName}"
                   class="w-28 h-28 rounded-2xl bg-white object-cover">
               <p class="text-gray-600 font-semibold">Qty : ${item.quantity}</p>
+              ${order.items.length>1
+                ?`<button id="itemStatus-${item._id}" onclick=returnSingleItem('${order._id}','${item._id}') class=" ${order.orderStatus==='delivered'||order.orderStatus=== 'partial-return'?'':'hidden'} px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" ${item.itemStatus=='return-rejected'||item.itemStatus=='returned'?'disabled':''}>
+                ${item.itemStatus || 'return'}
+              </button>`
+              :''
+              }
+              
           </div>
       </div>
     </div>
     `
     orderDetailsContainer.appendChild(orderCard)
   })
+  
 
   const orderDetails = document.createElement('div')
   orderDetails.innerHTML = `
@@ -135,13 +145,20 @@ async function viewDetails(orderId){
       <!-- PAYMENT METHODS -->
       <div class="grid grid-row-2 bg-white rounded-2xl gap-3">
         <div class="border-2 border-black  rounded-2xl p-4" >
-        <h3 class="text-lg text-black font-bold mb-4 ">Payment Method</h3>
-          <ul class="space-y-2">
-              <li class="text-sm text-gray-800 flex items-center gap-2">
-                  <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                  ${order.payment.method}<br>
-              </li>
-          </ul>
+        <h3 class="text-lg text-black text-center font-bold mb-4 ">Payment Method</h3>
+           <div id="paymentStatusContainer" class="flex justify-center gap-10 p-2">
+         
+              <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-gray-500" disabled>
+              ${order.payment.method}
+              </button>
+
+              <button 
+              onclick="retryPayment('${order._id}','${order.total}')"
+              class="px-8 py-1 text-sm font-semibold rounded-lg text-white ${order.payment.status=='pending'?'bg-red-500':'bg-green-500'} "${order.payment.status=='pending'?'':'disabled'} >
+              ${order.payment.status}
+              </button>
+           </div>   
+          
         </div>
         <div class="border-2 border-black rounded-2xl p-4">
         <h3 class="text-lg text-black font-bold mb-4 text-center">Status</h3>
@@ -192,11 +209,18 @@ async function viewDetails(orderId){
               </div>
               <div class="flex justify-between text-sm">
                   <span class="text-gray-600">Discount</span>
-                  <span class="text-red-600 font-medium">${order.discount}</span>
+                  <span class="text-green-500 font-medium">${order.discount}</span>
               </div>
+
+              ${order.couponDiscount ? `
+              <div class="flex justify-between text-sm">
+                <span class="text-green-700">Coupon discount</span>
+                <span class="text-green-700 font-medium">${order.couponDiscount}</span>
+              </div>
+            ` : ''}
               <div class="flex justify-between text-sm">
                   <span class="text-gray-600">Delivery Fee</span>
-                  <span class="text-gray-900 font-medium">₹40</span>
+                  <span class="text-gray-900 font-medium">₹0</span>
               </div>
               <div class="border-t border-gray-300 pt-3 flex justify-between">
                   <span class="text-lg text-black font-bold">Total</span>
@@ -291,8 +315,8 @@ async function orderReturnCancel(orderId,action){
               modal.querySelector('textarea').value=''
             }catch(error){
               console.log('Error in cancel,return request'),error;
-              const message= response.error.data.customMessage;
-              if(message) showToast('success',message)
+              const message= error.response.data.customMessage || 'Something went wrong';
+              if(message) showToast('error',message)
             }
           })
       
@@ -348,3 +372,154 @@ async function downloadInvoice(orderId){
   }
 }
 
+//single order return
+
+async function returnSingleItem(orderId,itemId){
+  try {
+    console.log('itemId',itemId);
+    const result=await sweetAlert('error','Are you sure ?',`You want to return the order`,true,true)
+    if(result.isConfirmed){
+     const modal= document.getElementById('return-cancelModal')
+     modal.classList.remove('hidden')
+     document.body.style.overflow='hidden';
+      
+     const submitBtn = document.getElementById('submitBtn')
+     submitBtn.addEventListener('click',async (e)=>{
+      try {
+        const text = modal.querySelector('textarea').value.trim();
+        if(!text){
+          showToast('error','Please enter the reason');
+          return
+        }
+
+        const response = await axios.patch(`/user/orders/return-item/${itemId}`,{orderId,reason:text})
+        if(!response?.data?.customMessage) throw new Error('Issue in returning item')
+
+        const itemStatusBtn = document.getElementById(`itemStatus-${itemId}`)
+        itemStatusBtn.textContent='return-requested';
+        itemStatusBtn.classList.add('bg-red-500')
+        showToast('success','Return Requested');
+        modal.classList.add('hidden')
+        modal.querySelector('textarea').value=''
+      } catch (error) {
+        console.log('Error in returning product',error);
+        const message= error.response.data.customMessage||'Something went wrong';
+         if(message) showToast('error',message)
+         modal.classList.add('hidden')
+         document.body.style.overflow='';
+      }
+    
+     })
+    }
+  
+  } catch (error) {
+    console.log('Error in returnSingleItem Script',error);
+    const modal= document.getElementById('return-cancelModal')
+    modal.classList.add('hidden')
+    document.body.style.overflow='';
+    showToast('error','Something went wrong, try again !')
+  }
+}
+
+
+//retry payment
+async function retryPayment(orderId,amount) {
+  try {
+    console.log('Order btn clicked');
+
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
+
+    try {
+              const orderResponse = await axios.post('/user/checkout/create-razorpay-order',{
+                amount: parseInt(amount),
+                orderId:orderId,
+              })
+              
+      
+              console.log('REsponse in create-razorpay order',orderResponse);
+      
+              if(!orderResponse.data.orderId){
+                showToast('error','Issue in completing the request, try again later')
+              }
+      
+              //show razorpay payment popup
+              const options = {
+                key: orderResponse.data.RAZORPAY_KEY,
+                amount: orderResponse.data.rzpOrder.amount,
+                currency: orderResponse.data.rzpOrder.currency,
+                order_id: orderResponse.data.rzpOrder.id, // Order ID from backend
+                handler:async  (response) => {
+                  console.log('razorpay response',response); // Payment details
+                  // Step 3: Send payment details to backend for verification
+                      try {
+                        const verify = await axios.post("/user/checkout/verify-payment", {
+                          orderId: orderId,
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_payment_id:  response.razorpay_payment_id,
+                          razorpay_signature: response.razorpay_signature
+                        });
+              
+                        console.log('verify',verify);
+                        
+                        if(verify.data.orderId){
+                          orderId=verify.data.orderId;
+                          document.getElementById('loader').classList.add('hidden')
+                          document.body.style.overflow = '';  
+                          window.location.href=`/user/checkout/order-success/${verify.data.orderId}`
+                        }else{
+                          await sweetAlert('error','Payment Failed','Your transaction has failed',false,false,3000)
+                          document.getElementById('loader').classList.add('hidden')
+                          document.body.style.overflow = '';  
+                          window.location.href=`/user/checkout/order-failed/${orderId}`
+                        }
+
+                      } catch (error) {
+                        console.log('Error in verifying payment',error);
+                        document.getElementById('loader').classList.add('hidden')
+                        document.body.style.overflow = '';                    
+                      }
+                
+                },
+                modal: {
+                  ondismiss : async ()=>{
+                    console.log('modal closed')
+                //   const isCancelled= await axios.delete(`/user/checkout/cancel-razorpay-order/${orderId}`)
+                //   if(isCancelled.data.customMessage){
+                    document.getElementById('loader').classList.add('hidden')
+                    document.body.style.overflow = '';  
+                    showToast('error','Payment Cancelled')
+                    return
+                //   }
+                    
+                  }
+                }
+              };
+                         const rzp = new Razorpay(options);
+                        
+                        rzp.on('payment.failed',async ()=>{
+                          console.log('Call recieved inside razorpay failed on method');
+                          await sweetAlert('error','Payment Failed','Your transaction has failed',false,false,3000)
+                          document.getElementById('loader').classList.add('hidden')
+                          document.body.style.overflow = '';                   
+                          window.location.href=`/user/checkout/order-failed/${orderId}`
+                        })
+                
+                        rzp.open();
+
+            }
+            
+            catch (error) {
+              console.log('Error in creating razorpay order',error);
+              document.getElementById('loader').classList.add('hidden')
+              document.body.style.overflow = '';              
+            }
+
+  } catch (error) {
+    console.log('Error in razorpay payament',error)
+        const message = error.data.message || 'Error while placing the order, Please try again later'
+        showToast('error',message)
+        document.getElementById('loader').classList.add('hidden')
+        document.body.style.overflow = '';
+  }
+}

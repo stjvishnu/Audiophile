@@ -22,7 +22,9 @@ myProfile.addEventListener('click',()=>{
   console.log('Profile clicked');
   console.log(profileInfo);
   profileInfo.classList.remove('hidden')
-  
+  addressPage.classList.add('hidden');
+  ordersSection.classList.add('hidden');
+  walletPage.classList.add('hidden')
 })
 console.log('Hello');
 
@@ -39,6 +41,7 @@ addressBtn.addEventListener('click',async(e)=>{
   // console.log('hello',hello);
   // hello.innerHTML=''
   profileInfo.classList.add('hidden')
+  walletPage.classList.add('hidden')
   addressPage.classList.remove('hidden');
   // document.body.style.position = 'fixed';
 

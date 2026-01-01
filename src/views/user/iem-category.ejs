@@ -1,0 +1,206 @@
+<style>
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #filterSidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .price-range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e7eb;
+    outline: none;
+  }
+  .price-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #000000;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .price-range-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #374151;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .rotate-180 {
+    transform: rotate(180deg);
+  }
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+  .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked+.toggle-slider {
+    background-color: #000000;
+  }
+  input:checked+.toggle-slider:before {
+    transform: translateX(20px);
+  }
+
+  .slide-in {
+    animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .product-card:hover .product-image {
+    transform: scale(1.1) rotateY(15deg);
+  }
+  .product-image {
+    transition: transform 0.5s ease-in-out;
+  }
+
+  /* Sidebar transitions */
+  #filterSidebar {
+    transition: all 0.3s ease-out;
+  }
+
+  #filterSidebar.hidden-sidebar {
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+</style>
+
+<!-- Banner Section -->
+<div class="overflow-x-hidden">
+  <!-- HERO SECTION -->
+  <section class="relative w-[calc(100%-2rem)] h-[50vh] sm:h-[88vh] bg-cover bg-center mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem]" style="background-image: url('https://res.cloudinary.com/dsvedpviz/image/upload/v1766564832/iems_ol7fru.png');">
+    <div class="relative z-10 flex items-center justify-center h-full">
+      <h1 class="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">IEM's</h1>
+    </div>
+  </section>
+</div>
+
+
+
+<!-- Main Container with Sidebar and Products -->
+<div class="container mx-auto mt-8 mb-4 px-4 sm:px-6 lg:px-8 max-w-[1440px]">
+  <div class="flex gap-6">
+
+
+    <!-- Products Grid -->
+    <div id="productsContainer" class="flex-1">
+      <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mx-8 transition-all duration-300">
+
+          <div onclick="loadIems('beginner')"
+            class="group relative h-[480px] w-full overflow-hidden rounded-[2.2rem] bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer pointer-events-auto"
+            style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity:0; transform: translateY(20px)">
+            <div class="absolute inset-0 flex items-center justify-center  mix-blend-multiply">
+              <img src="https://res.cloudinary.com/dsvedpviz/image/upload/v1766565877/beginner-iems_swwaik.png" alt="beginner-iems"
+                class=" object-contain transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+            </div>
+            <div class="relative z-10 flex items-center justify-center h-full">
+              <h1 class="text-xl md:text-4xl  font-bold text-white drop-shadow-lg">Beginner IEM's</h1>
+            </div>
+          </div>
+
+
+          <div onclick="loadIems('intermediate')"
+          class="group relative h-[480px] w-full overflow-hidden rounded-[2.2rem] bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer pointer-events-auto"
+          style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity:0; transform: translateY(20px)">
+          <div class="absolute inset-0 flex items-center justify-center mix-blend-multiply">
+            <img src="https://res.cloudinary.com/dsvedpviz/image/upload/v1766574175/intermediates-iem_cux5iv.jpg" alt="intermediate-iems"
+              class="object-contain transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+          </div>
+          <div class="relative z-10 flex items-center justify-center h-full">
+            <h1 class="text-xl md:text-4xl  font-bold text-white drop-shadow-lg">Intermediate IEM's</h1>
+          </div>
+          </div>
+
+
+        <div onclick="loadIems('advanced')"
+        class="group relative h-[480px] w-full overflow-hidden rounded-[2.2rem] bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer pointer-events-auto"
+        style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity:0; transform: translateY(20px)">
+        <div class="absolute inset-0 flex items-center justify-center  mix-blend-multiply">
+          <img src="https://res.cloudinary.com/dsvedpviz/image/upload/v1766565900/advanced-iems_j2gqt9.jpg" alt="advanced-iems"
+            class=" object-cover transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+        </div>
+        <div class="relative z-10 flex items-center justify-center h-full">
+          <h1 class="text-xl md:text-4xl font-bold text-white drop-shadow-lg">Advanced IEM's</h1>
+        </div>
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  async function loadIems(subCategory){
+    try {
+      console.log('subCategory',subCategory);
+     const response= await axios.get('/user/category/iem/subCategory',{params:{subCategory}})
+      console.log(req.body);
+    } catch (error) {
+      console.log('error in loadItems',error);
+    }
+  }
+</script>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const target = document.getElementsByClassName('container')[0];
+      const offset = -100;
+      const y = target.getBoundingClientRect().top + window.scrollY + offset;
+
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }, 2000);
+  });
+</script>
+

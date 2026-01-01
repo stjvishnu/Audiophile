@@ -55,6 +55,22 @@ if (result.isConfirmed) {
 
     }
 }
+let previousUsers = [];
+
+
+async function loadUsers() {
+  console.log('hello');
+  const res = await fetch('/admin/users/loadUsers');
+  const data = await res.json();
+   previousUsers = data.users;
+
+  
+  // console.log('hi')
+  // console.log('orginalusers',originalUsers.users);
+  // renderUsers(originalUsers);
+}
+
+
 
 
 function debounce(fn, wait) {
@@ -75,18 +91,25 @@ async function handleSearch() {
   try {
 
     //input element always emit input event whenever input value changes
-    const searchTerm = document.getElementById('searchInput').value.trim();
+    let searchTerm = document.getElementById('searchInput').value.trim();
     const usersContainer = document.getElementById('usersContainer');
 
     //show loading state
 
     usersContainer.innerHTML = '<div class="text-center py-8" > Searching... </div> '
 
-    if(/[*%$?\\]/.test(searchTerm)){ //avoid special characters that may crash the server
+    if (searchTerm === '') {
+      console.log(previousUsers);
+      renderUsers(previousUsers);
+      return;
+    }
+
+    //avoid special characters that may crash the server
+    if(/[*%$?\\]/.test(searchTerm)){ 
       searchTerm=searchTerm.replaceAll(/[*%$?\\]/g,'').trim()
     }
   
-    const response = await fetch(`/admin/users/search?searchTerm=${searchTerm}`);
+    const response = await fetch(`/admin/users/search?searchTerm=${encodeURIComponent(searchTerm)}`);
   
     if (!response.ok) {
       throw new Error('Search Failed')
@@ -94,19 +117,22 @@ async function handleSearch() {
 
     const users = await response.json();
     renderUsers(users);
-  } catch (err) {
-    console.log('Error in get handleSearch: ', err);
-    usersContainer.innerHTML = '<div class="text-center py-8 teext-red-500" > Error Loading Results </div>'
+  } catch (error) {
+    console.log('Error in get handleSearch: ', error);
+    usersContainer.innerHTML = '<div class="text-center py-8 text-red-500" > Error Loading Results </div>'
   }
 }
 
 async function renderUsers(users) {
   const usersContainer = document.getElementById('usersContainer');
 
-  if (users.length == 0) {
+  if (!users || users.length == 0) {
     usersContainer.innerHTML = '<div class="text-center py-8 text-gray-400">No users found</div>';
-    usersContainer.appendChild(userElement);
+    // usersContainer.appendChild(userElement);
+    return
   }
+
+
   usersContainer.innerHTML = '';
 
   users.forEach((user, index) => {
@@ -114,14 +140,14 @@ async function renderUsers(users) {
     
     const userRow = document.createElement('div');
     userRow.id = `user-${user._id}`
-    userRow.className = ` ${user.isActive? 'bg-black bg-opacity-90': 'bg-gray-600' }  backdrop-blur-sm text-white rounded-lg p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40`
+    userRow.className = ` ${user.isActive? 'bg-black bg-opacity-90': 'bg-gray-600' }  backdrop-blur-sm text-white rounded-[1.5rem] p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40`
 
     userRow.style.animation = `slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards ${index * 0.1}s`;
 
     userRow.innerHTML = `
 
       <div class = "col-span-1">
-        <img src="${user.photo}" 
+        <img src="${user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png'}" 
         alt="${user.firstName}"
         class="w-10 h-10 rounded-full object-cover"
         >
@@ -161,13 +187,13 @@ async function renderUsers(users) {
   })
 }
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("Dom fully loaded")
+  // console.log("Dom fully loaded")
 
-  document.getElementById('searchInput').addEventListener('input', (e) => {
-    console.log('Input event fired:', e.target.value);
-  });
+  // document.getElementById('searchInput').addEventListener('input', (e) => {
+  //   console.log('Input event fired:', e.target.value);
+  // });
+  loadUsers();
   const searchInput = document.getElementById('searchInput');
-  console.log(searchInput)
   searchInput.addEventListener('input', debounce(handleSearch, 500))
 
 })

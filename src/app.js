@@ -47,7 +47,9 @@ app.use(nocache())
 app.use(cookieParser())
 app.use(passport.initialize());
 
-app.use(usermiddleware.setName)
+app.use(usermiddleware.loadUserAuth);
+
+// app.use(usermiddleware.setName)
 app.use(usermiddleware.setCategories)
 app.use(usermiddleware.wishListCount)
 app.use(usermiddleware.cartCount)
@@ -71,7 +73,7 @@ app.set("layout", "layouts/user-layout")
 app.use('/', mainRouter);
 
 app.get('*', (req, res) => {
-  res.send('404')
+  res.render('404.ejs',{ layout: false })
 });
 
 app.use((err, req, res, next) => {

@@ -132,6 +132,7 @@ async function openAddModal(productId=null) {
   //Edit Mode
   if(productId){
     console.log('Went inside edit mode apend',productId);
+    console.log('product',product);
     productNameContainer.value=product?.name||null;
     brandContainer.value=product?.brand||null;
     categoryContainer.value=product?.category?.name||null;
@@ -144,9 +145,9 @@ async function openAddModal(productId=null) {
     soundSignatureContainer.value=product?.productDetails?.soundSignature||null;
     microphoneContainer.value=product?.productDetails?.mic||null;
     isActive.value=product?.isActive||null;
-    
   }
 
+  console.log('product?.productDetails?.mic',product?.productDetails?.mic);
 
 
   function showError(inputId, message, index = null) {
@@ -204,7 +205,7 @@ async function openAddModal(productId=null) {
     }
 
     if (inputId == 'subCategory') {
-      const subCategories = ['Beginner', 'Intermediate', 'Advanced'];
+      const subCategories = ['beginner', 'intermediate', 'advanced'];
       if (!value.trim()) {
         showError(inputId, 'SubCategory name is required');
         isValid = false;
@@ -607,11 +608,18 @@ async function openAddModal(productId=null) {
         if (el.classList.contains('imagePreview')) {
           el.innerHTML = ''
         }
-        
-if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
+        console.log('check',document.getElementById(`mic-1`)); 
+      if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
       if (el.id.startsWith(`color-${index}`)) el.value = variantObj.attributes.color || '';
       if (el.id.startsWith(`plug-${index}`)) el.value = variantObj.attributes.plug || '';
-      if (el.id.startsWith(`mic-${index}`)) el.value = variantObj.attributes.mic || '';
+      if (el.id.startsWith(`mic-${index}`)) {
+        // el.value = variantObj.attributes.mic || '';
+              el.value =
+        variantObj.attributes.mic === true ? 'true' :
+        variantObj.attributes.mic === false ? 'false' :
+        '';
+
+      }
       if (el.id.startsWith(`price-${index}`)) el.value = variantObj.attributes.price || '';
       if (el.id.startsWith(`stock-${index}`)) el.value = variantObj.attributes.stock || '';
       if (el.id.startsWith(`discount-${index}`)) el.value = variantObj.attributes.discount || '';
@@ -852,6 +860,7 @@ if (el.id.startsWith(`sku-${index}`)) el.value = variantObj.sku || '';
       });
     });
     console.log('before fetch',productId);
+    console.log('form data',formData);
     // console.log(Object.fromEntries(formData.entries()));
     try{
       let url=""

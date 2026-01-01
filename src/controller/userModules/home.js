@@ -6,7 +6,7 @@ const getHome = async (req, res) => {
    
   } catch (err) {
     console.log("Error Getting Home", err);
-    return res.render("user/home.ejs");
+    return res.render("user/home.ejs",{title:'home'});
   }
 };
 

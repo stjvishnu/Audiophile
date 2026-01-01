@@ -4,8 +4,7 @@
     }
 </style>
 
-
-<nav class="bg-white z-20 fixed top-0 left-0 right-0 animate-fadeIn ">
+<nav id="navbar" class="<%= locals.title === 'home' ? 'hide-during-splash' : '' %> bg-white z-20 fixed top-0 left-0 right-0 animate-fadeIn ">
     <!-- Desktop Navigation -->
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
@@ -22,12 +21,12 @@
                         </svg>
                     </button>
                     <div
-                        class="absolute z-10 left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <div class="py-1">
+                        class="absolute z-10 left-0 mt-5 w-48 rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <div class="py-1 mt-1">
 
                             <% categories.forEach((category)=> { %>
 
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="/user/category/<%=category.name%>" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">
                                     <%=category.name%>
                                 </a>
 
@@ -47,11 +46,11 @@
                         </svg>
                     </button>
                     <div
-                        class="absolute z-10 left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        class="absolute z-10 left-0 mt-5 w-48 rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <div class="py-1">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Brand 1</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Brand 2</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Brand 3</a>
+                            <a href="#" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-[0.9rem]">Brand 1</a>
+                            <a href="#" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-[0.9rem]">Brand 2</a>
+                            <a href="#" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-[0.9rem]">Brand 3</a>
                         </div>
                     </div>
                 </div>
@@ -61,7 +60,7 @@
 
             <!-- Center: Logo -->
             <div class="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
-                <img src="/images/audiophile-logo-black.png" alt="Brand" class="h-14 w-auto">
+                <img src="/images/audiophile-logo-black.png" alt="Brand" class="h-14 w-auto mt-1">
             </div>
 
             <!-- Right Section: Search, Icons -->
@@ -96,7 +95,7 @@
 
                 <!-- Cart Icon with Counter -->
                 <div class="relative group">
-                    <btn id="cartBtn"  class="text-gray-700 hover:text-black transition-colors p-1">
+                    <button id="cartBtn"  class="text-gray-700 hover:text-black transition-colors p-1" <%=locals.userName?'':'disabled'%> >
                         <i
                             class="fas fa-shopping-cart text-xl group-hover:scale-110 transition-transform duration-200"></i>
                         <% if (locals.cartCount !==undefined) { %> 
@@ -107,38 +106,39 @@
                             <% } %> 
                             
                             
-                        </btn>
+                        </button>
                 </div>
 
                 <!-- User Profile with Dropdown -->
                 <div class="relative group">
                     <button class="flex items-center text-gray-700 hover:text-black focus:outline-none">
                         <i class="far fa-user"></i>
-                        <% if (locals.user) { %>
+                        <% if (locals.userName) { %>
                             <span class="ml-2 text-sm text-gray-700">
-                                <%= user.firstName %>
+                                <%= userName.firstName %>
                             </span>
                             <span class="ml-1 w-2 h-2 bg-green-500 rounded-full"></span>
                             <% } else { %>
                                 <span class="ml-1 w-2 h-2 bg-red-500 rounded-full"></span>
                                 <% } %>
                     </button>
-                    <% if (locals.user) { %>
+                    <% if (locals.userName) { %>
                         <div
-                            class="absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            class="absolute z-10 right-0 mt-4 w-40 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                             <div class="py-1">
                                 <a href="/user/profile"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Profile</a>
                                 <a href="/user/logout"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                                    onclick="sessionStorage.removeItem('splashShown')"
+                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Logout</a>
                             </div>
                         </div>
                         <% }else { %>
                             <div
-                            class="absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            class="absolute z-10 right-0 mt-4 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                             <div class="py-1 text-center">
                                 <a href="/user/login"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</a>
+                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Login</a>
                             </div>
                         <% }%>
                 </div>
@@ -195,13 +195,13 @@
                 class="w-full px-4 py-1 text-sm border border-gray-300 rounded-full focus:outline-none focus:border-gray-500">
         </div>
         <!-- Mobile User Profile -->
-        <% if (locals.user) { %>
+        <% if (locals.userName) { %>
             <div class="mobile-submenu">
                 <button class="w-full flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100">
                     <div class="flex items-center">
                         <i class="far fa-user mr-2"></i>
                         <span>
-                            <%= user.name %>
+                            <%= userName.firstName %>
                         </span>
                     </div>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,11 +264,19 @@
       const productContainer = document.getElementById('productContainer');
       const cartModal = document.getElementById('cartModal');
       const cancelBtn = document.getElementById('cancelBtn');
-    
+      const subTotalEl = document.getElementById('subTotal');
+      const cartCountContainer = document.getElementById('cartCountContainer')
+
+      cancelBtn.addEventListener('click',()=>{
+        document.getElementById('cartModal').classList.add('hidden')
+        })
+
       try {
         console.log('hello');
         const response = await axios.get('/user/cart');
+        console.log('response inside get cart script header',response);
         const cart = response.data.cart;
+        console.log('cart',cart);
         if (!cart || !cart.items.length) {
           productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
           console.log('HIHIH');
@@ -277,239 +285,139 @@
           document.getElementById('cartModal').classList.remove('hidden')
             return
         }
-        console.log('Cart:', cart);
-        console.log('hiii');
-        // Clear existing items
-        productContainer.innerHTML = '';
-    
-     
-    
-        // Generate cart items
-        cart.items.forEach((item) => {
-          console.log('item:', item);
-    
-          const productVariant = item.productId.variants.find(
-            (variant) => variant.sku === item.variantId
-          );
-    
-          if (!productVariant) {
-            console.warn('No matching variant found for item:', item);
-            return;
-          }
-    
-          const { attributes } = productVariant;
-          const imgUrl = attributes.productImages?.[0] || '/images/placeholder.png';
-          const color = attributes.color || 'N/A';
-          const price = Math.round(
-            item.quantity * attributes.price * (1 - attributes.discount / 100)
-          );
-    
-          // Create item element
-          const productDiv = document.createElement('li');
-          productDiv.innerHTML=`
-      <li class="flex py-6">
-      <div class="size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
-        <img src="${imgUrl}" alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt." class="size-full object-cover" />
-      </div>
-  
-      <div class="ml-4 flex flex-1 flex-col">
-        <div>
-          <div class="flex justify-between text-base font-medium text-gray-900">
-            <h3>
-              <a href="#">${item.productId.name}</a>
-            </h3>
-            <p id='productPrice' class="ml-4">${price} ₹</p>
-          </div>
-          <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
-          <p class="mt-1 text-sm text-gray-500">${color}</p>
-        </div>
-        <div class="flex flex-1 items-end justify-between text-sm">
-        <div class="flex items-center space-x-2">
-            <p class="text-gray-500 text-md">Qty</p>
-            <form class="max-w-xs">
-                <div class="relative flex items-center">
-                    <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" data-product-id=${item.productId._id} data-product-color=${color} data-variant-id=${productVariant.sku} class="shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                        <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                        </svg>
-                    </button>
-                    <input type="text" id="counter-input" data-input-counter class="shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value=${item.quantity} required />
-                    <button type="button" id="increment-button" data-input-counter-increment="counter-input" data-product-id=${item.productId._id} data-product-color=${color} data-variant-id=${productVariant.sku} class="shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-                        <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </div>
-    
-        <div class="flex">
-          <button id='remove-Button' data-variant-id=${productVariant.sku} type="button" class="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
-        </div>
-    </div>
-      </div>
-    </li>
-      `
-  
-      updateSubTotal()
-      productContainer.appendChild(productDiv);
-
-      //quanity management
-      const incrementButton = productDiv.querySelector('#increment-button')
-      const decrementButton = productDiv.querySelector('#decrement-button')
-      const removeButton = productDiv.querySelector('#remove-Button')
-      
-      decrementButton.addEventListener('click',()=>{
-      console.log('btn clicked');
-
-      const targetInput=productDiv.querySelector('#counter-input');
-      const productPrice=productDiv.querySelector('#productPrice');
-      const productId = decrementButton.dataset.productId;
-      const variantId = decrementButton.dataset.variantId;
-        const variantColor = decrementButton.dataset.productColor;
-        console.log(variantColor);
-        console.log(productId);
-      const type = 'decrement'
-      
-        axios.post(`/user/cart/update-quantity`,{
-          productId,
-          variantId,
-          variantColor,
-          type,
-        })
-        .then((response)=>{
-          const updatedItem = response.data.updatedItem;
-
-            targetInput.value=updatedItem.quantity;
-            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
-            updateSubTotal()
-          
-        })
-        .catch((err)=>{
-          if(err.response.data.customMessage){
-            showToast('warning',err.response.data.customMessage)
-            document.getElementById('loader').classList.add('hidden')
-            document.body.style.overflow = '';
-          }
-          console.log('Error in decreasing the quantity',err)
-        })
-  
-    })
-
-
-    incrementButton.addEventListener('click',()=>{
-        // console.log(incrementButton);
-        const targetInput=productDiv.querySelector('#counter-input');
-        const productPrice=productDiv.querySelector('#productPrice');
-        const productId = incrementButton.dataset.productId;
-        const variantId = incrementButton.dataset.variantId;
-        const variantColor = incrementButton.dataset.productColor;
-    
-        const type = 'increment'
-    
-          axios.post(`/user/cart/update-quantity`,{
-            productId,
-            variantId,
-            variantColor,
-            type,
-          })
-          .then((response)=>{
-            const updatedItem = response.data.updatedItem;
-            targetInput.value=updatedItem.quantity
-            productPrice.textContent=`${updatedItem.totalPrice} ₹`;
-            updateSubTotal()
-            
-          })
-          .catch((err)=>{
-            if(err.response.data.customMessage){
-              showToast('warning',err.response.data.customMessage)
-              document.getElementById('loader').classList.add('hidden')
-              document.body.style.overflow = '';
-            }
-            console.log(err)
-            })
-        
-       
-      })
-
-      removeButton.addEventListener('click',()=>{
-          const variantId=removeButton.dataset.variantId;
-          console.log(variantId);
-          axios.delete(`/user/cart/${variantId}`)
-          .then((response)=>{
-            const message = response.data.customMessage;
-            const updatedCart = response.data.updatedCart;
-            console.log('Updated Cart',updatedCart);
-            if(message){
-            showToast('success',message)
-            const cartCount = Number(response.data.cartCount);
-              console.log('CartCount',cartCount);
-              cartCountContainer.innerText=cartCount;
-              if(response.data.cartCount=='0'){
-                cartCountContainer.classList.add('opacity-50')
-              }
-            }
-            
-            updateSubTotal()
-            productDiv.remove();
-        
-            if(!(!!updatedCart) || updatedCart.items.length===0){
-                console.log('hijkgky');
-             productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
-             document.getElementById('loader').classList.add('hidden')
-             document.body.style.overflow = '';
-            }
-            
-          })
-          .catch((err)=>{
-            const message = err.response.data.customMessage;
-            showToast('warning',message);
-            console.log('Error in deleting Item from the cart',err);
-            document.getElementById('loader').classList.add('hidden')
-            document.body.style.overflow = '';
-          })
-      })
-
-      
-          document.getElementById('loader').classList.add('hidden')
-          document.body.style.overflow = '';
-
-          document.getElementById('cartModal').classList.remove('hidden')
-        });
-    
-      } catch (err) {
-        document.getElementById('loader').classList.add('hidden')
-         document.body.style.overflow = '';
-
-            const cart = err.response.data.cart;
-            
-           if (!cart || !cart.items.length) {
-          productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
-          document.getElementById('loader').classList.add('hidden')
-          document.body.style.overflow = '';
-
-          document.getElementById('cartModal').classList.remove('hidden')
-          return;
-        }
-        console.error('Error in fetching cart:', err);
-        productContainer.innerHTML = `<p class="text-center text-red-500">Failed to load cart. Please try again.</p>`;
+        renderCart(cart);
         document.getElementById('loader').classList.add('hidden')
         document.body.style.overflow = '';
         document.getElementById('cartModal').classList.remove('hidden')
-      }
-    });
+    }
+        catch(error){
+            console.log('error in getting cart',error);
+            document.getElementById('loader').classList.add('hidden')
+             document.body.style.overflow = '';
+        }
 
-    async function updateSubTotal(){
-        console.log('Call inside updateSubTotal');
-        const response = await axios.get('/user/cart');
-        const cart = response.data.cart;
-        let subTotal=0
-         cart.items.forEach((item)=>{
-          subTotal+=item.totalPrice
+        function renderCart(cart){
+            console.log('inside renderCart',cart);
+        productContainer.innerHTML='';
+
+                if (!cart || cart.items.length==0) {
+            productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+            subTotalEl.textContent =  `0 ₹` 
+
+            document.getElementById('loader').classList.add('hidden')
+            document.body.style.overflow = '';
+            document.getElementById('cartModal').classList.remove('hidden')
+            return
+        }
+
+            cart.items.forEach((item)=>{
+            console.log('item',item);
+            
+        
+            let productDiv = document.createElement('div');
+            productDiv.innerHTML=`
+            <li class="flex py-6">
+            <div class="size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
+                <img src="${item.imgUrl}" alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt." class="size-full object-cover" />
+            </div>
+        
+            <div class="ml-4 flex flex-1 flex-col">
+                <div>
+                <div class="flex justify-between text-base font-medium text-gray-900">
+                    <h3>
+                    <a href="#">${item.name}</a>
+                    </h3>
+                    <p id='productPrice' class="ml-1">${item.itemTotal} ₹</p>
+                </div>
+                <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
+                <p class="mt-1 text-sm text-gray-500">${item.color}</p>
+                ${
+                    item.appliedOffer
+                    ? `<p class="text-xs text-green-600">${item.appliedOffer} offer applied</p>`
+                    : ``
+                }
+                </div>
+                <div class="flex flex-1 items-end justify-between text-sm">
+                <div class="flex items-center space-x-2">
+                    <p class="text-gray-500 text-md">Qty</p>
+                    <form class="max-w-xs">
+                        <div class="relative flex items-center">
+                            <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId} class="decrement shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                </svg>
+                            </button>
+                            <input type="text" id="counter-input" data-input-counter class="shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value=${item.quantity} required />
+                            <button type="button" id="increment-button" data-input-counter-increment="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId} class="increment shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="flex">
+                <button id='remove-Button' data-variant=${item.variantId} type="button" class="remove font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+                </div>
+            </div>
+            </div>
+            </li>
+            `
+
+            productContainer.appendChild(productDiv)
+            console.log('subTotalEl',subTotalEl);
+            console.log(cart.total);
+            subTotalEl.textContent = `${cart.total} ₹`;
         })
-        console.log('From updatesubtotal',subTotal);
-        document.getElementById('subTotal').textContent=(subTotal ?`${parseInt(subTotal)} ₹` : `0 ₹`);
 
-      }
+        }
+
+
+        productContainer.addEventListener('click',async (e)=>{
+            console.log('hhihihigggcfxdxddd');
+        if(e.target.classList.contains('increment')){
+            console.log('hi increment');
+            await axios.post('/user/cart/update-quantity',{
+            productId: e.target.dataset.product,
+            variantId: e.target.dataset.variant,
+            type: 'increment'
+            })
+            refreshCart();
+        }
+
+        if (e.target.classList.contains('decrement')) {
+            await axios.post('/user/cart/update-quantity', {
+            productId: e.target.dataset.product,
+            variantId: e.target.dataset.variant,
+            type: 'decrement'
+            });
+            refreshCart();
+        }
+
+        if (e.target.classList.contains('remove')) {
+            await axios.delete(`/user/cart/${e.target.dataset.variant}`);
+            refreshCart();
+        }
+
+        })
+
+        async function refreshCart(){
+        try {
+            const res = await axios.get('/user/cart')
+            if(res.data.cart){
+            renderCart(res.data.cart);
+            cartCountContainer.textContent = res.data.cartCount;
+            cartCountContainer.classList.toggle(
+            'opacity-50',
+            res.data.cartCount === 0
+        );
+            }
+        } catch (error) {
+            console.log('Error in refreshing cart',error);
+        }
+        }
+
+      })  
     </script>
     

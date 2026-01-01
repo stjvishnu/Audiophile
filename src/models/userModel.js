@@ -46,7 +46,10 @@ const userSchema = new mongoose.Schema({
     },
     googleID:{
         type : String,
-    }
+    },
+    referralCode:{type:String,unique:true},
+    referredBy:{type:mongoose.Types.ObjectId,ref:'User',default:null},
+    referralCount:{type:Number,default:0}
   
 },{timestamps:true});
 

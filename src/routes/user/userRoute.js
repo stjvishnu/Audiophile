@@ -14,13 +14,13 @@ import upload from '../../utils/multer.js';
 
 //auth routes
 
-router.get('/',usermiddleware.isLogin,userController.getUserHome)
+router.get('/',userController.getUserHome)
 
-router.get('/signup',userController.getSignUp)
+router.get('/signup',usermiddleware.authLogin,userController.getSignUp)
 router.post('/signup',userController.postSignUp);
 
 router.get('/login',usermiddleware.authLogin,userController.getLogin);
-router.post('/login',usermiddleware.blockedUser,userController.postLogin);
+router.post('/login',userController.postLogin);
 
 router.get('/logout',userController.getLogout);
 router.get('/send-otp',userController.getOtp)
@@ -40,6 +40,6 @@ router.post('/otp',userController.postOtp)
 router.post('/resend-otp',userController.resendOtp)
 
 router.get('/auth/google',userController.getGoogleAuth);
-router.get('/auth/google/callback',usermiddleware.blockedUser,userController.getGoogleAuthCallBack);
+router.get('/auth/google/callback',userController.getGoogleAuthCallBack);
 
 export default router;

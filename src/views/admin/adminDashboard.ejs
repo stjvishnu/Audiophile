@@ -1,6 +1,317 @@
-<main class="flex-1 overflow-y-auto p-6">
+<div class="flex-1 overflow-y-auto p-6 ">
     <!-- Your main content goes here -->
-    <div class="h-full flex items-center justify-center text-gray-500">
-        <p>Main content area - Add your dashboard components here</p>
+  
+
+  <!-- Stats cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div class="stats-card bg-black rounded-[1.8rem] p-6 shadow-md transition-all duration-300 hover:border-l-4 hover:border-white">
+          <div class="flex items-center justify-between">
+              <div>
+                  <p class="text-gray-400 text-sm font-medium">Total Revenue</p>
+                  <h3 class="text-2xl font-bold mt-1"><%=totalRevenue[0].totalRevenue%></h3>
+              </div>
+              <div class="p-3 rounded-full bg-black text-white">
+                <i class="fa-solid fa-indian-rupee-sign" style="color: #ffffff;"></i>
+              </div>
+          </div>
+      </div>
+      <div class="stats-card bg-black rounded-[1.8rem] p-6 shadow-md transition-all duration-300 hover:border-l-4 hover:border-white">
+          <div class="flex items-center justify-between">
+              <div>
+                  <p class="text-gray-400 text-sm font-medium">Total fullfilled Orders</p>
+                  <h3 class="text-2xl font-bold mt-1"><%=totalOrders%></h3>
+                  <p class="text-white text-xs mt-2 flex items-center">
+
+              </div>
+              <div class="p-3 rounded-full bg-black text-white">
+                  <i class="fas fa-shopping-cart text-xl"></i>
+              </div>
+          </div>
+      </div>
+      <div class="stats-card bg-black rounded-[1.8rem] p-6 shadow-md transition-all duration-300 hover:border-l-4 hover:border-white">
+          <div class="flex items-center justify-between">
+              <div>
+                  <p class="text-gray-400 text-sm font-medium">Total Products</p>
+                  <h3 class="text-2xl font-bold mt-1"><%=totalProducts%></h3>
+
+              </div>
+              <div class="p-3 rounded-full bg-black text-white">
+                  <i class="fas fa-box text-xl"></i>
+              </div>
+          </div>
+      </div>
+      <div class="stats-card bg-black rounded-[1.8rem] p-6 shadow-md transition-all duration-300 hover:border-l-4 hover:border-white">
+          <div class="flex items-center justify-between">
+              <div>
+                  <p class="text-gray-400 text-sm font-medium">Total Customers</p>
+                  <h3 class="text-2xl font-bold mt-1"><%=totalCustomers%></h3>
+
+              </div>
+              <div class="p-3 rounded-full bg-black text-white">
+                  <i class="fas fa-users text-xl"></i>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Charts and Recent Orders -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Sales chart -->
+      <div class="lg:col-span-2 bg-black rounded-[2.3em] p-6 shadow-md  transition-all duration-300 hover:border-l-4 hover:border-white">
+          <div class="flex items-center justify-between mb-6">
+              <h2 class="text-lg font-semibold">Sales Overview</h2>
+              <div class="flex space-x-2">
+                  <button onclick="loadSalesChart('weekly')" class="px-3 py-1 text-xs rounded-lg bg-black hover:bg-gray-800">Week</button>
+                  <button onclick="loadSalesChart('monthly')" class="px-3 py-1 text-xs rounded-lg bg-white text-black hover:bg-gray-200">Month</button>
+                  <button onclick="loadSalesChart('yearly')" class="px-3 py-1 text-xs rounded-lg bg-black hover:bg-gray-800">Year</button>
+                  <button onclick="loadSalesChart('daily')" class="px-3 py-1 text-xs rounded-lg bg-black hover:bg-gray-800">Daily</button>
+              </div>
+          </div>
+          <div class="h-80 bg-black rounded-[2rem] p-6">
+            <div class="grid grid-cols-2 gap-4 w-full h-full">
+                <div class="relative">
+                    <canvas id="salesChartLeft" class="w-full h-full"></canvas>
+                </div>
+                <div class="relative">
+                    <canvas id="salesChartRight" class=" h-full w-full"></canvas>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- Recent orders -->
+      <div class="bg-black rounded-[2.2rem] p-6 shadow-md transition-all duration-300 hover:border-l-4 hover:border-white ">
+          <div class="flex items-center justify-between mb-6">
+              <h2 class="text-lg font-semibold">Recent Orders</h2>
+              <button class="text-white hover:text-gray-300 text-sm flex items-center nav-item">
+                  View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+              </button>
+          </div>
+          <div class="space-y-4">
+
+           <% if(recentOrders){ %>
+                <%recentOrders.forEach((order)=>{%>
+                    <div class="flex items-center justify-between p-4 bg-black rounded-3xl hover:bg-gray-800 transition-colors border border-gray-800">
+                        <div>
+                            <p class="font-medium">#<%=order.orderNumber%></p>
+                            <p class="text-sm text-gray-400"><%=order.userId.firstName%> • <%=order.total%></p>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-800 text-white border border-gray-700"><%=order.orderStatus%></span>
+                            <p class="text-xs text-gray-400 mt-1"><%=(new Date(order.createdAt).toLocaleDateString())%></p>
+                        </div>
+                    </div>
+                <%})%>
+            <%}%>
+
+
+              
+
+          </div>
+      </div>
+  </div>
+
+  <!-- Products table -->
+  <div class="bg-transparent rounded-xl shadow-md overflow-hidden">
+    <div class="py-6 px-4 sm:px-1">
+      <!-- Main grid - 1 column mobile, 3 columns desktop -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+         <!-- Best Selling Products -->
+         <div class="bg-black rounded-[2rem] transition-all duration-300 hover:border-l-4 hover:border-white overflow-hidden flex flex-col h-full">
+            <div class="bg-black px-5 py-4 border-b border-gray-700">
+              <h3 class="text-base text-center font-semibold text-gray-100 tracking-tight">
+                Best Selling Products (Top 10)
+              </h3>
+            </div>
+            <div class="overflow-x-auto flex-1">
+              <table class="min-w-full divide-y divide-gray-800/70 text-sm">
+                <thead class="bg-black sticky top-0 z-10 backdrop-blur-sm">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">RANK</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">PRODUCT</th>
+                    <th class="px-2 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">QUANTITY</th>
+                    <th class="px-3 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">REVENUE</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/50 bg-black">
+                    <%if(topSellingProducts){%>
+                        <%topSellingProducts.forEach((p,index)=>{%>
+                        <tr class="hover:bg-slate-800/40 transition-colors">
+                            <td class="px-4 py-3 text-gray-300 font-medium">#<%=index+1%></td>
+                            <td class="px-4 py-3 text-white"><%=p.product.name%><span class="pl-1">(<%=p.product.variants[0].attributes.color%>)</span></td>
+                            <td class="px-2 py-3 text-right text-gray-300"><%=p.totalSold%></td>
+                            <td class="px-3 py-3 text-right text-emerald-400 font-medium">₹<%=p.revenue%></td>
+                          </tr>
+                        <%})%>
+                    <%}%>
+  
+                  <!-- Add remaining rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        
+        <!-- Best Selling Categories -->
+        <div class="bg-black rounded-[2.3rem] transition-all duration-300 hover:border-l-4 hover:border-white overflow-hidden flex flex-col h-full">
+          <div class="bg-black px-5 py-4 border-b border-gray-700">
+            <h3 class="text-base text-center font-semibold text-gray-100 tracking-tight">
+              Best Selling Categories (Top 10)
+            </h3>
+          </div>
+          <div class="overflow-x-auto flex-1">
+            <table class="min-w-full divide-y divide-gray-800/70 text-sm">
+              <thead class="bg-black sticky top-0 z-10 backdrop-blur-sm">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">RANK</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">CATEGORY</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">QUANTITY</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">REVENUE</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/50 bg-black">
+                <% if(topSellingCategories){ %>
+                   <% topSellingCategories.forEach((c,index)=>{ %>
+
+                        <tr class="hover:bg-slate-800/40 transition-colors">
+                            <td class="px-4 py-3 text-gray-300 font-medium"><%=index+1%></td>
+                            <td class="px-4 py-3 text-white"><%=c.category%></td>
+                            <td class="px-4 py-3 text-right text-gray-300"><%=c.totalSold%></td>
+                            <td class="px-4 py-3 text-right text-emerald-400 font-medium">₹<%=c.revenue%></td>
+                          </tr>
+                   <% }) %>
+                <% } %>
+  
+  
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+       
+  
+        <!-- Best Selling Brands -->
+        <div class="bg-black rounded-[2rem] transition-all duration-300 hover:border-l-4 hover:border-white overflow-hidden flex flex-col h-full">
+          <div class="bg-black px-5 py-4 border-b border-gray-700">
+            <h3 class="text-base text-center font-semibold text-gray-100 tracking-tight">
+              Best Selling Brands (Top 10)
+            </h3>
+          </div>
+          <div class="overflow-x-auto flex-1 relative">
+            <table class="min-w-full divide-y divide-gray-800/70 text-sm">
+              <thead class="bg-black sticky top-0 z-10 backdrop-blur-sm">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">RANK</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">BRAND</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">QUANTITY</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">REVENUE</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/50 bg-black">
+
+                <% if(topSellingBrands){  %>
+                    <% topSellingBrands.forEach((b,index)=>{ %>
+                        <td class="px-4 py-3 text-gray-300 font-medium"><%=index+1%></td>
+                        <td class="px-4 py-3 text-white"><%=b.brand%></td>
+                        <td class="px-4 py-3 text-right text-gray-300"><%=b.totalSold%></td>
+                        <td class="px-4 py-3 text-right text-emerald-400 font-medium"><%=b.revenue%></td>
+                      </tr>
+                   <% }) %>
+                <% } %>
+                <tr class="hover:bg-slate-800/40 transition-colors">
+
+                <!-- Add remaining rows -->
+              </tbody>
+            </table>
+  
+            <!-- Optional: small scroll indicator like in your screenshot -->
+            <div class="absolute bottom-2 right-3 text-xs text-gray-500 pointer-events-none">
+              ›
+            </div>
+          </div>
+        </div>
+  
+      </div>
     </div>
-</main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx1 = document.getElementById('salesChartLeft').getContext('2d');
+    const ctx2 = document.getElementById('salesChartRight').getContext('2d');
+
+let salesChart = new Chart(ctx1, {
+  type: 'doughnut',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Sales Amount',
+      data: [],
+      backgroundColor: [
+        '#FF9F40',    // Pending - orange
+        '#36A2EB',    // Processing - blue
+        '#4BC0C0',    // Shipped - teal
+        '#4CAF50',    // Delivered - green
+        '#FF6384',    // Cancelled - red/pink
+        '#9966FF'     // Returned - purple
+      ],
+      borderColor: '#ffffff',
+      borderWidth: 2,
+      hoverOffset: 20,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        x: { display: false },
+        y: { display: false }
+    }
+  }
+});
+
+let salesChart2 = new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Sales Amount',
+      data: [],
+      backgroundColor: [
+        '#ffffff',    // Pending - orange
+         // Returned - purple
+      ],
+      borderWidth: 2,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+
+async function loadSalesChart(filter='monthly') {
+    console.log('call inside loadSalesChart script');
+  const res = await fetch(`/admin/dashboard/sales-chart?filter=${filter}`);
+  console.log('response',res);
+  const data = await res.json();
+  console.log('data',data);
+
+  salesChart.data.labels = data.labels;
+  salesChart.data.datasets[0].data = data.values;
+  salesChart2.data.labels = data.labels;
+  salesChart2.data.datasets[0].data = data.values;
+  salesChart.update();
+  salesChart2.update();
+}
+loadSalesChart()
+
+
+</script>

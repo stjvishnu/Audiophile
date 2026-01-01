@@ -1,0 +1,141 @@
+
+    <style>
+
+.paytone-one-regular {
+  font-family: "Paytone One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
+
+
+
+        @keyframes slideFromLeft {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideFromRight {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .slide-left-panel {
+            animation: slideFromLeft 1s ease-out forwards;
+        }
+
+        .slide-right-panel {
+            animation: slideFromRight 1s ease-out forwards;
+        }
+
+        .fade-in-scale {
+            animation: fadeInScale 1s ease-out forwards;
+            animation-delay: 1s;
+            opacity: 0;
+        }
+
+        .bounce-in {
+            animation: bounceIn 5s ease-out forwards;
+            animation-delay: 1.3s;
+            opacity: 0;
+        }
+
+        .earphone-left,
+        .earphone-right {
+            width: 400px;
+
+            /* border: 4px solid white; */
+            border-radius: 40%;
+            position: relative;
+        }
+
+        .earphone-left::after,
+        .earphone-right::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            background: white;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+
+<div id="splash-screen" class="splash-content min-h-screen overflow-hidden">
+    <div class="relative w-full h-screen flex">
+        <div class="w-1/2 h-full bg-white slide-left-panel flex items-center justify-end pr-8">
+            <div class="earphone-left border-black">
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <img src="/images/Black-logo.svg" alt="Logo" class="w-60  mx-auto">
+                </div>
+            </div>
+        </div>
+
+        <div class="w-1/2 h-full bg-black slide-right-panel flex items-center justify-start pl-8">
+            <div class="earphone-right">
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <img src="/images/white-logo-flip.svg" alt="Logo" class="w-60 mx-auto">
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="text-center fade-in-scale">
+                <!-- <div class="mb-6">
+                    <img src="/images/Black-logo.svg" alt="Logo" class="w-60  mx-auto">
+                </div> -->
+
+                <!-- <h1 class="text-6xl font-bold mb-2"> -->
+                  <img src="/images/audiophile-brand-logo2.svg" alt="Logo" class=" w-[13rem] sm:w-[15rem] md:w-[17rem] lg:w-[19rem] mx-auto">
+                    <!-- <span class="text-black ">Audio</span><span class="text-white ">phile</span> -->
+                <!-- </h1> -->
+
+                <div class="bounce-in">
+                    <p class="text-gray-600 text-xl">
+                        Redefines Your Audio Experience
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

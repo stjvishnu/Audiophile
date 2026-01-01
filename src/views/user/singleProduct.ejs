@@ -54,6 +54,7 @@
                             <span id="price" class="ml-3 text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %> ₹</span>
                             <span id="discount" class="ml-3 bg-black text-white px-3 py-1 rounded-full text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
                         </div>
+                        
                     </div>
 
                     <div class="space-y-6 pl-7">
@@ -104,11 +105,55 @@
                             </div>
                         </div>
                     </div>
+    
 
-                    <div class="flex items-center  rounded-xl pl-5">
-                        <span class=" text-green-800 text-sm font-semibold px-3 py-1 rounded-full">In Stock</span>
-                        <span id="stock" class="ml-3 text-gray-700 font-medium"><%= product.variants[0].attributes.stock %> units available</span>
+                    <div class="flex items-center pl-7 space-x-4 ">
+
+                        <!-- IN STOCK BOX -->
+                        <div class="min-w-[100px] h-10 flex items-center justify-center 
+                                    bg-white rounded-xl border-2 border-gray-200 
+                                    hover:border-gray-600 transition-all duration-300 shadow-sm">
+                            <span id="stockIndicator" class="text-green-700 font-semibold text-sm"><%=product.variants[0].attributes.stock>0?'In Stock':'Out Of Stock'%></span>
+                        </div>
+                    
+                        <!-- STOCK COUNT BOX -->
+                        <div class="min-w-[100px] h-10 flex items-center justify-center 
+                                    bg-white rounded-xl border-2 border-gray-200 
+                                    hover:border-gray-600 transition-all duration-300 shadow-sm">
+                            <span id="stock" class="text-gray-700 font-medium text-sm">
+                                <%= product.variants[0].attributes.stock %> units
+                            </span>
+                        </div>
+                    
+                        <div class="relative inline-flex items-center group">
+
+                            <!-- COUPON ICON BUTTON -->
+                            <div id="coupon-btn"
+                                 class="peer min-w-[60px] h-10 flex items-center justify-center 
+                                        bg-white rounded-xl border-2 border-gray-200 
+                                        hover:border-gray-600 transition-all duration-300 shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-tag fa-xl" style="color: #ababab;"></i>
+                            </div>
+                        
+                            <!-- COPY BUTTON -->
+                            <button id="copyBtn"
+                                class="ml-2 px-4 h-10 bg-black text-white rounded-xl shadow-sm text-sm
+                                       opacity-0 pointer-events-none
+                                       transition-all duration-200
+                        
+                                       peer-hover:opacity-100 peer-hover:pointer-events-auto
+                                       group-hover:opacity-100 group-hover:pointer-events-auto">
+                                <span id="couponCode"></span>
+                            </button>
+                        
+                        </div>
+                        
+
+
+                        
+                    
                     </div>
+                    
 
                     <div class="flex items-center justify-center flex-col sm:flex-row gap-4 pt-2 pb-8">
                         <button data-product-id= "<%=product._id %>" data-variant-id="<%=product.variants[0].sku%>" class="addToCartBtn bg-gray-800 hover:bg-black text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl ">
@@ -124,6 +169,9 @@
             </div>
         </div>
     </div>
+
+
+    
     
 </div>
 
@@ -159,6 +207,63 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
 <script>
+
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+    console.log('hihiih');
+    const code = document.getElementById("couponCode").textContent.trim();
+    
+  try {
+    await navigator.clipboard.writeText(code);
+    showToast('success',"Coupon Copied");
+  } catch (err) {
+    console.error("Copy failed", err);
+  }
+})
+
+//coupon loaded
+
+async function getCoupons(){
+    console.log('hello');
+    try {
+        console.log('call inside getCOupons');
+        const response= await axios.get('/user/coupons')
+        console.log('response',response);
+        if(!response.data.coupons){
+            throw new Error('Server issue')
+        }
+        const coupons = response.data.coupons.map((c)=>c.code);
+         console.log(coupons);
+        if(coupons && coupons.length>0){
+            document.getElementById("couponCode").textContent=coupons[0]
+         loadCoupons(coupons) 
+        }
+        
+    } catch (error) {
+        console.log('Error in getting coupon',error);
+        if(error){
+            document.getElementById("copyBtn").classList.add('hidden')
+            document.getElementById('coupon-btn').classList.remove('border-2')
+        
+        }
+    }
+}
+getCoupons()
+
+async function loadCoupons(coupons){
+    console.log('Hello');
+    try {
+        const codeSpan = document.getElementById("couponCode")
+        
+
+        setInterval(()=>{
+            let index=Math.floor(Math.random()*(coupons.length-1))
+            codeSpan.textContent=coupons[index];
+            
+        },10000)
+    } catch (error) {
+        console.log('Error in Loading Coupons',error);
+    }
+}
 
 function changeImage(imageUrl, thumbnailElement) {
   const mainImage = document.getElementById('main-image');
@@ -257,8 +362,9 @@ function updateVariantDetails(variant){
             micIcon.classList.add('text-white')
             micBtn.classList.add('bg-black')
         }
-
-    document.querySelector('#stock').textContent= `${variant[0].attributes.stock} units availabe`
+    
+    document.querySelector('#stockIndicator').textContent = `${variant[0].attributes.stock>0?'In Stock':'Out Of Stock'}`;
+    document.querySelector('#stock').textContent= `${variant[0].attributes.stock} units`
 
 }
 

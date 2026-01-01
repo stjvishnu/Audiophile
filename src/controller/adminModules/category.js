@@ -166,8 +166,6 @@ const restoreCategory = async(req,res)=>{
 
 
 
-
-
 const blockCategory = async (req,res)=>{
   try{
     const categoryId=req.params.id;
@@ -206,6 +204,45 @@ const unblockCategory = async (req,res)=>{
   }
 }
 
+const searchCategory = async (req,res)=>{
+  console.log('Search Categories');
+  try {
+    const {searchTerm} = req.query;
+    const categories = await Category.find({
+      name:{$regex:searchTerm,$options:'i'}
+    })
+
+    if(categories.length==0){
+      return res.status(HTTP_STATUS.OK).json([]);
+    }
+    console.log('Categories',categories);
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,categories})
+  } catch (error) {
+    console.log('Error in search category',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
+
+  }
+}
+
+
+
+const loadCategories = async (req,res)=>{
+  console.log('Call inside loadCategories');
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Category.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const categories = await Category.find({}).sort({createdAt:-1}).skip(skip).limit(limit);
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,categories})
+  } catch (error) {
+    console.log('Error in load Categories',error);
+  }
+}
+
+
+
 export default {
   getCategory,
   addCategory,
@@ -213,5 +250,7 @@ export default {
   deleteCategory,
   restoreCategory,
   blockCategory,
-  unblockCategory
+  unblockCategory,
+  searchCategory,
+  loadCategories
 }

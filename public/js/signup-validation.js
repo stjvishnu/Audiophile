@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileContainer = document.getElementById('mobile');
   const passwordContainer = document.getElementById('password');
   const confirmPasswordContainer = document.getElementById('confirmPassword');
+  const referralCodeContainer = document.getElementById('referralCode')
   const submitBtn = document.getElementById('submitBtn');
 
 
@@ -148,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mobile: mobileContainer.value.trim(),
       password: passwordContainer.value.trim(),
       confirmPassword: confirmPasswordContainer.value.trim(),
+      referralCode: referralCodeContainer.value.trim()
     };
 
     clearErrors();

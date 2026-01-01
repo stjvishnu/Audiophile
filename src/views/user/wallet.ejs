@@ -1,0 +1,171 @@
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+ 
+    .no-scrollbar::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+    
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE + Edge */
+      scrollbar-width: none;     /* Firefox */
+    }
+    </style>
+  
+
+<div id="walletPage" class="h-full overflow-y-auto p-12  no-scrollbar hidden">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">My Wallet</h1>
+    </div>
+
+    <!-- Wallet Balance Card -->
+    <div class="bg-black rounded-[2rem] p-8 mb-8 text-white shadow-lg">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <p class="text-gray-400 text-sm mb-2">Available Balance</p>
+          <h2 class="text-5xl font-bold">₹ <span id="walletBalance"></span></h2>
+        </div>
+        <div class="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <button onclick="openAddMoneyModal()" class="flex-1 bg-white text-gray-900 rounded-xl py-3 px-6 ml-6 mr-6 font-medium hover:bg-gray-100 transition-colors">
+          Add Money
+        </button>
+        <button class="px-6 py-3 border border-white/20 rounded-xl hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Transaction History</h2>
+      </div>
+    </div>
+
+    <!--  TRANSACTIONS -->
+    <div id="transaction-list" class="space-y-4">
+
+      CREDIT
+      <!-- <div class="transaction-card border-2 border-gray-200 rounded-2xl p-6 hover:border-black transition-all cursor-pointer group"
+        data-type="credit">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4 flex-1">
+            <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0 0l-4-4m4 4l4-4" />
+              </svg>
+            </div>
+
+            <div class="flex-1">
+              <h3 class="font-bold text-gray-900 text-base mb-1">Added to Wallet</h3>
+              <p class="text-sm text-gray-500">10 Dec 2025 • 4:20 PM</p>
+              <p class="text-xs text-gray-400 mt-2">Order ID: #123456</p>
+            </div>
+          </div>
+
+          <div class="text-right ml-4">
+            <p class="text-xl font-bold text-green-600">+ ₹500</p>
+            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              success
+            </span>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- DEBIT -->
+      <!-- <div class="transaction-card border-2 border-gray-200 rounded-2xl p-6 hover:border-black transition-all cursor-pointer group"
+        data-type="debit">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4 flex-1">
+            <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 0l4 4m-4-4l-4 4" />
+              </svg>
+            </div>
+
+            <div class="flex-1">
+              <h3 class="font-bold text-gray-900 text-base mb-1">Order Payment</h3>
+              <p class="text-sm text-gray-500">09 Dec 2025 • 1:10 PM</p>
+              <p class="text-xs text-gray-400 mt-2">Order ID: #987654</p>
+            </div>
+          </div>
+
+          <div class="text-right ml-4">
+            <p class="text-xl font-bold text-red-600">- ₹300</p>
+            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+              failed
+            </span>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- CREDIT -->
+      <!-- <div class="transaction-card border-2 border-gray-200 rounded-2xl p-6 hover:border-black transition-all cursor-pointer group"
+        data-type="credit">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4 flex-1">
+            <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0 0l-4-4m4 4l4-4" />
+              </svg>
+            </div>
+
+            <div class="flex-1">
+              <h3 class="font-bold text-gray-900 text-base mb-1">Refund Credited</h3>
+              <p class="text-sm text-gray-500">08 Dec 2025 • 6:45 PM</p>
+              <p class="text-xs text-gray-400 mt-2">Order ID: #112233</p>
+            </div>
+          </div>
+
+          <div class="text-right ml-4">
+            <p class="text-xl font-bold text-green-600">+ ₹350</p>
+            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              success
+            </span>
+          </div>
+        </div>
+      </div> -->
+
+    </div>
+  </div>
+</div>
+
+<script src="/js/user/wallet-script.js"></script>
+<script>
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.remove('active', 'bg-black', 'text-white');
+        t.classList.add('text-gray-600', 'bg-gray-100');
+      });
+
+      this.classList.add('active', 'bg-black', 'text-white');
+      this.classList.remove('text-gray-600', 'bg-gray-100');
+
+      const filter = this.dataset.filter;
+      document.querySelectorAll('.transaction-card').forEach(card => {
+        card.style.display = (filter === 'all' || card.dataset.type === filter) ? 'block' : 'none';
+      });
+    });
+  });
+
+  function openAddMoneyModal() {
+    alert("Add money clicked (static)");
+  }
+</script>

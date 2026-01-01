@@ -34,8 +34,8 @@
     }
 </style>
 
-<div class="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 md:p-8 antialiased">
-    <div class="flex flex-col md:flex-row bg-white shadow-[0_12px_20px_rgba(0,0,0,0.25)] rounded-3xl border border-gray-100 overflow-hidden md:min-h-[550px] w-full max-w-4xl transition-all duration-300 hover-scale">
+<div class="bg-white flex items-center justify-center mt-5 p-4 sm:p-6 md:p-8 antialiased">
+    <div class="flex flex-col md:flex-row bg-white shadow-[0_12px_20px_rgba(0,0,0,0.25)] rounded-[3rem] border border-gray-100 overflow-hidden  w-full max-w-4xl transition-all duration-300 hover-scale">
         
         <!-- Left Side - Logo (Hidden on mobile) -->
         <div class="hidden md:flex md:w-2/4 bg-gradient-to-br from-black to-gray-900 items-center justify-center p-12 relative overflow-hidden">
@@ -46,19 +46,19 @@
             <img 
                 src="/images/white-logo.svg"
                 alt="Audiophile Logo" 
-                class="w-50 h-50 object-contain relative z-10 animate-float transition-all duration-700 hover:scale-110 hover:brightness-110"
+                class="w-50 h-50 object-contain p-8 relative z-10 animate-float transition-all duration-700 hover:scale-110 hover:brightness-110"
             >
         </div>
 
         <!-- Right Side - Registration Form -->
-        <div class="w-full md:w-2/4 flex items-center justify-center p-8 md:p-12">
-            <div class="w-full max-w-md space-y-6">
+        <div class="w-full md:w-2/4 flex items-center justify-center p-8 md:p-12 md:pt-6 md:pb-6">
+            <div class="w-full max-w-md space-y-2">
                 <div class="text-center space-y-2">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">Create Your Account</h2>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-900">Create Your Account</h2>
                     <p class="text-gray-500 text-sm font-medium">Join our community of audiophiles</p>
                 </div>
 
-                <form id="form"  method="post" class="mt-8 space-y-6">
+                <form id="form"  method="post" class="mt-8 space-y-4">
                     <!-- First Name -->
                     <div class="space-y-2">
                         <div class="relative group">
@@ -66,12 +66,12 @@
                                 id="firstName" 
                                 name="firstName" 
                                 type="text" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="First Name"
                             >
-                            <div id="firstName-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="firstName-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
                         </div>
                     </div>
                     
@@ -82,12 +82,12 @@
                                 id="lastName" 
                                 name="lastName" 
                                 type="text" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="Last Name"
                             >
-                            <div id="lastName-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="lastName-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
                         </div>
                     </div>
 
@@ -98,12 +98,12 @@
                                 id="email" 
                                 name="email" 
                                 type="email" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="Email"
                             >
-                            <div id="email-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="email-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
                         </div>
                     </div>
 
@@ -114,12 +114,12 @@
                                 id="mobile" 
                                 name="mobile" 
                                 type="tel" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="Mobile Number"
                             >
-                            <div id="mobile-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="mobile-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
                         </div>
                     </div>
 
@@ -130,12 +130,12 @@
                                 id="password" 
                                 name="password" 
                                 type="password" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="Password"
                             >
-                            <div id="password-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="password-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
                         </div>
                     </div>
 
@@ -146,12 +146,26 @@
                                 id="confirmPassword" 
                                 name="confirmPassword" 
                                 type="password" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
                                        focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
-                                       group-hover:border-gray-300" 
+                                       group-hover:border-gray-300 placeholder:text-sm" 
                                 placeholder="Confirm Password"
                             >
-                            <div id="confirmPassword-error" class="absolute top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
+                            <div id="confirmPassword-error" class="absolute top-full left-0 text-red-500 text-xs  h-2 invisible"></div>
+                        </div>
+                    </div>
+                    <!-- Referral Code-->
+                    <div class="space-y-2">
+                        <div class="relative group">
+                            <input 
+                                id="referralCode" 
+                                name="referralCode" 
+                                type="text" 
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-[1.2rem] text-gray-900 transition-all duration-200 
+                                       focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none
+                                       group-hover:border-gray-300 placeholder:text-sm" 
+                                placeholder="Referral Code (optional)"
+                            >
                         </div>
                     </div>
 
@@ -160,7 +174,7 @@
                         <button 
                             id="submitBtn" 
                             type="submit" 
-                            class="w-full py-3 px-4 bg-black text-white rounded-xl font-medium
+                            class="w-full py-2 px-4 bg-black text-white rounded-[1.2rem] font-medium
                                    transform transition-all duration-200
                                    hover:bg-gray-900 hover:shadow-lg hover:-translate-y-0.5
                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
@@ -189,7 +203,7 @@
                         </div>
 
                         <a 
-                            class="w-full flex items-center justify-center px-4 rounded-xl
+                            class="w-full flex items-center justify-center px-4 rounded-[1.2rem]
                                    transform transition-all duration-200
                                    hover:bg-white hover:-translate-y-0.5
                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200

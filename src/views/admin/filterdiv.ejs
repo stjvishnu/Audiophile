@@ -1,0 +1,42 @@
+
+<div id="filterDiv" class="hidden flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8 bg-black p-4 sm:p-6 rounded-xl border border-gray-800 gap-4">
+       
+  <button data-range="daily"
+      class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-blue-600 transition min-w-[80px]"
+    >
+      Daily
+    </button>
+    
+    <button data-range="weekly"
+      class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-blue-600 transition min-w-[80px]"
+    >
+      Weekly
+    </button>
+
+    <button data-range="monthly"
+      class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-blue-600 transition min-w-[80px]"
+    >
+      Monthly
+    </button>
+    
+    <div class="flex flex-col">
+      <label for="fromDate" class="text-xs text-gray-400 mb-1">Start Date</label>
+      <input id="fromDate" type="date"
+        class="px-3 py-2 bg-gray-900 text-white rounded-lg border border-gray-700 focus:ring-0 w-40"
+      />
+    </div>
+    
+    <div class="flex flex-col">
+      <label for="toDate" class="text-xs text-gray-400 mb-1">To Date</label>
+      <input id="toDate" type="date"
+        class="px-3 py-2 bg-gray-900 text-white rounded-lg border border-gray-700 focus:ring-0 w-40"
+      />
+    </div>
+    
+    <button id="applyCustom"
+      class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold transition mt-2 sm:mt-0"
+    >
+      Apply Changes
+    </button>
+  
+</div>

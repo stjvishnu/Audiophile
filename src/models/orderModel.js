@@ -17,10 +17,22 @@ const orderSchema =  new mongoose.Schema({
       type:String,
       required:true
     },
+    itemStatus:{
+      type:String,
+      enum:['delivered','cancelled','return-requested','return-rejected','returned'],
+    },
+    itemReturnReason:{
+      type:String,
+    },
     categoryName:{
       type:String,
       required:true
     },
+    brandName:{
+      type:String,
+      required:true
+    },
+    
     productName:String,
     productImage:String,
     productColor:String,
@@ -28,6 +40,7 @@ const orderSchema =  new mongoose.Schema({
     priceAtPurchase:Number,
     quantity:Number,
     totalPrice:Number,
+    offerApplied:Boolean,
   }
 ],
 shippingAddress:{
@@ -59,17 +72,20 @@ orderNumber:{
 },
 orderStatus:{
   type:String,
-  enum:['processing','shipped','out for delivery','delivered','cancelled','returned'],
+  enum:['processing','shipped','out for delivery','delivered','cancelled','returned','partial-return'],
   default:'processing'
 },
 reason:{
   type:String,
   default:null
 },
+deliveryCharge:Number,
 subTotal:Number,
 discount:Number,
 total:Number,
-
+finalPayableAmount:Number,
+couponApplied:Boolean,
+couponDiscount:Number,
 },
 {timestamps:true});
 
