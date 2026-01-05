@@ -257,7 +257,9 @@ function validationCheckBeforeSubmit(){
   const maxDiscount = couponModal.querySelector('#maxDiscount').value;
   const validFrom = couponModal.querySelector('#validFrom').value
   const validTo = couponModal.querySelector('#validTo').value
-  const perUserLimit = couponModal.querySelector('#perUserLimit').value
+  const perUserLimit = couponModal.querySelector('#perUserLimit').value.trim();
+  console.log('perUserLimit',perUserLimit);
+
 
   // Clear previous errors
   clearErrors();
@@ -340,35 +342,18 @@ if(!minPurchase) {
   showError('minPurchase', "Minimum purchase required");
   isValid = false;
 }  else if(minPurchase<1) {
-  showError('minPurchase', "Minimum purchase can't be less than 0");
+  showError('minPurchase', "Minimum purchase can't be less than 1");
   isValid = false;
 }else if(/[a-zA-Z]/.test(minPurchase)) {
 showError('mobile', "Cannot contain letters");
 isValid = false;
-} 
+}else if(discountType ==='fixed' && Number(discountValue)>Number(minPurchase)){
+  console.log('inisde trouble shooting');
+  isValid=false;
+  showError('discountValue','Discount value should be less than minimum purchase')
+}
 
 
-
-
-
-
-
-// const discountValue = couponModal.querySelector('#discountValue').value;
-// const minPurchase = couponModal.querySelector('#minPurchase').value;
-// const maxDiscount = couponModal.querySelector('#maxDiscount').value;
-
-// const requiredMinPurchase = maxDiscount/(discountValue/100)
-// if(minPurchase<requiredMinPurchase) {
-//   showError('minPurchase', `Minimum purchase must be at least ₹${Math.ceil(requiredMinPurchase)}`);
-//   isValid = false;
-// }
-
-// if(discountType==='fixed'){
-//   const minimumPurchase = Math.ceil((discountValue*100)/30);
-//   if(minPurchase<minimumPurchase){
-//       showError('minPurchase', `Minimum purchase must be at least ₹${Math.ceil(minimumPurchase)}`)
-//   }
-// }
 
 
 if(!validFrom){
@@ -393,20 +378,20 @@ if(!validTo){
 
 if(isNaN(new Date(validTo).getTime())){
   showError('validTo', "Please select a valid expiry date");
-  return;
+  isValid = false;
 }
-
+console.log('hello mwonu 1');
 if(new Date(validTo)<new Date(validFrom)){
   showError('validTo', "Expiry date must be AFTER start date");
-  return;
+  isValid = false;
 }
 
-
+console.log('hello mwonu 2');
 
 if(!perUserLimit) {
   showError('perUserLimit', "User limit required");
   isValid = false;
-}  else if(perUserLimit<0) {
+}  else if(Number(perUserLimit)<0) {
   showError('perUserLimit', "User limit can't be less than 0");
   isValid = false;
 }else if(/[a-zA-Z]/.test(perUserLimit)) {

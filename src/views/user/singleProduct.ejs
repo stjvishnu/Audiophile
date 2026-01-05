@@ -1,168 +1,304 @@
+<style>
+    .scroll-container {
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .arrow-btn {
+        transition: all 0.3s ease;
+    }
+
+    .arrow-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .arrow-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    .arrow-btn:disabled:hover {
+        transform: scale(1);
+    }
+
+    @keyframes slideIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    <style>
+    /* Custom scrollbar hiding */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    /* Slide-in animation */
+    @keyframes slideIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Extra small breakpoint for very small devices */
+    @media (min-width: 375px) {
+        .xs\:w-\[75vw\] {
+            width: 75vw;
+        }
+        .xs\:h-\[360px\] {
+            height: 360px;
+        }
+        .xs\:h-48 {
+            height: 12rem;
+        }
+        .xs\:w-48 {
+            width: 12rem;
+        }
+        .xs\:text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        .xs\:text-\[10px\] {
+            font-size: 10px;
+        }
+        .xs\:flex-row {
+            flex-direction: row;
+        }
+        .xs\:items-center {
+            align-items: center;
+        }
+        .xs\:px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .xs\:py-1\.5 {
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+        .xs\:h-3 {
+            height: 0.75rem;
+        }
+        .xs\:w-3 {
+            width: 0.75rem;
+        }
+        .xs\:inline {
+            display: inline;
+        }
+    }
+    
+    @keyframes slideIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Hide scrollbar on mobile for cleaner look */
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      /* Show scrollbar on larger screens */
+      @media (min-width: 768px) {
+        .scrollbar-default::-webkit-scrollbar {
+          display: block;
+          height: 8px;
+        }
+        
+        .scrollbar-default::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        .scrollbar-default::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 10px;
+        }
+        
+        .scrollbar-default::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      }
+      
+      /* Smooth scroll snap on mobile */
+      @media (max-width: 767px) {
+        #similarProductsContainer {
+          scroll-snap-type: x mandatory;
+        }
+        
+        #similarProductsContainer > div > div {
+          scroll-snap-align: start;
+        }
+      }
+      
+</style>
 
 <div class="py-3 px-4">
     <!-- Main Product Container - Large like Hero Carousel -->
-    <div class="carousel-container bg-gray-50  mx-4 sm:mx-4 my-5 mt-3 rounded-[2rem] sm:rounded-[5.5rem] relative  ">
+    <div class="carousel-container bg-transparent mx-2 sm:mx-4 my-3 sm:my-5 mt-2 sm:mt-3 rounded-xl sm:rounded-[2rem] lg:rounded-[5.5rem] relative">
         <div>
             <!-- Product Overview Section -->
-            <div class=" grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 p-14 sm:p-10 lg:pb-12 lg:pl-12 lg:pr-12 ">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 p-4 sm:p-6 md:p-10 lg:p-14 lg:pb-12 lg:pl-12 lg:pr-12">
                 
                 <!-- Left Column - Product Images -->
-                <div class="flex justify-center items-start rounded-[1.5rem]  sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
-                    <div class="  max-w-lg relative ">
+                <div class="flex justify-center items-start rounded-xl sm:rounded-[1.5rem] lg:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_15px_rgba(0,0,0,0.15)] sm:shadow-[0_0_20px_rgba(0,0,0,0.25)]">
+                    <div class="w-full max-w-lg relative">
                         <!-- Main Product Image -->
-                        <div class="mb-3 rounded-[1.5rem] sm:rounded-[5rem] overflow-visible p-4">
+                        <div class="mb-2 sm:mb-3 rounded-xl sm:rounded-[1.5rem] lg:rounded-[5rem] overflow-visible p-2 sm:p-4">
                             <img id="main-image" 
                                  src="<%= product.variants[0].attributes.productImages[0] %>" 
                                  data-zoom-image="<%= product.variants[0].attributes.productImages[0] %>" 
                                  alt="<%= product.name %>" 
-                                 class="w-full h-auto object-contain pt-2 pl-4 pr-4 transition-all duration-500 rounded-[1.5rem] sm:rounded-[5rem]">
+                                 class="w-full h-auto object-contain pt-1 sm:pt-2 px-2 sm:pl-4 sm:pr-4 transition-all duration-500 rounded-xl sm:rounded-[1.5rem] lg:rounded-[5rem]">
                         </div>
                         
                         <!-- Thumbnail Images -->
-                        <div id="thumbnailContainer" class="grid grid-cols-5 gap-2 mb-3">
+                        <div id="thumbnailContainer" class="grid grid-cols-5 gap-1 sm:gap-2 mb-2 sm:mb-3 px-2 sm:px-0">
                             <% for (let i = 0; i < 5 && i < product.variants[0].attributes.productImages.length; i++) { %>
                               <button 
                                 type="button"
-                                class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-[2rem] overflow-hidden
-                                        border-transparent focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-0 transition-all duration-300"
+                                class="thumbnail <%= i === 0 ? 'active' : '' %> cursor-pointer rounded-lg sm:rounded-xl lg:rounded-[2rem] overflow-hidden border-transparent focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-0 transition-all duration-300"
                                 onclick="changeImage('<%= product.variants[0].attributes.productImages[i] %>', this)">
                                 <img src="<%= product.variants[0].attributes.productImages[i] %>" 
                                      alt="Thumbnail <%= i + 1 %>" 
                                      class="w-full h-auto object-cover aspect-square">
                               </button>
                             <% } %>
-                          </div>
-                          
+                        </div>
                     </div>
                 </div>
-
+    
                 <!-- Right Column - Product Details -->
-                <div class="flex flex-col justify-center space-y-5 space-x-14 rounded-[1.5rem] sm:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_20px_rgba(0,0,0,0.25)]">
-                    <div class="pl-20">
-                        <p class="text-gray-400 tracking-widest pt-2 pb-4 font-sans text-lg"><%= product.brand %></p>
-                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 leading-tight tracking-wide">
+                <div class="flex flex-col justify-center space-y-3 sm:space-y-4 lg:space-y-5 rounded-xl sm:rounded-[1.5rem] lg:rounded-[5rem] bg-white shadow-gray-200 shadow-[0_0_15px_rgba(0,0,0,0.15)] sm:shadow-[0_0_20px_rgba(0,0,0,0.25)] px-4 sm:px-8 lg:px-14 py-6 sm:py-8 lg:py-0">
+                    
+                    <!-- Product Title Section -->
+                    <div class="lg:pl-6">
+                        <p class="text-gray-400 tracking-widest pt-1 sm:pt-2 pb-2 sm:pb-4 font-sans text-sm sm:text-base lg:text-lg"><%= product.brand %></p>
+                        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-1 sm:mt-2 leading-tight tracking-wide">
                             <%= product.name %>
                         </h1>
-                        <p class="text-gray-600 text-lg mt-3"><%= product.productDetails.driverConfiguration %> driver</p>
+                        <p class="text-gray-600 text-base sm:text-lg mt-2 sm:mt-3"><%= product.productDetails.driverConfiguration %> driver</p>
                     </div>
-
-                    <div class="rounded-2xl pl-6 ">
-                        <div class="flex items-center mb-2">
-                            <span id="discountedPrice" class="text-4xl font-bold font-sans text-gray-900">
+    
+                    <!-- Price Section -->
+                    <div class="rounded-2xl lg:pl-6">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                            <span id="discountedPrice" class="text-3xl sm:text-4xl font-bold font-sans text-gray-900">
                                 <%= Math.round(product.variants[0].attributes.price * 0.01 * (100 - product.variants[0].attributes.discount)) %> ₹
                             </span>
-                            <span id="price" class="ml-3 text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %> ₹</span>
-                            <span id="discount" class="ml-3 bg-black text-white px-3 py-1 rounded-full text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
+                            <span id="price" class="text-lg sm:text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %> ₹</span>
+                            <span id="discount" class="bg-black text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
                         </div>
-                        
                     </div>
-
-                    <div class="space-y-6 pl-7">
+    
+                    <!-- Variant Selection Section -->
+                    <div class="space-y-4 sm:space-y-5 lg:space-y-6 lg:pl-6">
+                        <!-- Color Selection -->
                         <div>
-                            <p class="text-gray-700 font-semibold mb-3 text-lg">
+                            <p class="text-gray-700 font-semibold mb-2 sm:mb-3 text-base sm:text-lg">
                                 Color: <span id="selected-color" class="text-gray-900"><%= product.variants[0].attributes.color%></span>
                             </p>
-                            <div class="flex space-x-5">
+                            <div class="flex flex-wrap gap-3 sm:gap-4 lg:gap-5">
                                 <% product.variants.forEach((variant,index)=>{ %>
-                                       <div 
+                                    <div 
                                         class="variant-option <%= index === 0 ? 'active' : '' %> cursor-pointer group" 
                                         data-value="<%= variant.attributes.color %>" 
                                         data-variant-id="<%=product.variants[0].sku%>"
                                         onclick="selectVariant(this, 'color')">
-
-                                        <!-- Dynamic color circle -->
                                         <div 
-                                            class="w-14 h-9 rounded-full border-2 
+                                            class="w-12 h-8 sm:w-14 sm:h-9 rounded-full border-2 
                                                 <%= index === 0 ? 'border-gray-400' : 'border-gray-400' %> 
                                                 group-hover:border-black transition-all duration-300 shadow-xl" 
                                             style="background-color: <%= variant.attributes.color.toLowerCase() %>">
                                         </div>
-
-                                      
                                     </div>
-
-                               <% }) %>
-                               
-
+                                <% }) %>
                             </div>
                         </div>
                         
+                        <!-- Mic Selection -->
                         <div>
-                            <p class="text-gray-700 font-semibold mb-2 text-lg">
-                                Type :  <span id="selected-mic" class="text-gray-900">With Mic</span>
+                            <p class="text-gray-700 font-semibold mb-2 text-base sm:text-lg">
+                                Type: <span id="selected-mic" class="text-gray-900">With Mic</span>
                             </p>
-                            <div class="flex space-x-4">
-                                <div id="mic-option" class="variant-option  cursor-pointer group" data-product-id= "<%=product.id %>" data-value="true" onclick="selectVariant(this, 'mic')">
-                                    <div id="mic-btn" class="w-16 h-10 flex items-center justify-center <%= product.variants[0].attributes.mic==true?'bg-black':'bg-white'%> rounded-xl border-2 border-gray-200 group-hover:border-gray-600 transition-all duration-300 shadow-sm">
-                                        <i id="micIcon" class="fas fa-microphone <%= product.variants[0].attributes.mic==true?'text-white':'text-black'%>"></i>
+                            <div class="flex flex-wrap gap-3 sm:gap-4">
+                                <div id="mic-option" class="variant-option cursor-pointer group" data-product-id="<%=product.id %>" data-value="true" onclick="selectVariant(this, 'mic')">
+                                    <div id="mic-btn" class="w-14 h-9 sm:w-16 sm:h-10 flex items-center justify-center <%= product.variants[0].attributes.mic==true?'bg-black':'bg-white'%> rounded-lg sm:rounded-xl border-2 border-gray-200 group-hover:border-gray-600 transition-all duration-300 shadow-sm">
+                                        <i id="micIcon" class="fas fa-microphone text-sm sm:text-base <%= product.variants[0].attributes.mic==true?'text-white':'text-black'%>"></i>
                                     </div>
                                 </div>
-                                <div id="mic-option" class="variant-option cursor-pointer group" data-product-id= "<%=product.id %>" data-value="false" onclick="selectVariant(this, 'mic')">
-                                    <div id="mic-btn" class="w-16 h-10 flex items-center justify-center  <%= product.variants[0].attributes.mic==false?'bg-black':'bg-white'%> rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
-                                        <i id="noMicIcon" class="fas fa-ban <%= product.variants[0].attributes.mic==false?'text-white':'text-black'%>"></i>
+                                <div id="mic-option" class="variant-option cursor-pointer group" data-product-id="<%=product.id %>" data-value="false" onclick="selectVariant(this, 'mic')">
+                                    <div id="mic-btn" class="w-14 h-9 sm:w-16 sm:h-10 flex items-center justify-center <%= product.variants[0].attributes.mic==false?'bg-black':'bg-white'%> rounded-lg sm:rounded-xl border-2 border-gray-200 group-hover:border-gray-400 transition-all duration-300 shadow-sm">
+                                        <i id="noMicIcon" class="fas fa-ban text-sm sm:text-base <%= product.variants[0].attributes.mic==false?'text-white':'text-black'%>"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
     
-
-                    <div class="flex items-center pl-7 space-x-4 ">
-
+                    <!-- Stock & Coupon Section -->
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4 lg:pl-6">
                         <!-- IN STOCK BOX -->
-                        <div class="min-w-[100px] h-10 flex items-center justify-center 
-                                    bg-white rounded-xl border-2 border-gray-200 
-                                    hover:border-gray-600 transition-all duration-300 shadow-sm">
-                            <span id="stockIndicator" class="text-green-700 font-semibold text-sm"><%=product.variants[0].attributes.stock>0?'In Stock':'Out Of Stock'%></span>
+                        <div class="min-w-[90px] sm:min-w-[100px] h-9 sm:h-10 flex items-center justify-center 
+                                    bg-white rounded-lg sm:rounded-xl border-2 border-gray-200 
+                                    hover:border-gray-600 transition-all duration-300 shadow-sm px-2">
+                            <span id="stockIndicator" class="text-green-700 font-semibold text-xs sm:text-sm"><%=product.variants[0].attributes.stock>0?'In Stock':'Out Of Stock'%></span>
                         </div>
                     
                         <!-- STOCK COUNT BOX -->
-                        <div class="min-w-[100px] h-10 flex items-center justify-center 
-                                    bg-white rounded-xl border-2 border-gray-200 
-                                    hover:border-gray-600 transition-all duration-300 shadow-sm">
-                            <span id="stock" class="text-gray-700 font-medium text-sm">
+                        <div class="min-w-[90px] sm:min-w-[100px] h-9 sm:h-10 flex items-center justify-center 
+                                    bg-white rounded-lg sm:rounded-xl border-2 border-gray-200 
+                                    hover:border-gray-600 transition-all duration-300 shadow-sm px-2">
+                            <span id="stock" class="text-gray-700 font-medium text-xs sm:text-sm">
                                 <%= product.variants[0].attributes.stock %> units
                             </span>
                         </div>
                     
+                        <!-- COUPON SECTION -->
                         <div class="relative inline-flex items-center group">
-
-                            <!-- COUPON ICON BUTTON -->
                             <div id="coupon-btn"
-                                 class="peer min-w-[60px] h-10 flex items-center justify-center 
-                                        bg-white rounded-xl border-2 border-gray-200 
+                                 class="peer min-w-[50px] sm:min-w-[60px] h-9 sm:h-10 flex items-center justify-center 
+                                        bg-white rounded-lg sm:rounded-xl border-2 border-gray-200 
                                         hover:border-gray-600 transition-all duration-300 shadow-sm cursor-pointer">
-                                <i class="fa-solid fa-tag fa-xl" style="color: #ababab;"></i>
+                                <i class="fa-solid fa-tag text-lg sm:fa-xl" style="color: #ababab;"></i>
                             </div>
                         
-                            <!-- COPY BUTTON -->
                             <button id="copyBtn"
-                                class="ml-2 px-4 h-10 bg-black text-white rounded-xl shadow-sm text-sm
+                                class="ml-2 px-3 sm:px-4 h-9 sm:h-10 bg-black text-white rounded-lg sm:rounded-xl shadow-sm text-xs sm:text-sm
                                        opacity-0 pointer-events-none
                                        transition-all duration-200
-                        
                                        peer-hover:opacity-100 peer-hover:pointer-events-auto
                                        group-hover:opacity-100 group-hover:pointer-events-auto">
                                 <span id="couponCode"></span>
                             </button>
-                        
                         </div>
-                        
-
-
-                        
-                    
                     </div>
-                    
-
-                    <div class="flex items-center justify-center flex-col sm:flex-row gap-4 pt-2 pb-8">
-                        <button data-product-id= "<%=product._id %>" data-variant-id="<%=product.variants[0].sku%>" class="addToCartBtn bg-gray-800 hover:bg-black text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl ">
-                            <i class="fas fa-shopping-cart mr-3"></i> 
+    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-center flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-3 lg:pt-2 pb-4 sm:pb-6 lg:pb-8">
+                        <button data-product-id="<%=product._id %>" data-variant-id="<%=product.variants[0].sku%>" class="addToCartBtn w-full sm:w-auto bg-gray-800 hover:bg-black text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                            <i class="fas fa-shopping-cart mr-2 sm:mr-3"></i> 
                             Add to Cart
                         </button>
-                        <button id="wishlistBtn" class="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-4 px-8 rounded-xl flex items-center justify-center transition-all duration-300" data-variant-id="<%=product.variants[0].sku%>" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>"  onclick="handleWishlist('<%=product._id%>',this.dataset.variantId,this)">
+                        <button id="wishlistBtn" class="w-full sm:w-auto border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300 text-sm sm:text-base" data-variant-id="<%=product.variants[0].sku%>" data-iswishlisted="<%= product.variants[0].attributes.isWishlisted %>" onclick="handleWishlist('<%=product._id%>',this.dataset.variantId,this)">
                             <i class="fas fa-heart mr-2" style='color: <%= product.variants[0].attributes.isWishlisted? '#000000' : '#a3a5a8'  %>; '></i>
-                           <p id="wishlist-text"><%= product.variants[0].attributes.isWishlisted? 'Wishlisted' : 'Wishlist'%> </p> 
+                            <p id="wishlist-text"><%= product.variants[0].attributes.isWishlisted? 'Wishlisted' : 'Wishlist'%></p> 
                         </button>
                     </div>
                 </div>
@@ -170,12 +306,174 @@
         </div>
     </div>
 
+    <!-- Product Technical Details Section -->
+    <div class="mx-4 sm:mx-6 md:mx-8 lg:mx-10 my-6 sm:my-8 lg:my-10">
+        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[3rem] lg:rounded-[5rem] bg-black p-6 sm:p-8 md:p-10 lg:p-12 xl:p-16 shadow-2xl">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16">
+                <!-- Left Column - Why It's Special -->
+                <div class="flex flex-col justify-center">
+                    <div class="inline-block mb-4 sm:mb-5 md:mb-6">
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight">Why it's special</h2>
+                        <div class="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-white to-gray-500 rounded-full"></div>
+                    </div>
+                    
+                    <ul class="space-y-3 sm:space-y-4 md:space-y-5">
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300"><%= product.description1 || 'Designed in China' %></span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300"><%= product.description2 || 'Premium Design'%></span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300"><%= product.productDetails.soundSignature || 'Balanced Sound Signature' %></span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300"><%= product.highligts || 'Balanced Sound Signature' %></span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300">From the house of <%= product.brand %></span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span class="flex-shrink-0 w-2 h-2 mt-2 sm:mt-2.5 bg-gradient-to-r from-white to-gray-500 rounded-full mr-3 sm:mr-4 group-hover:scale-150 transition-transform duration-300"></span>
+                            <span class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed group-hover:text-white transition-colors duration-300">Perfect to Analyse Music</span>
+                        </li>
+                    </ul>
+                </div>
+    
+                <!-- Divider -->
+                <div class="hidden lg:block absolute left-1/2 top-8 md:top-10 lg:top-12 bottom-8 md:bottom-10 lg:bottom-12 w-px bg-gradient-to-b from-transparent via-gray-600 to-transparent"></div>
+    
+                <!-- Right Column - Product Details -->
+                <div class="flex flex-col justify-center lg:pl-6 xl:pl-8">
+                    <div class="inline-block mb-4 sm:mb-5 md:mb-6">
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight">Product Details</h2>
+                        <div class="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-white to-gray-500 rounded-full"></div>
+                    </div>
+                    
+                    <div class="space-y-4 sm:space-y-5 md:space-y-6">
+                        <div class="group flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 pb-4 sm:pb-5 border-b border-gray-700/50 hover:border-blue-500/50 transition-colors duration-300">
+                            <span class="text-white font-bold text-xs sm:text-sm md:text-base tracking-widest uppercase min-w-fit">Driver</span>
+                            <span class="text-gray-300 text-xs sm:text-sm md:text-base text-left sm:text-right group-hover:text-white transition-colors duration-300 break-words"><%= product.productDetails.driver || 'High-Performance Polymer Composite Diaphragm' %></span>
+                        </div>
+                        
+                        <div class="group flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 pb-4 sm:pb-5 border-b border-gray-700/50 hover:border-blue-500/50 transition-colors duration-300">
+                            <span class="text-white font-bold text-xs sm:text-sm md:text-base tracking-widest uppercase min-w-fit">Diaphragm</span>
+                            <span class="text-gray-300 text-xs sm:text-sm md:text-base text-left sm:text-right group-hover:text-white transition-colors duration-300 break-words"><%= product.productDetails.driverConfiguration || 'Double-Sided Vapor Deposited Silicon Crystal Diaphragm' %></span>
+                        </div>
+    
+                        <div class="group flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 pb-4 sm:pb-5 border-b border-gray-700/50 hover:border-blue-500/50 transition-colors duration-300">
+                            <span class="text-white font-bold text-xs sm:text-sm md:text-base tracking-widest uppercase min-w-fit">Impedance</span>
+                            <span class="text-gray-300 text-xs sm:text-sm md:text-base text-left sm:text-right group-hover:text-white transition-colors duration-300 break-words"><%= product.productDetails.impedance || '26+-15% (@1kHz)' %></span>
+                        </div>
+    
+                        <div class="group flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 pb-4 sm:pb-5 border-b border-gray-700/50 hover:border-blue-500/50 transition-colors duration-300">
+                            <span class="text-white font-bold text-xs sm:text-sm md:text-base tracking-widest uppercase min-w-fit">Sensitivity</span>
+                            <span class="text-gray-300 text-xs sm:text-sm md:text-base text-left sm:text-right group-hover:text-white transition-colors duration-300 break-words"><%= product.productDetails.sensitivity || '119dB/Vrms (@kHz)' %></span>
+                        </div>
+    
+                        <div class="group flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4">
+                            <span class="text-white font-bold text-xs sm:text-sm md:text-base tracking-widest uppercase min-w-fit">Plug Type</span>
+                            <span class="text-gray-300 text-xs sm:text-sm md:text-base text-left sm:text-right group-hover:text-white transition-colors duration-300"><%= product.productDetails.mic?'3.5mm' : 'wireless' %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Similar Products Section -->
+     <!-- Similar Products Section -->
+<div class="bg-gradient-to-br from-white to-gray-200 mx-2 sm:mx-4 md:mx-6 lg:mx-10 my-6 sm:my-8 lg:my-10 rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[2rem] xl:rounded-[5.5rem] shadow-xl sm:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12">
+    <div class="relative mb-6 sm:mb-8">
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 tracking-wide">Similar Products</h2>
+    </div>
+    
+    <div id="similarProductsContainer" class="scroll-container overflow-x-auto overflow-y-hidden scrollbar-hide md:scrollbar-default" style="-webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+      <div class="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8 pb-4">
+        <% similarProducts.forEach((product, index) => { %>
+        <div class="flex-shrink-0 w-[280px] xs:w-[300px] sm:w-[320px] md:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-1.333rem)] xl:w-[calc(33.333%-1.5rem)]">
+          <div class="group relative h-[340px] xs:h-[360px] sm:h-[380px] md:h-[400px] lg:h-[420px] w-full overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-[2.2rem] bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm hover:shadow-lg transition-all duration-300" style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.1 %>s; opacity:0; transform: translateY(20px)">
+            
+          
+            
+            <!-- Product Image -->
+            <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-10 mix-blend-multiply">
+              <img src="<%= product.variants[0].attributes.productImages[0] %>" 
+                   alt="<%= product.name %>" 
+                   class="h-40 w-40 xs:h-48 xs:w-48 sm:h-56 sm:w-56 lg:h-72 lg:w-72 object-contain transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+            </div>
+            
+            <!-- Product Info -->
+            <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8 bg-gradient-to-t from-black/30 to-transparent text-white">
+              <div class="transform translate-y-10 sm:translate-y-12 lg:translate-y-16 group-hover:translate-y-0 transition-transform duration-300">
+                <span class="text-xs sm:text-sm font-medium tracking-widest opacity-90 block truncate">
+                  <%= product.brand %>
+                </span>
+                <h3 class="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mt-1 line-clamp-2">
+                  <%= product.name %>
+                </h3>
+                
+                <!-- Price Section -->
+                <div class="mt-2 sm:mt-3 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <span class="text-sm sm:text-base lg:text-lg text-black font-bold">
+                    <%= Math.round(product.variants[0].attributes.price * 0.01 * (100-product.variants[0].attributes.discount)) %> ₹
+                  </span>
+                  <span class="text-xs sm:text-sm line-through opacity-70">
+                    <%= product.variants[0].attributes.price %>
+                  </span>
+                  <span class="ml-1 px-1.5 sm:px-2 py-0.5 bg-black text-xs font-bold rounded-full">
+                    <%= product.variants[0].attributes.discount %> %
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Description - Shows on Hover -->
+              <div class="mt-2 sm:mt-3 max-h-0 opacity-0 group-hover:max-h-20 group-hover:opacity-100 transition-all duration-300 ease-in-out overflow-hidden">
+                <p class="text-xs sm:text-sm font-light opacity-90 line-clamp-2">Entry level IEM with exceptional sound quality and comfort for long listening sessions.</p>
+              </div>
+              
+              <!-- Action Buttons - Shows on Hover -->
+              <div class="mt-2 sm:mt-3 lg:mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <button class="flex items-center text-xs sm:text-sm font-medium tracking-wider hover:translate-x-1 transition-transform duration-200">
+                  <a href="/user/products/productPage/<%=product._id%>">EXPLORE</a>
+                  <svg class="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                  </svg>
+                </button>
+                
+                <button data-product-id="<%=product._id %>" 
+                        data-variant-id="<%=product.variants[0].sku%>" 
+                        class="addToCartBtn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-xs sm:text-sm font-medium transition-all duration-200 border border-white/20 hover:border-white/40 hover:scale-105">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <span class="hidden xs:inline">ADD</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  
+    
+    
 
     
     
 </div>
-
-<%-//include ('cart')%> //we can remove this
 
 <style>
 .thumbnail.active {
@@ -205,7 +503,84 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('similarProductsContainer');
+      const scrollLeft = document.getElementById('scrollLeft');
+      const scrollRight = document.getElementById('scrollRight');
+      
+      if (scrollLeft && scrollRight && container) {
+        scrollLeft.addEventListener('click', function() {
+          container.scrollBy({
+            left: -400,
+            behavior: 'smooth'
+          });
+        });
+        
+        scrollRight.addEventListener('click', function() {
+          container.scrollBy({
+            left: 400,
+            behavior: 'smooth'
+          });
+        });
+        
+        // Update arrow visibility based on scroll position
+        function updateArrows() {
+          const isAtStart = container.scrollLeft <= 0;
+          const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
+          
+          scrollLeft.style.opacity = isAtStart ? '0.3' : '1';
+          scrollLeft.style.pointerEvents = isAtStart ? 'none' : 'auto';
+          
+          scrollRight.style.opacity = isAtEnd ? '0.3' : '1';
+          scrollRight.style.pointerEvents = isAtEnd ? 'none' : 'auto';
+        }
+        
+        container.addEventListener('scroll', updateArrows);
+        updateArrows();
+      }
+    });
+    </script>
+<script>
+    const scrollContainer = document.getElementById('similarProductsContainer');
+    const scrollLeftBtn = document.getElementById('scrollLeft');
+    const scrollRightBtn = document.getElementById('scrollRight');
 
+    function updateScrollButtons() {
+        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+        scrollLeftBtn.disabled = scrollContainer.scrollLeft <= 0;
+        scrollRightBtn.disabled = scrollContainer.scrollLeft >= maxScroll - 5;
+    }
+
+    scrollLeftBtn.addEventListener('click', () => {
+        const cardWidth = scrollContainer.querySelector('.flex-shrink-0').offsetWidth;
+        const gap = 24;
+        scrollContainer.scrollBy({
+            left: -(cardWidth + gap),
+            behavior: 'smooth'
+        });
+    });
+
+    scrollRightBtn.addEventListener('click', () => {
+        const cardWidth = scrollContainer.querySelector('.flex-shrink-0').offsetWidth;
+        const gap = 24;
+        scrollContainer.scrollBy({
+            left: cardWidth + gap,
+            behavior: 'smooth'
+        });
+    });
+
+    scrollContainer.addEventListener('scroll', updateScrollButtons);
+    window.addEventListener('resize', updateScrollButtons);
+    updateScrollButtons();
+
+    function handleWishlist(productId, variantId, element) {
+        const icon = element.querySelector('i');
+        const isWishlisted = icon.style.color === 'rgb(0, 0, 0)';
+        icon.style.color = isWishlisted ? '#a3a5a8' : '#000000';
+        console.log('Wishlist action:', productId, variantId, !isWishlisted);
+    }
+</script>
 <script>
 
 document.getElementById('copyBtn').addEventListener('click',async()=>{

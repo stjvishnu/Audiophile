@@ -53,8 +53,8 @@
           <!-- Processing -->
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
-              <button id="processing" onclick="changeStatus('<%=orders.id%>','processing')" class="w-6 h-6 <%=orders.orderStatus==='processing'||orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'  ? "bg-white":"bg-black" %>  rounded-full">
-                <%if(orders.orderStatus==='processing' || orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'  ){%>
+              <button id="processing" onclick="changeStatus('<%=orders.id%>','processing')" class="w-6 h-6 <%=orders.orderStatus==='processing'||orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested' || orders.orderStatus==='partial-return'  ? "bg-white":"bg-black" %>  rounded-full">
+                <%if(orders.orderStatus==='processing' || orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return' ){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
                 
@@ -68,8 +68,8 @@
           <!-- Shipped -->
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
-              <button id="shipped" onclick="changeStatus('<%=orders.id%>','shipped')" class="w-6 h-6 <%=orders.orderStatus==='shipped'||orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' ? "bg-white":"bg-black" %> rounded-full">
-                <%if(orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+              <button id="shipped" onclick="changeStatus('<%=orders.id%>','shipped')" class="w-6 h-6 <%=orders.orderStatus==='shipped'||orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %> rounded-full">
+                <%if(orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
               </button>
@@ -82,8 +82,8 @@
             <!-- out for delivery -->
             <div class="flex flex-col items-center">
               <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
-                <button id="outfordelivery" onclick="changeStatus('<%=orders.id%>','outfordelivery')" class="w-6 h-6 <%= orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'? "bg-white":"bg-black" %> rounded-full">
-                  <%if(orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+                <button id="outfordelivery" onclick="changeStatus('<%=orders.id%>','outfordelivery')" class="w-6 h-6 <%= orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %> rounded-full">
+                  <%if(orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                     <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                     <%}%>
                 </button>
@@ -96,8 +96,8 @@
           <!-- Delivered -->
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
-              <button id="delivered" onclick="changeStatus('<%=orders.id%>','delivered')" class="w-6 h-6 <%=orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'? "bg-white":"bg-black" %>  rounded-full">
-                <%if(orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned'){%>
+              <button id="delivered" onclick="changeStatus('<%=orders.id%>','delivered')" class="w-6 h-6 <%=orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %>  rounded-full">
+                <%if(orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
               </button>
@@ -114,8 +114,8 @@
                  <button id="cancelledOrReturned" class="w-6 h-6 bg-white rounded-full">
                     <% if(orders.orderStatus==='cancelled'){ %>
                      <i class="fa-regular fa-circle-xmark fa-2xl" style="color: #de1b1b;"></i>
-                     <% } else if(orders.orderStatus==='returned'){%>
-                      <i class="fa-regular fa-rotate-left fa-2xl" style="color: #de1b1b;"></i>
+                     <% } else if(orders.orderStatus==='returned' || orders.orderStatus==='partial-return'){%>
+                      <i class="fa-solid fa-rotate-left fa-xl" style="color: #de1b1b;"></i>
                      <% } %>
                  </button>
                </div>
@@ -142,7 +142,7 @@
               <th class="text-left text-white font-semibold py-4 px-4">Product Name</th>
               <th class="text-center text-white font-semibold py-4 px-4">Qty</th>
               <th class="text-right text-white font-semibold py-4 px-4">Price</th>
-              <th class="text-right text-cyan-400 font-semibold py-4 px-4">SubTotal</th>
+              <th class="text-right text-white font-semibold py-4 px-4">SubTotal</th>
             </tr>
           </thead>
 
@@ -152,14 +152,8 @@
 
           <tbody>
             <tr 
-            class="border-b <%=order.itemStatus=='return-requested'?'bg-red-500':''%> border-white/10 hover:bg-white/5 transition-colors"
-            <% if(order.itemStatus === 'return-requested') { %>
-              data-order-id="<%= orders._id %>"
-              data-item-id="<%= order._id %>"
-              data-reason="<%- order.itemReturnReason %>"
-              onclick="returnItem(this)"
-            <% } %>
-        
+            class="border-b border-white/10 hover:bg-white/5 transition-colors"
+           
               >
               <td class="py-6 px-4">
                 <div class="flex items-center gap-4">
@@ -175,7 +169,31 @@
                 <span class="bg-white/10 px-3 py-1 rounded-full text-sm"><%=order.quantity%></span>
               </td>
               <td class="text-right text-white py-6 px-4">₹<%=order.priceAtPurchase%></td>
-              <td class="text-right text-cyan-400 font-semibold py-6 px-4">₹<%=order.totalPrice%></td>
+              <td class="text-right text-white font-semibold py-6 px-4">₹<%=order.totalPrice%></td>
+              
+              <td class="text-center py-6 px-4">
+                <% if(order.itemStatus === 'return-requested') { %>
+                  <button
+                    class="px-2 py-1 text-sm rounded-xl bg-red-600 text-white cursor-default"
+                    <% if(order.itemStatus === 'return-requested') { %>
+                      data-order-id="<%= orders._id %>"
+                      data-item-id="<%= order._id %>"
+                      data-reason="<%- order.itemReturnReason %>"
+                      onclick="returnItem(this)"
+                    <% } %>
+                  >
+                    Return Requested<i class="fa-solid fa-sm fa-chevron-right " style="color: #ffffff;"></i>
+                  </button>
+                <% } else if(order.itemStatus === 'returned') { %>
+                  <!-- STATUS -->
+                  <button
+                    class="px-3 py-1 text-sm rounded-xl bg-gray-600 text-white cursor-not-allowed"
+                    disabled
+                  >
+                    Returned
+                  </button>
+                <% } %>
+              </td>
             </tr>
           </tbody>
           <% }) %>
@@ -183,7 +201,24 @@
         </table>
       </div>
 
-      <div class="border-t border-white/20 mt-8 pt-8">
+      
+        <tr class="text-center ">
+          <td>
+            <button class="mx-auto block px-2 py-1 bg-red-500 rounded-xl text-sm mt-3 hover:scale-105 translate-x-1 <%=orders.orderStatus==='return-requested'?'':'hidden'%>"
+              <% if(orders.orderStatus === 'return-requested') { %>
+                data-order-id="<%= orders._id %>"
+                data-reason="<%- orders.reason %>"
+                onclick="returnWholeItem(this)"
+              <% } %>
+              >
+             <span>Return Requested<i class="fa-solid fa-sm fa-chevron-right " style="color: #ffffff;"></i></span> 
+            </button>
+          </td>
+        </tr>
+      
+      
+
+      <div class="border-t border-white/20 <%=orders.orderStatus==='return-requested'?'mt-3':'mt-8'%>  pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
 
           <div class="space-y-4">

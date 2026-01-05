@@ -28,14 +28,16 @@ const getCheckout = async (req,res)=>{
     const user = await User.findById(req.user)
     const cart = await Cart.findOne({userId:req.user}).populate('items.productId');
     const address = await Address.findOne({userId:req.user}).sort({isDefault:-1})
-    const pincode = address.pincode.toString().slice(0,1)
-    const deliveryzone = await DeliveryZone.find().lean()
-    const charge = deliveryzone.find(d=>d.pincode.toString()===pincode.toString()).charge
+    let charge;
+    if(address){
+      const pincode = address.pincode.toString().slice(0,1)
+      const deliveryzone = await DeliveryZone.find().lean()
+      charge = deliveryzone.find(d=>d.pincode.toString()===pincode.toString()).charge
+    }
     const addresses = await Address.find({userId:req.user})||[]
     const calculatedCart = await calculateCart(cart,charge);
     const coupons =  await Coupon.find({minPurchase:{$lte:calculatedCart.total}})
     
-
 
     console.log(cart)
   

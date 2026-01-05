@@ -357,7 +357,10 @@ const getOtpSuccess = (req, res) => {
 // ------------------------------------------
 
 const getForgotPassword = (req, res) => {
-  res.render("user/forgot-password.ejs");
+  const email = req.body.email;
+  console.log('call inside got forgt  password');
+  res.render("user/forgot-password.ejs",{
+  email:email})
 };
 
 // ------------------------------------------
@@ -365,6 +368,7 @@ const getForgotPassword = (req, res) => {
 // ------------------------------------------
 
 const postForgotPassword = async (req, res) => {
+  console.log('call inside post forgot password');
   const email = req.body.email;
   try {
     const user = await User.findOne({
@@ -407,11 +411,18 @@ const postForgotPassword = async (req, res) => {
 };
 
 const getVerifyOtp = (req, res) => {
+  console.log('call inside get  verify otp ');
   const token = req.cookies.forgotToken;
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
   const email = decoded.email;
-  res.render("user/verify-otp.ejs", {
-    email,
+  console.log('email',email);
+  res.render("user/otp.ejs", {
+    email:email,
+    title:'Verify your Account',
+    formAction :'/user/verify-otp',
+    backLinkHref:'/user/forgot-password',
+    backLinkText:'Back to forgt password',
+    resendHref:'/user/resend-otp'
   });
 };
 

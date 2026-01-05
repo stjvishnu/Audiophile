@@ -4,7 +4,7 @@ const ordersBtn= document.getElementById('ordersBtn');
 const orderDetailsSectionContainer = document.getElementById('orderDetailsSection');
 
 let orders;
-
+let itemReturnRequested=false;
 
 ordersBtn.addEventListener('click', async (e)=>{
   console.log('orders btn clciked');
@@ -23,44 +23,83 @@ ordersBtn.addEventListener('click', async (e)=>{
       console.log(orders);
       orders.forEach((order,index)=>{
         console.log(order);
+        
         const orderCard = document.createElement('div');
         orderCard.innerHTML=`
 
-        <div class="rounded-2xl border border-gray-300 p-6 bg-white shadow-l hover:shadow-md transition-all">
+        <div class="group relative rounded-3xl border-2 border-black/40 p-5 bg-white shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+  <!-- Decorative corner accent -->
+  <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-100 to-transparent rounded-bl-[3rem] rounded-tr-3xl opacity-50"></div>
   
-        <div class="flex items-start justify-between">
-          <div class="flex items-start gap-4">
-            <img 
-              src="${order.items[0].productImage}"
-              class="w-16 h-16 rounded-3xl object-cover border" 
-            />
-            <div>
-              <h2 class="text-lg font-semibold text-gray-900">${order.items[0].productName}</h2>
-              <p class="text-sm text-gray-500">+1 more item</p>
-            </div>
-          </div>
-          <p class="text-xl font-semibold text-gray-900">₹ ${order.total}</p>
+  <!-- Header Section -->
+  <div class="relative flex items-start justify-between gap-4 mb-4">
+    <div class="flex items-start gap-4 flex-1">
+      <!-- Product Image with badge -->
+      <div class="relative flex-shrink-0">
+        <img 
+          src="${order.items[0].productImage}"
+          class="w-20 h-20 rounded-2xl object-cover border-2  shadow-md" 
+          alt="Product"
+        />
+        ${order.items.length > 1 ? `
+        <div class="absolute -top-2 -right-2 bg-black text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+          +${order.items.length - 1}
         </div>
-
-        <div class="my-4 border-t border-gray-200"></div>
-
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">
-              Order Id <span class="font-semibold text-gray-900">#${order.orderNumber}</span>
-            </p>
-            <p class="text-sm text-gray-600 mt-1">Ordered on: 4 Nov 2025</p>
-          </div>
-
-          <div class="flex flex-col items-end gap-2">
-            <span class="px-4 py-1 bg-black text-white text-sm font-medium rounded-full">${order.orderStatus}</span>
-            <button onclick="viewDetails('${order._id}')"  class="text-sm text-gray-700 font-medium underline-offset-2 hover:underline">
-              View Details
-            </button>
-          </div>
-        </div>
-
+        ` : ''}
       </div>
+      
+      <!-- Product Info -->
+      <div class="flex-1 min-w-0">
+        <h2 class="text-lg font-bold text-gray-900 truncate mb-1">${order.items[0].productName}</h2>
+        <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Order #${order.orderNumber}</p>
+        ${order.items.length > 1 ? `
+        <p class="text-sm text-gray-600 mt-1">+${order.items.length - 1} more item${order.items.length > 2 ? 's' : ''}</p>
+        ` : ''}
+      </div>
+    </div>
+    
+    <!-- Price Badge -->
+    <div class="flex-shrink-0">
+      <div class="bg-black  text-white px-4 py-1 rounded-full ">
+        <p class="text-md font-bold">₹${order.total}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Divider -->
+  <div class="my-4 border-t-2 border-gray-200"></div>
+  
+  <!-- Footer Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <!-- Order Info -->
+    <div class="flex flex-col gap-1">
+      <p class="text-sm text-gray-600 flex items-center gap-2">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span class="font-medium">Ordered: 4 Nov 2025</span>
+      </p>
+    </div>
+    
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Status Badge -->
+      <span class="px-4 py-1.5 bg-gradient-to-r from-gray-800 to-black text-white text-xs font-bold rounded-full uppercase tracking-wide ">
+        ${order.orderStatus}
+      </span>
+      
+      <!-- View Details Button -->
+      <button 
+        onclick="viewDetails('${order._id}')" 
+        class="group/btn flex items-center gap-1.5 px-4 py-1.5 bg-white border-2 border-black/60 text-black text-sm font-bold rounded-full hover:bg-black hover:text-white transition-all duration-200  hover:shadow-lg">
+        <span>Details</span>
+        <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
         `
      ordersContainer.prepend(orderCard)
       })
@@ -91,6 +130,10 @@ async function viewDetails(orderId){
 
     order.items.forEach((item)=>{
 
+      if(item.itemStatus==='return-requested' || item.itemStatus==='return-rejected' || item.itemStatus==='returned'){
+        itemReturnRequested=true
+      }
+      
     
     const orderCard = document.createElement('div');
     orderCard.innerHTML=`
@@ -109,8 +152,8 @@ async function viewDetails(orderId){
                   class="w-28 h-28 rounded-2xl bg-white object-cover">
               <p class="text-gray-600 font-semibold">Qty : ${item.quantity}</p>
               ${order.items.length>1
-                ?`<button id="itemStatus-${item._id}" onclick=returnSingleItem('${order._id}','${item._id}') class=" ${order.orderStatus==='delivered'||order.orderStatus=== 'partial-return'?'':'hidden'} px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" ${item.itemStatus=='return-rejected'||item.itemStatus=='returned'?'disabled':''}>
-                ${item.itemStatus || 'return'}
+                ?`<button id="itemStatus-${item._id}" onclick=returnSingleItem('${order._id}','${item._id}') class="item-status ${order.orderStatus==='delivered'||order.orderStatus=== 'partial-return'?'':'hidden'} px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" ${item.itemStatus=='return-rejected'||item.itemStatus=='returned' || item.itemStatus=='return-requested' ?'disabled':''}>
+                ${item.itemStatus==='delivered'?'Return' :item.itemStatus||''}
               </button>`
               :''
               }
@@ -125,110 +168,104 @@ async function viewDetails(orderId){
 
   const orderDetails = document.createElement('div')
   orderDetails.innerHTML = `
-  <!-- GRID OF DETAILS -->
-  <div class="grid grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
 
-      <!-- SHIPPING DETAILS -->
-      <div class="bg-white border-2 border-black text-black rounded-2xl p-6">
-          <h3 class="text-lg font-bold mb-4">Shipping Details</h3>
-          <p class="text-sm text-gray-800 leading-relaxed">
-              ${order.shippingAddress.fullName}<br>
-              ${order.shippingAddress.houseName}<br>
-              ${order.shippingAddress.city}<br>
-              ${order.shippingAddress.locality}<br>
-              ${order.shippingAddress.state}, ${order.shippingAddress.pincode}<br>
-              Phone number: ${order.shippingAddress.mobile}<br>
-              ${order.shippingAddress.landmark}<br>
-          </p>
-      </div>
+  <!-- SHIPPING DETAILS -->
+  <div class="bg-white border-2 border-black text-black rounded-2xl p-4 md:p-6">
+    <h3 class="text-base md:text-lg font-bold mb-3 md:mb-4">Shipping Details</h3>
+    <p class="text-xs md:text-sm text-gray-800 leading-relaxed">
+      ${order.shippingAddress.fullName}<br>
+      ${order.shippingAddress.houseName}<br>
+      ${order.shippingAddress.city}<br>
+      ${order.shippingAddress.locality}<br>
+      ${order.shippingAddress.state}, ${order.shippingAddress.pincode}<br>
+      Phone number: ${order.shippingAddress.mobile}<br>
+      ${order.shippingAddress.landmark}<br>
+    </p>
+  </div>
 
-      <!-- PAYMENT METHODS -->
-      <div class="grid grid-row-2 bg-white rounded-2xl gap-3">
-        <div class="border-2 border-black  rounded-2xl p-4" >
-        <h3 class="text-lg text-black text-center font-bold mb-4 ">Payment Method</h3>
-           <div id="paymentStatusContainer" class="flex justify-center gap-10 p-2">
-         
-              <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-gray-500" disabled>
-              ${order.payment.method}
+  <!-- PAYMENT METHODS & STATUS -->
+  <div class="grid grid-rows-2 bg-white rounded-2xl gap-3 md:col-span-1 lg:col-span-1">
+    <div class="border-2 border-black rounded-2xl p-3 md:p-4">
+      <h3 class="text-base md:text-lg text-black text-center font-bold mb-3 md:mb-4">Payment Method</h3>
+      <div id="paymentStatusContainer" class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 md:gap-10 p-2">
+        <button class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white bg-gray-500" disabled>
+          ${order.payment.method}
+        </button>
+
+        <button 
+          onclick="retryPayment('${order._id}','${order.total}')"
+          class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white ${order.payment.status=='pending'?'bg-red-500':'bg-green-500'}" ${order.payment.status=='pending'?'':'disabled'}>
+          ${order.payment.status}
+        </button>
+      </div>   
+    </div>
+
+    <div class="border-2 border-black rounded-2xl p-3 md:p-4">
+      <h3 class="text-base md:text-lg text-black font-bold mb-3 md:mb-4 text-center">Status</h3>
+      <div id="statusContainer" class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 md:gap-10 p-2">
+        ${
+          order.orderStatus === 'cancelled'
+            ? `
+              <button class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
+                Cancelled
+              </button>
+            `
+            : order.orderStatus === 'returned'
+            ? `
+              <button class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
+                Returned
+              </button>
+            `
+            : `
+              <button class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg 
+                      ${order.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-gray-200'}
+                      text-black">
+                ${order.orderStatus}
               </button>
 
-              <button 
-              onclick="retryPayment('${order._id}','${order.total}')"
-              class="px-8 py-1 text-sm font-semibold rounded-lg text-white ${order.payment.status=='pending'?'bg-red-500':'bg-green-500'} "${order.payment.status=='pending'?'':'disabled'} >
-              ${order.payment.status}
+              <button id="returnCancelBtn" onclick="orderReturnCancel('${order._id}', '${order.orderStatus === 'delivered' ? 'return' : 'cancel'}')"
+                class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white 
+                      ${order.orderStatus === 'delivered' ? 'bg-red-500' : 'bg-red-500'}" ${itemReturnRequested?'disabled':''}>
+                ${order.orderStatus == 'partial-return' ? 'Return' : order.orderStatus==='delivered'?'Return':'Cancel'}
               </button>
-           </div>   
-          
-        </div>
-        <div class="border-2 border-black rounded-2xl p-4">
-        <h3 class="text-lg text-black font-bold mb-4 text-center">Status</h3>
-          <div id="statusContainer" class="flex justify-center gap-10 p-2">
-
-
-      ${
-      order.orderStatus === 'cancelled'
-        ? `
-          <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
-            Cancelled
-          </button>
-        `
-        : order.orderStatus === 'returned'
-        ? `
-          <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
-            Returned
-          </button>
-        `
-        : `
-          <button class="px-5 py-1 text-sm font-semibold rounded-lg 
-                  ${order.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-gray-200'}
-                  text-black">
-            ${order.orderStatus}
-          </button>
-
-          <button onclick="orderReturnCancel('${order._id}', '${order.orderStatus === 'delivered' ? 'return' : 'cancel'}')"
-            class="px-5 py-1 text-sm font-semibold rounded-lg text-white 
-                  ${order.orderStatus === 'delivered' ? 'bg-red-400' : 'bg-red-500'}">
-            ${order.orderStatus === 'delivered' ? 'Return' : 'Cancel'}
-          </button>
-        `
+            `
         }
+      </div>
+    </div>
+  </div>
 
-          </div>
-        </div>
-          
+  <!-- ORDER SUMMARY -->
+  <div class="bg-white border-2 border-black rounded-2xl p-4 md:p-6 md:col-span-2 lg:col-span-1">
+    <h3 class="text-base md:text-lg text-black font-bold mb-3 md:mb-4">Order Summary</h3>
+
+    <div class="space-y-2 md:space-y-3">
+      <div class="flex justify-between text-xs md:text-sm">
+        <span class="text-gray-600">Subtotal</span>
+        <span class="text-gray-900 font-medium">₹${order.subTotal}</span>
+      </div>
+      <div class="flex justify-between text-xs md:text-sm">
+        <span class="text-gray-600">Discount</span>
+        <span class="text-green-500 font-medium">${order.discount}</span>
       </div>
 
-      <!-- ORDER SUMMARY -->
-      <div class="bg-white border-2 border-black  rounded-2xl p-6">
-          <h3 class="text-lg text-black font-bold mb-4">Order Summary</h3>
-
-          <div class="space-y-3">
-              <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Subtotal</span>
-                  <span class="text-gray-900 font-medium">₹${order.subTotal}<br></span>
-              </div>
-              <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Discount</span>
-                  <span class="text-green-500 font-medium">${order.discount}</span>
-              </div>
-
-              ${order.couponDiscount ? `
-              <div class="flex justify-between text-sm">
-                <span class="text-green-700">Coupon discount</span>
-                <span class="text-green-700 font-medium">${order.couponDiscount}</span>
-              </div>
-            ` : ''}
-              <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Delivery Fee</span>
-                  <span class="text-gray-900 font-medium">₹0</span>
-              </div>
-              <div class="border-t border-gray-300 pt-3 flex justify-between">
-                  <span class="text-lg text-black font-bold">Total</span>
-                  <span class="text-lg text-black font-bold">₹${order.total}</span>
-              </div>
-          </div>
+      ${order.couponDiscount ? `
+      <div class="flex justify-between text-xs md:text-sm">
+        <span class="text-green-700">Coupon discount</span>
+        <span class="text-green-700 font-medium">${order.couponDiscount}</span>
       </div>
+      ` : ''}
 
+      <div class="flex justify-between text-xs md:text-sm">
+        <span class="text-gray-600">Delivery Fee</span>
+        <span class="text-gray-900 font-medium">₹0</span>
+      </div>
+      <div class="border-t border-gray-300 pt-2 md:pt-3 flex justify-between">
+        <span class="text-base md:text-lg text-black font-bold">Total</span>
+        <span class="text-base md:text-lg text-black font-bold">₹${order.total}</span>
+      </div>
+    </div>
+  </div>
   </div>
   `
   orderDetailsContainer.appendChild(orderDetails)
@@ -236,18 +273,18 @@ async function viewDetails(orderId){
   const hideButton = document.createElement('div')
   hideButton.innerHTML=`
   <!-- BUTTON -->
-  <div class="flex justify-center gap-8 mt-8">
-      <button onclick="hideOrderDetails()"
-              class="bg-black text-white px-5 py-2 rounded-[2rem] text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all">
-          Hide Details
-      </button>
+  <div class="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-8 mt-4 md:mt-8 col-span-1 md:col-span-2 lg:col-span-3">
+  <button onclick="hideOrderDetails()"
+          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all">
+    Hide Details
+  </button>
 
-      <button onclick="downloadInvoice('${order._id}')"
-      class="bg-black text-white px-5 py-2 rounded-[2rem] text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all">
-      <i class="fa-solid fa-file-lines" style="color: #ffffff;"></i> <span class="ml-1 font-semibold text-white">invoice</span>
-     </button>
-
-  </div>
+  <button onclick="downloadInvoice('${order._id}')"
+          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all">
+    <i class="fa-solid fa-file-lines" style="color: #ffffff;"></i> 
+    <span class="ml-1 font-semibold text-white">Invoice</span>
+  </button>
+</div>
   `
 
   orderDetailsContainer.appendChild(hideButton)
@@ -292,29 +329,72 @@ async function orderReturnCancel(orderId,action){
             try{
               const modal= document.getElementById('return-cancelModal');
               const orderId=modal.querySelector('#submitBtn').dataset.orderId
-              const text = modal.querySelector('textarea').value.trim();
-              if(!text){
+              let reason;
+              console.log('hello ji');
+              const returnReason=modal.querySelector('#returnReasonDropdown').value.trim();
+              console.log('return reason',returnReason);
+              if(returnReason=='custom'){
+                const text = modal.querySelector('#customReasonTextarea').value.trim();
+                console.log('text',text);
+                reason=text;
+              }else{
+                reason=returnReason
+              }
+              console.log('reason',reason);
+              if(!reason){
                 showToast('error','Please enter the reason');
                 return
               }
-
-              console.log('User typed',text);
+              modal.querySelector('#returnReasonDropdown').value='';
+              modal.querySelector('#customTextareaContainer').classList.add('hidden')
+              modal.querySelector('#customReasonTextarea').value=''
+              console.log('User typed',reason);
               console.log('OrderId',orderId)
-
-              const response = await axios.post(`/user/orders/${action}`,{orderId,reason:text})
-              const message= response.data.customMessage;
-              const orderDetailsContainer = orderDetailsSectionContainer.querySelector('.orderDetails')
-              const statusContainer =  orderDetailsContainer.querySelector('#statusContainer');
-              statusContainer.innerHTML=''
-              statusContainer.innerHTML=`
-              <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
-              Cancelled
-              </button>
-              `
-              if(message) showToast('success',message)
-              modal.querySelector('textarea').value=''
+              
+                const response = await axios.post(`/user/orders/${action}`,{orderId,reason:reason})
+                if(!response?.data?.customMessage) throw new Error('Issue in returning item')
+                const orderDetailsContainer = orderDetailsSectionContainer.querySelector('.orderDetails')
+                const statusContainer =  orderDetailsContainer.querySelector('#statusContainer');
+                statusContainer.innerHTML=''
+                if(action=='return'){
+                  statusContainer.innerHTML=`
+                  <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
+                  Return-Requested
+                  </button>
+                  `
+                  const itemStatusBtns= document.querySelectorAll('.item-status');
+                  console.log('itemstatusBtn',itemStatusBtns);
+                  itemStatusBtns.forEach((btn)=>{
+                   btn.textContent=`Return-Requested`;
+                   btn.disabled = true;
+                 })
+                showToast('success','Return Requested')
+                }else if(action == 'cancel'){
+                  statusContainer.innerHTML=`
+                  <button class="px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" disabled>
+                  Cancelled
+                  </button>
+                  `
+                  const itemStatusBtns= document.querySelectorAll('.item-status');
+                  console.log('itemstatusBtn',itemStatusBtns);
+                  itemStatusBtns.forEach((btn)=>{
+                   btn.textContent=`Cancelled`;
+                   btn.disabled = true;
+                 })
+                showToast('success','Order Cancelled')
+                }
+            
+              modal.querySelector('customReasonTextarea').value='';
+              modal.querySelector('#returnReasonDropdown').value=''
+              modal.classList.add('hidden')
+            console.log('itemstatusBtn after update',itemStatusBtns);
+              
+              
             }catch(error){
               console.log('Error in cancel,return request'),error;
+              document.getElementById('return-cancelModal').classList.add('hidden')
+              document.getElementById('returnReasonDropdown').value='';
+              document.getElementById('customReasonTextarea').value='';
               const message= error.response.data.customMessage || 'Something went wrong';
               if(message) showToast('error',message)
             }
@@ -386,18 +466,38 @@ async function returnSingleItem(orderId,itemId){
      const submitBtn = document.getElementById('submitBtn')
      submitBtn.addEventListener('click',async (e)=>{
       try {
-        const text = modal.querySelector('textarea').value.trim();
-        if(!text){
-          showToast('error','Please enter the reason');
-          return
-        }
+        const modal= document.getElementById('return-cancelModal');
+              const orderId=modal.querySelector('#submitBtn').dataset.orderId
+              let reason;
+              console.log('hello ji');
+              const returnReason=modal.querySelector('#returnReasonDropdown').value.trim();
+              console.log('return reason',returnReason);
+              if(returnReason=='custom'){
+                const text = modal.querySelector('#customReasonTextarea').value.trim();
+                console.log('text',text);
+                reason=text;
+              }else{
+                reason=returnReason
+              }
+              console.log('reason',reason);
+              if(!reason){
+                showToast('error','Please enter the reason');
+                return
+              }
+              modal.querySelector('#returnReasonDropdown').value='';
+              modal.querySelector('#customTextareaContainer').classList.add('hidden')
+              modal.querySelector('#customReasonTextarea').value=''
+              console.log('User typed',reason);
+              console.log('OrderId',orderId)
 
-        const response = await axios.patch(`/user/orders/return-item/${itemId}`,{orderId,reason:text})
+        const response = await axios.patch(`/user/orders/return-item/${itemId}`,{orderId,reason:reason})
         if(!response?.data?.customMessage) throw new Error('Issue in returning item')
 
         const itemStatusBtn = document.getElementById(`itemStatus-${itemId}`)
         itemStatusBtn.textContent='return-requested';
         itemStatusBtn.classList.add('bg-red-500')
+        const returnBtn=document.getElementById('returnCancelBtn');
+        returnBtn.disabled=true;
         showToast('success','Return Requested');
         modal.classList.add('hidden')
         modal.querySelector('textarea').value=''

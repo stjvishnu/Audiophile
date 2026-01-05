@@ -38,25 +38,26 @@ if(currentStatus === 'processing'){
   deliveredBtn.disabled=true;
   processingBtn.disabled=true;
   outfordeliveryBtn.disabled=true;
-  cancelledOrReturnedBtn.disabled=true;
+  if(cancelledOrReturnedBtn) cancelledOrReturnedBtn.disabled=true;
+  
  }else if(currentStatus === 'return-requested'){
   shippedBtn.disabled=true;
   deliveredBtn.disabled=true;
   processingBtn.disabled=true;
   outfordeliveryBtn.disabled=true;
-  cancelledOrReturnedBtn.disabled=true;
+  if(cancelledOrReturnedBtn) cancelledOrReturnedBtn.disabled=true;
  }else if(currentStatus==='partial-return'){
   shippedBtn.disabled=true;
   deliveredBtn.disabled=true;
   processingBtn.disabled=true;
   outfordeliveryBtn.disabled=true;
-  cancelledOrReturnedBtn.disabled=true;
+  if(cancelledOrReturnedBtn) cancelledOrReturnedBtn.disabled=true;
  }else if(currentStatus==='returned'){
   shippedBtn.disabled=true;
   deliveredBtn.disabled=true;
   processingBtn.disabled=true;
   outfordeliveryBtn.disabled=true;
-  cancelledOrReturnedBtn.disabled=true;
+  if(cancelledOrReturnedBtn) cancelledOrReturnedBtn.disabled=true;
  }
  
 
@@ -126,10 +127,50 @@ async function changeStatus(orderId,newStatus){
   }
 }
 
+async function returnWholeItem(order){
+  try {
+    const {orderId,reason} = order.dataset;
+    const result= await sweetAlert('warning','Are you sure ?',`You want to accept return request \nreason: ${reason}!`,true,true)
+    if(result.isConfirmed){
+      let action= 'return-accepted';
+      const response = await fetch('/admin/orders/return-whole-item',{
+        method:'POST',
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({orderId,reason,action})
+      })
+      console.log('response',response);
+      const data = await response.json()
+      console.log('data',data);
+      if(data?.customMessage){
+        showToast('success',data?.customMessage);
+      }
+      setTimeout(()=>{
+        window.location.reload()
+      },2000)
+    }else if(result.isDismissed){
+      let action = 'return-rejected';
+      const response  = await fetch('/admin/orders/return-whole-item',{
+        method:'POST',
+        headers:{"Content-Type": "application/json"},
+        body: JSON.stringify({orderId,action})
+      })
+      const data = await response.json()
+      console.log('data',data);
+      if(data?.customMessage){
+        showToast('success',data?.customMessage);
+      }
+    }
+  } catch (error) {
+    console.log('Error in return item',error);
+    showToast('error','Something went wrong !')
+  }
+}
+
 async function returnItem(item){
   try {
-
+    console.log('inside returnItem');
     const {orderId,itemId,reason:itemReturnReason} = item.dataset;
+    
     const result= await sweetAlert('warning','Are you sure ?',`You want to accept return request \nreason: ${itemReturnReason}!`,true,true)
 
     if(result.isConfirmed){

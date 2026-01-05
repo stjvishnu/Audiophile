@@ -1,21 +1,28 @@
-
-<div class=" p-4">
-
-    <div class=" h-[calc(100vh-2rem)] flex gap-5 rounded-[2rem] mx-auto my-3">
-
-        <div class="bg-black w-64 h-full shadow-2xl rounded-[2rem] overflow-hidden">
-            <div class="flex flex-col items-center py-8 px-6">
+<div class="p-2 sm:p-4 mt-3">
+    <div class="min-h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] flex flex-col lg:flex-row gap-3 sm:gap-5 mx-auto my-2 sm:my-3">
+        <!-- Sidebar - Sticky with fixed height on desktop -->
+        <div class="bg-black w-full lg:w-64 lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 shadow-2xl rounded-xl sm:rounded-[2rem] overflow-hidden flex-shrink-0">
+            <div class="flex flex-col items-center py-4 sm:py-8 px-4 sm:px-6">
                 <img id="mainProfileImg" src="<%= user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png' %>"
                      alt="User Profile"
-                     class="w-24 h-24 rounded-full object-cover ring-4 ring-gray-700 mb-4">
-                <h2 id="mainProfileName" class="text-white text-xl font-bold text-center"><%=user.firstName%> <%=user.lastName%></h2>
+                     class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-gray-700 mb-3 sm:mb-4">
+                <h2 id="mainProfileName" class="text-white text-base sm:text-xl font-bold text-center"><%=user.firstName%> <%=user.lastName%></h2>
             </div>
-
-            <div class="mt-6">
-                <ul class="space-y-2 px-4">
+            
+            <!-- Mobile menu toggle button -->
+            <button id="mobileMenuToggle" class="lg:hidden w-full px-4 py-3 text-white flex items-center justify-between border-t border-gray-700">
+                <span class="font-medium">Menu</span>
+                <svg class="w-5 h-5 transition-transform duration-200" id="menuChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            
+            <!-- Scrollable menu on desktop -->
+            <div id="mobileMenuContent" class="mt-2 sm:mt-6 max-h-0 lg:max-h-[calc(100vh-20rem)] overflow-hidden lg:overflow-y-auto transition-all duration-300 ease-in-out">
+                <ul class="space-y-1 sm:space-y-2 px-2 sm:px-4 pb-4 lg:pb-0">
                     <li>
-                        <a href="#" id="myProfile" class="flex items-center px-4 py-3 text-white border-l-4 border-gray-500 transition-all duration-200 ease-in-out">
-                            <svg class="w-5 h-5 mr-3"
+                        <a href="#" id="myProfile" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-gray-500 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
                                  fill="none"
                                  stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -25,13 +32,12 @@
                                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
                                 </path>
                             </svg>
-                            <span  class="font-medium">My Profile</span>
+                            <span class="font-medium">My Profile</span>
                         </a>
                     </li>
-
                     <li>
-                        <a href="#" id="ordersBtn" class="flex items-center px-4 py-3 text-white  border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out">
-                            <svg class="w-5 h-5 mr-3"
+                        <a href="#" id="ordersBtn" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
                                  fill="none"
                                  stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -44,10 +50,9 @@
                             <span class="font-medium">Orders</span>
                         </a>
                     </li>
-
                     <li>
-                        <a href='' id="addressBtn" class="flex items-center px-4 py-3 text-white  border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out">
-                            <svg class="w-5 h-5 mr-3"
+                        <a href='' id="addressBtn" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
                                  fill="none"
                                  stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -65,11 +70,9 @@
                             <span class="font-medium">Addresses</span>
                         </a>
                     </li>
-
-
                     <li>
-                        <a href="/user/wishlist" class="flex items-center px-4 py-3 text-white  border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out">
-                            <svg class="w-5 h-5 mr-3"
+                        <a href="/user/wishlist" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
                                  fill="none"
                                  stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -82,10 +85,9 @@
                             <span class="font-medium">Wishlist</span>
                         </a>
                     </li>
-
                     <li>
-                        <a href="#" id="walletBtn" class="flex items-center px-4 py-3 text-white  border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out">
-                            <svg class="w-5 h-5 mr-3"
+                        <a href="#" id="walletBtn" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
                                  fill="none"
                                  stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -99,16 +101,17 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" id="referralBtn" class="flex items-center px-4 py-3 text-white  border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out">
-                            <i class="fa-solid fa-users mr-3" style="color: #ffffff;"></i>
+                        <a href="#" id="referralBtn" class="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-white border-l-4 border-transparent hover:border-gray-600 transition-all duration-200 ease-in-out text-sm sm:text-base">
+                            <i class="fa-solid fa-users mr-2 sm:mr-3 text-sm sm:text-base" style="color: #ffffff;"></i>
                             <span class="font-medium">Referral</span>
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
-
-        <div id='hello' class="flex-1 rounded-[2rem] bg-white shadow-2xl overflow-hidden">
+        
+        <!-- Main content area - Sticky container, content scrolls naturally -->
+        <div id='hello' class="flex-1 rounded-xl sm:rounded-[2rem] bg-white shadow-2xl overflow-y-auto lg:overflow-hidden lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 min-h-[400px]">
             <%-include('./myProfile.ejs') %>
             
             <%-include('./myProfile-editModal.ejs') %>
@@ -119,16 +122,87 @@
             <%-include('./address-modal.ejs') %>
             
             <%-include('./order-details.ejs') %>
-            
-            
         </div>
-
     </div>
-
-    
 </div>
+
+<style>
+/* Custom scrollbar styling for better appearance */
+#mobileMenuContent::-webkit-scrollbar,
+#hello::-webkit-scrollbar {
+    width: 8px;
+}
+
+#mobileMenuContent::-webkit-scrollbar-track,
+#hello::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#mobileMenuContent::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+#hello::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+#mobileMenuContent::-webkit-scrollbar-thumb:hover,
+#hello::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+</style>
+
+<script>
+    // Mobile menu toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenuContent = document.getElementById('mobileMenuContent');
+    const menuChevron = document.getElementById('menuChevron');
+    
+    // Function to reset menu state on desktop
+    function handleResize() {
+        if (window.innerWidth >= 1024) {
+            // Clear inline styles when switching to desktop
+            mobileMenuContent.style.maxHeight = '';
+            menuChevron.style.transform = '';
+        }
+    }
+    
+    // Initial check
+    handleResize();
+    
+    // Listen for window resize
+    window.addEventListener('resize', handleResize);
+    
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+            const isOpen = mobileMenuContent.style.maxHeight && mobileMenuContent.style.maxHeight !== '0px';
+            
+            if (isOpen) {
+                mobileMenuContent.style.maxHeight = '0px';
+                menuChevron.style.transform = 'rotate(0deg)';
+            } else {
+                mobileMenuContent.style.maxHeight = mobileMenuContent.scrollHeight + 'px';
+                menuChevron.style.transform = 'rotate(180deg)';
+            }
+        });
+        
+        // Close menu when clicking on a menu item on mobile
+        const menuLinks = mobileMenuContent.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 1024) {
+                    mobileMenuContent.style.maxHeight = '0px';
+                    menuChevron.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    }
+});
+</script>
 
 <script src="/js/user/profile-script.js" ></script>
 <script src="/js/user/orders-script.js"></script>
 <script src="/js/user/referral-script.js"></script>
-

@@ -4,7 +4,7 @@ import User from '../../models/userModel.js';
 import Orders from '../../models/orderModel.js';
 import Wallet from '../../models/walletModel.js'
 import WalletTransaction from '../../models/walletTransaction.js'
-
+import PDFDocument from 'pdfkit'
 
 import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js'
 
@@ -94,6 +94,35 @@ async function updateStock(productId,variantId,quantity){
   }
 }
 
+const returnWholeItem = async (req,res)=>{
+  try {
+    console.log('Call inside returnWhole Item');
+    const {orderId,reason,action} = req.body;
+    console.log('req.body',req.body);
+    const order = await Orders.findOne({_id:orderId});
+    if(!order) return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND,customMessage:'Order not found'})
+
+    if(action=='return-accepted'){
+      order.orderStatus='returned';
+      await order.save();
+      if(order.payment.method=='razorpay' || order.payment.method=='wallet'){
+        let amount = order.finalPayableAmount || order.totalPrice;
+        creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
+      }
+       order.items.forEach(item=>updateStock(item.productId,item.variantId,item.quantity) )
+       return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated,Refund Intiated'})
+    }else if(action=='return-rejected'){
+      order.orderStatus='return-rejected';
+      await order.save();
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated'})
+
+    }
+  } catch (error) {
+    console.log('Error in returning item',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Server Error, try again later !'});
+  }
+}
+
 
 const returnItem  = async (req,res)=>{
   console.log('call inside admin order return');
@@ -141,9 +170,12 @@ const returnItem  = async (req,res)=>{
   }
 }
 
+
 export default{
   getOrders,
   getOrderDetails,
   changeOrderStatus,
-  returnItem
+  returnWholeItem,
+  returnItem,
+
 }

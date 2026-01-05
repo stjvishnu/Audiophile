@@ -10,7 +10,7 @@
             const countdownTimer = document.getElementById("countdownTimer");
             const email = document.getElementById('email').value;
             const inDiv = document.getElementById('in')
-            let timeLeft = parseInt(localStorage.getItem('otpTimer')) ||  60; //60 seconds
+            let timeLeft = parseInt(sessionStorage.getItem('otpTimer')) ||  60; //60 seconds
 
             // Focus the first input on page load
             if (otpInputs[0]) {
@@ -137,10 +137,10 @@
                       inDiv.classList.add('hidden')
                       countdownTimer.textContent = '';
                       resendBtn.disabled = false;
-                      localStorage.removeItem('otpTimer') // Clear stored time when timer ends
+                      sessionStorage.removeItem('otpTimer') // Clear stored time when timer ends
                   } else {
                       countdownTimer.textContent = `${timeLeft}s`;
-                      localStorage.setItem('otpTimer',timeLeft)
+                      sessionStorage.setItem('otpTimer',timeLeft)
                       timeLeft--;
                   }
               }, 1000)
@@ -172,7 +172,7 @@
             async function resendFunctionality() {
 
                 timeLeft = 60; //reset timer
-                localStorage.setItem('otpTimer',timeLeft) //save reset time to local storage
+                sessionStorage.setItem('otpTimer',timeLeft) //save reset time to local storage
 
 
                 try {

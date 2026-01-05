@@ -31,38 +31,84 @@ const allProducts = async (req, res) => {
         query.brand=brand;
         }
 
-        let sortOption = {createdAt:-1};  //default sort
+
        let sortBy= req.query.sort;
         
-        if(sortBy=='alphabetical-az'){
-          sortOption={name:1}
-        }else if(sortBy=='alphabetical-za'){
-          sortOption={name:-1}
-        }else if(sortBy=='price-low-high'){
-          sortOption={price:1}
-        }else if(sortBy=='price-high-low'){
-          sortOption={price:-1}
-        }else if(sortBy=='date-old-new'){
-          sortOption={date:1}
-        }else if(sortBy=='date-new-old'){
-          sortOption={date:-1}
-        }else{
-          sortOption={createdAt:-1}
-        }
+       let sortStage = { createdAt: -1 }; // default
+
+       if (sortBy === 'alphabetical-az') {
+         sortStage = { name: 1 };
+       }
+       else if (sortBy === 'alphabetical-za') {
+         sortStage = { name: -1 };
+       }
+       else if (sortBy === 'price-low-high') {
+         sortStage = { minPrice: 1 };
+       }
+       else if (sortBy === 'price-high-low') {
+         sortStage = { minPrice: -1 };
+       }
+       else if (sortBy === 'date-old-new') {
+         sortStage = { createdAt: 1 };
+       }
+       else if (sortBy === 'date-new-old') {
+         sortStage = { createdAt: -1 };
+       }
         
-        const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption).lean();
+        // const products = await Product.find(query).skip(skip).limit(limit).sort(sortOption).lean();
+        const products = await Product.aggregate([
+          { $match: query },
+        
+          { $unwind: "$variants" },
+        
+          // keep only active variants for price calculation
+          { $match: { "variants.attributes.isActive": true } },
+        
+          {
+            $group: {
+              _id: "$_id",
+        
+              // rebuild full variants array
+              variants: { $push: "$variants" },
+        
+              // keep product-level fields ONCE
+              name: { $first: "$name" },
+              brand: { $first: "$brand" },
+              category: { $first: "$category" },
+              subCategory: { $first: "$subCategory" },
+              description1: { $first: "$description1" },
+              description2: { $first: "$description2" },
+              productDetails: { $first: "$productDetails" },
+              productImages: { $first: "$productImages" },
+              isActive: { $first: "$isActive" },
+              createdAt: { $first: "$createdAt" },
+              updatedAt: { $first: "$updatedAt" },
+        
+              // compute lowest price
+              minPrice: { $min: {$multiply:[ "$variants.attributes.price",{$subtract:[1,{$divide:['$variants.attributes.discount',100]}]} ]}}
+            }
+          },
+        
+          { $sort: sortStage },
+          { $skip: skip },
+          { $limit: limit }
+        ]);
+        
+        console.log('products',products);
+        
         if(req.user){
-          const wishlist = await Wishlist.findOne({userId:req.user}).lean();
-
+       
+         const wishlist = await Wishlist.findOne({user:req.user}).lean();
         const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
-
-
         products.forEach((product)=>{
+          console.log('product',product);
+        
          const isProductWishlisted= product.variants.some(variant=>{
             return wishlistedVariants.has(variant.sku)
           });
           product.isWishlisted=isProductWishlisted;
         });
+
         }
 
         // const categoryList = await Category.find({isActive:true,isDeleted:false})
@@ -176,7 +222,8 @@ const singleProduct = async (req,res)=>{
 
 const productPage = async (req,res)=>{
   const productId= req.params.id;
-  const product=await Product.findById(productId);
+  const product=await Product.findById(productId)
+  console.log('rpoduct',product);
   const wishlist = await Wishlist.findOne({userId:req.user}).lean();
   const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
   if(product){
@@ -184,8 +231,10 @@ const productPage = async (req,res)=>{
     product.variants.forEach(variant=>{
       variant.attributes.isWishlisted= wishlistedVariants.has(variant.sku)
     });
+    const similarProducts = await Product.find({category:product.category,isActive:true,isDeleted:false,'variants.attributes.isActive':true,'variants.attributes.isDeleted':false})
+    console.log('similar products',similarProducts);
     console.log('After edit',product);
-    res.render('user/singleProduct.ejs',{product})
+    res.render('user/singleProduct.ejs',{product,similarProducts})
   }
 }
 

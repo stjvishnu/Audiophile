@@ -97,52 +97,52 @@ const returnOrder = async (req,res) =>{
   console.log('Call recived in returnOrder controller');
   try {
     const {orderId,reason} = req.body;
-    const returnOrder = await Order.findOneAndUpdate({_id:orderId},{orderStatus:'returned',reason:reason},{new:true});
+    const returnOrder = await Order.findOneAndUpdate({_id:orderId},{orderStatus:'return-requested',reason:reason},{new:true});
 
     if(!returnOrder){
       res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Request Failed, try again later !'})
     }
 
-    const productInfo=[];
+  //   const productInfo=[];
 
-    returnOrder.items.forEach((order)=>{
-      productInfo.push({
-        productId:order.productId,
-        variantId:order.variantId,
-        quantity:order.quantity
-      })
-    })
+  //   returnOrder.items.forEach((order)=>{
+  //     productInfo.push({
+  //       productId:order.productId,
+  //       variantId:order.variantId,
+  //       quantity:order.quantity
+  //     })
+  //   })
 
-   const stockUpdated= await Promise.all(
+  //  const stockUpdated= await Promise.all(
 
-      productInfo.map((pInfo)=>{
-        return Product.updateOne({_id:pInfo.productId,'variants.sku':pInfo.variantId},{$inc:{'variants.$.attributes.stock':pInfo.quantity}})
-      })
+  //     productInfo.map((pInfo)=>{
+  //       return Product.updateOne({_id:pInfo.productId,'variants.sku':pInfo.variantId},{$inc:{'variants.$.attributes.stock':pInfo.quantity}})
+  //     })
 
-    )  
+  //   )  
 
-    creditWallet(req.user,returnOrder.total,returnOrder.orderStatus,returnOrder.orderNumber)
+    // creditWallet(req.user,returnOrder.total,returnOrder.orderStatus,returnOrder.orderNumber)
 
-    console.log('Stock Updated',stockUpdated);
+    // console.log('Stock Updated',stockUpdated);
 
    
-    console.log('Returned order',returnOrder);
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Your order has been returned successfully !'})
+    // console.log('Returned order',returnOrder);
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Return - Requested !'})
   } catch (error) {
     console.log('Error in cancel return controller',error);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Request Failed, try again later !'})
   }
 }
 
-const downloadInvoice = async (req,res)=>{
-  console.log('Call recieved in downloadInvoice controller');
+const downloadInvoice = async (req, res) => {
+  console.log('Call received in downloadInvoice controller');
   try {
-    const {orderId}=req.params
-    console.log('orderId',orderId);
-    const order = await Order.findOne({_id:orderId}).populate('userId')
-    console.log('order',order);
-    const doc = new PDFDocument();
-
+    const { orderId } = req.params;
+    console.log('orderId', orderId);
+    const order = await Order.findOne({ _id: orderId }).populate('userId');
+    console.log('order', order);
+    const doc = new PDFDocument({ margin: 50 });
+    
     // ================= HEADERS =================
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -155,22 +155,26 @@ const downloadInvoice = async (req,res)=>{
     // ================= WATERMARK =================
     doc.opacity(0.08);
     
-    const logoPath = '/Users/vishnu/Desktop/Audiophile-Main/public/images/Black-logo.png';
+    const logoPath = 'https://res.cloudinary.com/dsvedpviz/image/upload/v1767444617/Black-logo_ndkbzi.png';
+
+    const response = await fetch(logoPath);
+    const arrayBuffer = await response.arrayBuffer();
+    const logoBuffer = Buffer.from(arrayBuffer)
     const imageWidth = 320;
     const wmX = (doc.page.width - imageWidth) / 2;
     const wmY = (doc.page.height - imageWidth) / 2;
     
-    doc.image(logoPath, wmX, wmY, { width: imageWidth });
+    doc.image(logoBuffer, wmX, wmY, { width: imageWidth });
     doc.opacity(1);
     
     // ================= HEADER =================
     doc.fontSize(20).text('Invoice', { align: 'center' });
-    doc.moveDown();
+    doc.moveDown(2);
     
     doc.fontSize(12);
     doc.text(`Order ID: #${order.orderNumber}`);
     doc.text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`);
-    doc.moveDown();
+    doc.moveDown(1.5);
     
     // ================= SHIPPING =================
     doc.text('Ship To:');
@@ -181,27 +185,27 @@ const downloadInvoice = async (req,res)=>{
     doc.text(`${order.shippingAddress.state} - ${order.shippingAddress.pincode}`);
     doc.text(order.userId.email);
     
-    doc.moveDown();
+    doc.moveDown(1.5);
     generateHr(doc, doc.y);
-    doc.moveDown();
+    doc.moveDown(0.5);
     
     // ================= TABLE HEADER =================
     const tableTop = doc.y;
     
     const itemX = 50;
-    const qtyX = 260;
-    const priceX = 320;
-    const discountX = 390;
-    const totalX = 460;
+    const qtyX = 300;
+    const priceX = 350;
+    const discountX = 420;
+    const totalX = 490;
     
     doc.font('Helvetica-Bold');
     doc.text('Item', itemX, tableTop);
-    doc.text('Qty', qtyX, tableTop);
-    doc.text('Price', priceX, tableTop);
-    doc.text('Discount', discountX, tableTop);
-    doc.text('Total', totalX, tableTop);
+    doc.text('Qty', qtyX, tableTop, { width: 40, align: 'center' });
+    doc.text('Price', priceX, tableTop, { width: 60, align: 'right' });
+    doc.text('Discount', discountX, tableTop, { width: 60, align: 'right' });
+    doc.text('Total', totalX, tableTop, { width: 60, align: 'right' });
     
-    doc.moveDown();
+    doc.moveDown(0.5);
     generateHr(doc, doc.y);
     
     // ================= TABLE ROWS =================
@@ -209,44 +213,44 @@ const downloadInvoice = async (req,res)=>{
     doc.font('Helvetica');
     
     order.items.forEach(item => {
-      const itemDiscount =
-        (item.priceAtPurchase * item.quantity) - item.totalPrice;
+      const itemDiscount = (item.priceAtPurchase * item.quantity) - item.totalPrice;
     
-      doc.text(item.productName, itemX, position, { width: 180 });
-      doc.text(item.quantity, qtyX, position);
-      doc.text(`₹${item.priceAtPurchase}`, priceX, position);
-      doc.text(`₹${itemDiscount}`, discountX, position);
-      doc.text(`₹${item.totalPrice}`, totalX, position);
+      doc.text(item.productName, itemX, position, { width: 240 });
+      doc.text(item.quantity.toString(), qtyX, position, { width: 40, align: 'center' });
+      doc.text(`Rs.${item.priceAtPurchase}`, priceX, position, { width: 60, align: 'right' });
+      doc.text(`Rs.${itemDiscount}`, discountX, position, { width: 60, align: 'right' });
+      doc.text(`Rs.${item.totalPrice}`, totalX, position, { width: 60, align: 'right' });
     
-      position += 20;
+      position += 30;
     });
     
     // ================= TOTALS =================
-    generateHr(doc, position + 10);
+    doc.moveDown(0.5);
+    generateHr(doc, doc.y);
     
-    const labelX = 360;
-    const valueX = 520;
+    const labelX = 380;
+    const valueX = 490;
     
-    const subTotalPos = position + 25;
-    const discountPos = position + 45;
-    const hrPos = position + 65;
-    const totalPos = position + 80;
+    const subTotalPos = doc.y + 15;
+    const discountPos = subTotalPos + 20;
+    const hrPos = discountPos + 20;
+    const totalPos = hrPos + 15;
     
     doc.font('Helvetica');
     doc.text('Sub Total:', labelX, subTotalPos);
-    doc.text(`₹${order.subTotal}`, valueX, subTotalPos, { align: 'right' });
+    doc.text(`Rs.${order.subTotal}`, valueX, subTotalPos, { width: 60, align: 'right' });
     
     doc.text('Total Discount:', labelX, discountPos);
-    doc.text(`-₹${order.totalDiscount}`, valueX, discountPos, { align: 'right' });
+    doc.text(`-Rs.${order.totalDiscount||0}`, valueX, discountPos, { width: 60, align: 'right' });
     
     generateHr(doc, hrPos);
     
     doc.font('Helvetica-Bold');
     doc.text('Grand Total:', labelX, totalPos);
-    doc.text(`₹${order.total}`, valueX, totalPos, { align: 'right' });
+    doc.text(`Rs.${order.total}`, valueX, totalPos, { width: 60, align: 'right' });
     
     // ================= FOOTER =================
-    doc.moveDown(3);
+    doc.moveDown(4);
     generateHr(doc, doc.y);
     
     doc.moveDown(0.5);
@@ -271,11 +275,11 @@ const downloadInvoice = async (req,res)=>{
         .lineTo(550, y)
         .stroke();
     }
-    
+    console.log('hi pdf');
   } catch (error) {
-    console.log('Error in download invoice controller',error);
+    console.log('Error in download invoice controller', error);
   }
-}
+};
 
 const returnSingleItem = async (req,res)=>{
   try {

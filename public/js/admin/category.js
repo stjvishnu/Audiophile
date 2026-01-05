@@ -27,6 +27,10 @@
 
       function addCategory(event) {
         event.preventDefault();
+        if(!newCategoryNameInput.value.trim()){
+          showToast('error','Valid category name required')
+          return
+        }
         fetch('/admin/category/add', {
           method: 'POST',
           headers: {

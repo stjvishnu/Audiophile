@@ -1,65 +1,94 @@
-<footer id="footer" class="<%= locals.title === 'home' ? 'hide-during-splash' : '' %> bg-black text-white py-8 mt-9 m-3 rounded-[2.2rem]">
-    <div class="container mx-auto px-6 ">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 text-center md:text-left">
+<footer id="footer" class="<%= locals.title === 'home' ? 'hide-during-splash' : '' %> bg-black text-white py-8 sm:py-10 lg:py-12 mt-6 sm:mt-8 lg:mt-9 mx-3 sm:mx-4 lg:m-3 rounded-2xl sm:rounded-3xl lg:rounded-[2.2rem] shadow-2xl">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-6">
             
             <!-- Support -->
-            <div>
-                <h3 class="text-lg font-semibold">Support</h3>
-                <p class="text-sm mt-2">24, Washington DC, USA</p>
-                <p class="text-sm">0953484822</p>
-                <p class="text-sm">audiophile@gmail.com</p>
+            <div class="text-center sm:text-left">
+                <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-100 tracking-wide">Support</h3>
+                <div class="space-y-2 text-gray-300">
+                    <p class="text-sm sm:text-base flex items-center justify-center sm:justify-start gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>24, Washington DC, USA</span>
+                    </p>
+                    <p class="text-sm sm:text-base flex items-center justify-center sm:justify-start gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                        <span>0953484822</span>
+                    </p>
+                    <p class="text-sm sm:text-base flex items-center justify-center sm:justify-start gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="break-all">audiophile@gmail.com</span>
+                    </p>
+                </div>
             </div>
 
             <!-- Account -->
-            <div>
-                <h3 class="text-lg font-semibold">Account</h3>
-                <ul class="mt-2 space-y-1">
-                    <li><a href="#" class="text-sm hover:text-gray-400">My Account</a></li>
-                    <li><a href="/login" class="text-sm hover:text-gray-400">Login/Register</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Cart</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Wishlist</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Shop</a></li>
+            <div class="text-center sm:text-left">
+                <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-100 tracking-wide">Account</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">My Account</a></li>
+                    <li><a href="/login" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Login/Register</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Cart</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Wishlist</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Shop</a></li>
                 </ul>
             </div>
 
             <!-- Quick Links -->
-            <div>
-                <h3 class="text-lg font-semibold">Quick Links</h3>
-                <ul class="mt-2 space-y-1">
-                    <li><a href="#" class="text-sm hover:text-gray-400">Privacy Policy</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Terms of Use</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">FAQ</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Contact</a></li>
+            <div class="text-center sm:text-left">
+                <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-100 tracking-wide">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Privacy Policy</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Terms of Use</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">FAQ</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Contact</a></li>
                 </ul>
             </div>
 
             <!-- About Us -->
-            <div>
-                <h3 class="text-lg font-semibold">About Us</h3>
-                <ul class="mt-2 space-y-1">
-                    <li><a href="#" class="text-sm hover:text-gray-400">Our Story</a></li>
-                    <li><a href="#" class="text-sm hover:text-gray-400">Press Releases</a></li>
+            <div class="text-center sm:text-left">
+                <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-100 tracking-wide">About Us</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Our Story</a></li>
+                    <li><a href="#" class="text-sm sm:text-base text-gray-300 hover:text-white hover:translate-x-1 inline-block transition-all duration-200">Press Releases</a></li>
                 </ul>
             </div>
 
             <!-- Follow Us -->
-            <div>
-                <h3 class="text-lg font-semibold">Follow Us</h3>
-                <div class="flex justify-center md:justify-start mt-2 space-x-3">
-                    <a href="#" class="text-xl hover:text-gray-400"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-xl hover:text-gray-400"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-xl hover:text-gray-400"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-xl hover:text-gray-400"><i class="fab fa-youtube"></i></a>
+            <div class="text-center sm:text-left sm:col-span-2 lg:col-span-1">
+                <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-100 tracking-wide">Follow Us</h3>
+                <div class="flex justify-center sm:justify-start gap-3 sm:gap-4">
+                    <a href="#" class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110" aria-label="Facebook">
+                        <i class="fab fa-facebook-f text-base sm:text-lg"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110" aria-label="Twitter">
+                        <i class="fab fa-twitter text-base sm:text-lg"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110" aria-label="Instagram">
+                        <i class="fab fa-instagram text-base sm:text-lg"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110" aria-label="YouTube">
+                        <i class="fab fa-youtube text-base sm:text-lg"></i>
+                    </a>
                 </div>
             </div>
         </div>
         
         <!-- Copyright Section -->
-        <div class="text-center text-sm mt-6 border-t border-gray-700 pt-4">
-            <p>© 2025, AUDIOPHILE</p>
-            <p class="mt-1">Owned, Operated & Funded by Proud Indians.</p>
-            <p class="mt-1">Everything on this website has been made with a lot of love and hard work.</p>
-            <p class="mt-1">If you copy anything we will hunt you down. We mean it.</p>
+        <div class="text-center mt-8 sm:mt-10 lg:mt-12 pt-6 sm:pt-8 border-t border-gray-800">
+            <p class="text-sm sm:text-base font-semibold text-gray-100 mb-2">© 2025, AUDIOPHILE</p>
+            <div class="text-xs sm:text-sm text-gray-400 space-y-1 max-w-2xl mx-auto px-4">
+                <p>Owned, Operated & Funded by Proud Indians.</p>
+                <p>Everything on this website has been made with a lot of love and hard work.</p>
+                <p class="font-medium text-gray-300">If you copy anything we will hunt you down. We mean it.</p>
+            </div>
         </div>
     </div>
 </footer>

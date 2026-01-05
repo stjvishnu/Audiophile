@@ -2,51 +2,77 @@
     .animate-fadeIn {
         animation: fadeIn 1.2s ease-in-out forwards;
     }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile menu slide animation */
+    .mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .mobile-menu.active {
+        max-height: 100vh;
+    }
+
+   
+
+    /* Mobile logo sizing */
+    @media (max-width: 768px) {
+        #navbar .logo-container img {
+            height: 2.5rem;
+        }
+    }
 </style>
 
-<nav id="navbar" class="<%= locals.title === 'home' ? 'hide-during-splash' : '' %> bg-white z-20 fixed top-0 left-0 right-0 animate-fadeIn ">
+<nav id="navbar" class="<%= locals.title === 'home' ? 'hide-during-splash' : '' %> bg-white z-40 fixed top-0 left-0 right-0 animate-fadeIn ">
     <!-- Desktop Navigation -->
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-            <!-- Left Section: Navigation Links -->
-            <div class="hidden md:flex items-center space-x-4 pl-0">
-                <a href="/" class="text-gray-700 hover:text-black transition-colors">Home</a>
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div class="flex justify-between items-center h-14 sm:h-16 ">
+            <!-- Left Section: Navigation Links (Desktop Only) -->
+            <div class="hidden md:flex items-center space-x-3 lg:space-x-4 pl-0">
+                <a href="/" class="text-sm lg:text-base text-gray-700 hover:text-black transition-colors">Home</a>
 
                 <!-- Categories Dropdown -->
                 <div class="relative group">
-                    <button class="flex items-center text-gray-700 hover:text-black">
+                    <button class="flex items-center text-sm lg:text-base text-gray-700 hover:text-black">
                         Categories
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div
-                        class="absolute z-10 left-0 mt-5 w-48 rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        class="absolute z-10 left-0 mt-5 w-48 rounded-2xl lg:rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <div class="py-1 mt-1">
-
                             <% categories.forEach((category)=> { %>
-
-                                <a href="/user/category/<%=category.name%>" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">
+                                <a href="/user/category/<%=category.name%>" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:rounded-[0.9rem]">
                                     <%=category.name%>
                                 </a>
-
-                                <% }) %>
-
+                            <% }) %>
                         </div>
-
                     </div>
                 </div>
 
                 <!-- Brands Dropdown -->
                 <div class="relative group">
-                    <button class="flex items-center text-gray-700 hover:text-black">
+                    <button class="flex items-center text-sm lg:text-base text-gray-700 hover:text-black">
                         Brands
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div
-                        class="absolute z-10 left-0 mt-5 w-48 rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        class="absolute z-10 left-0 mt-5 w-48 rounded-2xl lg:rounded-[2rem] shadow-2xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                         <div class="py-1">
                             <a href="#" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-[0.9rem]">Brand 1</a>
                             <a href="#" class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-[0.9rem]">Brand 2</a>
@@ -55,100 +81,129 @@
                     </div>
                 </div>
 
-                <a href="/user/products" class="text-gray-700 hover:text-black transition-colors">All Products</a>
+                <a href="/user/products" class="text-sm lg:text-base text-gray-700 hover:text-black transition-colors">All Products</a>
             </div>
 
-            <!-- Center: Logo -->
-            <div class="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
-                <img src="/images/audiophile-logo-black.png" alt="Brand" class="h-14 w-auto mt-1">
+            <!-- Center: Logo (Desktop) / Left: Logo (Mobile) -->
+            <div class="flex items-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2 logo-container">
+                <a href="/">
+                    <img src="/images/audiophile-logo-black.png" alt="Brand" class="h-10 sm:h-12 md:h-14 w-auto mt-0 sm:mt-1">
+                </a>
             </div>
 
-            <!-- Right Section: Search, Icons -->
-            <div class="hidden md:flex items-center space-x-6 ml-auto">
-                        <!-- Search Bar -->
-                        <div class="relative">
-                            <input id="searchInput" type="text" placeholder="Search..."
-                                class="w-32 focus:w-64 transition-all duration-300 px-4 py-1 text-sm text-black border border-gray-300 rounded-full focus:outline-none focus:border-gray-500">
-                            <svg id="searchIcon" class="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none"
-                                stroke="black" viewBox="0 0 24 24 " role="button">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <!-- Result Container -->
-                            <div id="searchResult"
-                                class="absolute w-64 px-4 py-2 text-sm text-black rounded-md max-h-80 overflow-y-auto  z-50 hidden flex flex-col gap-2">
-                            </div>
-                        </div>
+            <!-- Right Section: Search, Icons (Desktop) -->
+            <div class="hidden md:flex items-center space-x-3 lg:space-x-6 ml-auto">
+                <!-- Search Bar -->
+                <div class="relative">
+                    <input id="searchInput" type="text" placeholder="Search..."
+                        class="w-28 lg:w-32 focus:w-52 lg:focus:w-64 transition-all duration-300 px-3 lg:px-4 py-1 text-xs lg:text-sm text-black border border-gray-300 rounded-full focus:outline-none focus:border-gray-500">
+                    <svg id="searchIcon" class="w-3 h-3 lg:w-4 lg:h-4 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none"
+                        stroke="black" viewBox="0 0 24 24" role="button">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <!-- Result Container -->
+                    <div id="searchResult"
+                        class="absolute w-52 lg:w-64 px-4 py-2 text-sm text-black rounded-md max-h-80 overflow-y-auto z-50 hidden flex flex-col gap-2">
+                    </div>
+                </div>
 
                 <!-- Wishlist Icon with Counter -->
                 <div class="relative group">
                     <a href="/user/wishlist" class="text-gray-700 hover:text-black transition-colors p-1">
-                        <i class="far fa-heart text-xl group-hover:scale-110 transition-transform duration-200"></i>
-                        <% if (locals.wishlistCount !==undefined) { %>
+                        <i class="far fa-heart text-lg lg:text-xl group-hover:scale-110 transition-transform duration-200"></i>
+                        <% if (locals.wishlistCount !== undefined) { %>
                             <span id="wishListCountContainer"
-                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200  <%= wishlistCount === 0 ? 'opacity-50' : '' %>">
+                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-4 w-4 lg:h-5 lg:w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 <%= wishlistCount === 0 ? 'opacity-50' : '' %>">
                                 <%= wishlistCount %>
                             </span>
-                            <% } %>
+                        <% } %>
                     </a>
                 </div>
 
                 <!-- Cart Icon with Counter -->
                 <div class="relative group">
-                    <button id="cartBtn"  class="text-gray-700 hover:text-black transition-colors p-1" <%=locals.userName?'':'disabled'%> >
-                        <i
-                            class="fas fa-shopping-cart text-xl group-hover:scale-110 transition-transform duration-200"></i>
-                        <% if (locals.cartCount !==undefined) { %> 
+                    <button id="cartBtn" class="text-gray-700 hover:text-black transition-colors p-1" <%=locals.userName?'':'disabled'%>>
+                        <i class="fas fa-shopping-cart text-lg lg:text-xl group-hover:scale-110 transition-transform duration-200"></i>
+                        <% if (locals.cartCount !== undefined) { %>
                             <span id="cartCountContainer"
-                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 <%= cartCount === 0 ? 'opacity-50' : '' %>">
+                                class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-4 w-4 lg:h-5 lg:w-5 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 <%= cartCount === 0 ? 'opacity-50' : '' %>">
                                 <%= cartCount %>
                             </span>
-                            <% } %> 
-                            
-                            
-                        </button>
+                        <% } %>
+                    </button>
                 </div>
 
                 <!-- User Profile with Dropdown -->
                 <div class="relative group">
                     <button class="flex items-center text-gray-700 hover:text-black focus:outline-none">
-                        <i class="far fa-user"></i>
+                        <i class="far fa-user text-base lg:text-lg"></i>
                         <% if (locals.userName) { %>
-                            <span class="ml-2 text-sm text-gray-700">
+                            <span class="ml-2 text-xs lg:text-sm text-gray-700">
                                 <%= userName.firstName %>
                             </span>
                             <span class="ml-1 w-2 h-2 bg-green-500 rounded-full"></span>
-                            <% } else { %>
-                                <span class="ml-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                                <% } %>
+                        <% } else { %>
+                            <span class="ml-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <% } %>
                     </button>
                     <% if (locals.userName) { %>
                         <div
                             class="absolute z-10 right-0 mt-4 w-40 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                             <div class="py-1">
                                 <a href="/user/profile"
-                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Profile</a>
+                                    class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:rounded-[0.9rem]">Profile</a>
                                 <a href="/user/logout"
                                     onclick="sessionStorage.removeItem('splashShown')"
-                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Logout</a>
+                                    class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:rounded-[0.9rem]">Logout</a>
                             </div>
                         </div>
-                        <% }else { %>
-                            <div
-                            class="absolute z-10 right-0 mt-4 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <% } else { %>
+                        <div
+                            class="absolute z-10 right-0 mt-4 w-40 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                             <div class="py-1 text-center">
                                 <a href="/user/login"
-                                    class="block  ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100  hover:rounded-[0.9rem]">Login</a>
+                                    class="block ml-3 mr-3 px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:rounded-[0.9rem]">Login</a>
                             </div>
-                        <% }%>
+                        </div>
+                    <% } %>
                 </div>
             </div>
 
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden flex items-center">
+            <!-- Right Section: Mobile Icons & Menu Button -->
+            <div class="md:hidden flex items-center space-x-3 ml-auto">
+                <!-- Mobile Search Icon -->
+                <button id="mobileSearchBtn" class="p-2 text-gray-700 hover:text-black">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+
+                <!-- Mobile Wishlist Icon -->
+                <a href="/user/wishlist" class="relative p-2 text-gray-700 hover:text-black">
+                    <i class="far fa-heart text-lg"></i>
+                    <% if (locals.wishlistCount !== undefined && wishlistCount > 0) { %>
+                        <span class="absolute top-0 right-0 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                            <%= wishlistCount %>
+                        </span>
+                    <% } %>
+                </a>
+
+                <!-- Mobile Cart Icon -->
+                <button id="cartBtn" class="relative p-2 text-gray-700 hover:text-black" <%=locals.userName?'':'disabled'%>>
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <% if (locals.cartCount !== undefined && cartCount > 0) { %>
+                        <span id="cartCountContainer" class="absolute top-0 right-0 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                            <%= cartCount %>
+                        </span>
+                    <% } %>
+                </button>
+
+                <!-- Mobile Menu Button -->
                 <button
-                    class="mobile-menu-button p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="mobile-menu-button p-2 rounded-md  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                    <svg class="w-6 h-6 text-black"  fill="" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -157,73 +212,88 @@
         </div>
     </div>
 
+    <!-- Mobile Search Bar (Hidden by default) -->
+    <div id="mobileSearchBar" class="hidden md:hidden bg-gray-50 px-3 py-3 border-t border-gray-200">
+        <div class="relative">
+            <input type="text" placeholder="Search products..."
+                class="w-full px-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:border-gray-500 pr-10">
+            <svg class="w-4 h-4 absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+    </div>
+
     <!-- Mobile Menu -->
-    <div class="mobile-menu hidden md:hidden transition-all duration-300 ease-in-out">
-        <a href="/" class="block py-2 px-4 text-sm hover:bg-gray-100">Home</a>
-        <!-- Categories Submenu -->
-        <div class="mobile-submenu">
-            <button class="w-full flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100">
-                Categories
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-            <div class="hidden bg-gray-50 pl-8">
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Category 1</a>
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Category 2</a>
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Category 3</a>
-            </div>
-        </div>
-        <!-- Brands Submenu -->
-        <div class="mobile-submenu">
-            <button class="w-full flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100">
-                Brands
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-            <div class="hidden bg-gray-50 pl-8">
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Brand 1</a>
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Brand 2</a>
-                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100">Brand 3</a>
-            </div>
-        </div>
-        <a href="/new-arrivals" class="block py-2 px-4 text-sm hover:bg-gray-100">New Arrivals</a>
-        <a href="/deals" class="block py-2 px-4 text-sm hover:bg-gray-100">Deals</a>
-        <div class="py-2 px-4">
-            <input type="text" placeholder="Search..."
-                class="w-full px-4 py-1 text-sm border border-gray-300 rounded-full focus:outline-none focus:border-gray-500">
-        </div>
-        <!-- Mobile User Profile -->
-        <% if (locals.userName) { %>
-            <div class="mobile-submenu">
-                <button class="w-full flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100">
-                    <div class="flex items-center">
-                        <i class="far fa-user mr-2"></i>
-                        <span>
-                            <%= userName.firstName %>
-                        </span>
-                    </div>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="mobile-menu text-black md:hidden bg-white border-t border-gray-200">
+        <div class="max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <a href="/" class="block py-3 px-4 text-sm hover:bg-gray-100 border-b border-gray-100">Home</a>
+            
+            <!-- Categories Submenu -->
+            <div class="mobile-submenu border-b border-gray-100">
+                <button class="w-full flex justify-between items-center py-3 px-4 text-sm hover:bg-gray-100">
+                    <span>Categories</span>
+                    <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div class="hidden bg-gray-50 pl-8">
-                    <a href="/profile" class="block py-2 px-4 text-sm hover:bg-gray-100">Profile</a>
-                    <a href="/logout" class="block py-2 px-4 text-sm hover:bg-gray-100">Logout</a>
+                <div class="hidden bg-gray-50">
+                    <% categories.forEach((category)=> { %>
+                        <a href="/user/category/<%=category.name%>" class="block py-2 px-8 text-sm hover:bg-gray-100">
+                            <%=category.name%>
+                        </a>
+                    <% }) %>
                 </div>
             </div>
+
+            <!-- Brands Submenu -->
+            <div class="mobile-submenu border-b border-gray-100">
+                <button class="w-full flex justify-between items-center py-3 px-4 text-sm hover:bg-gray-100">
+                    <span>Brands</span>
+                    <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="hidden bg-gray-50">
+                    <a href="#" class="block py-2 px-8 text-sm hover:bg-gray-100">Brand 1</a>
+                    <a href="#" class="block py-2 px-8 text-sm hover:bg-gray-100">Brand 2</a>
+                    <a href="#" class="block py-2 px-8 text-sm hover:bg-gray-100">Brand 3</a>
+                </div>
+            </div>
+
+            <a href="/user/products" class="block py-3 px-4 text-sm hover:bg-gray-100 border-b border-gray-100">All Products</a>
+
+            <!-- Mobile User Profile -->
+            <% if (locals.userName) { %>
+                <div class="mobile-submenu border-b border-gray-100">
+                    <button class="w-full flex justify-between items-center py-3 px-4 text-sm hover:bg-gray-100">
+                        <div class="flex items-center">
+                            <i class="far fa-user mr-2"></i>
+                            <span><%= userName.firstName %></span>
+                            <span class="ml-2 w-2 h-2 bg-green-500 rounded-full"></span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="hidden bg-gray-50">
+                        <a href="/user/profile" class="block py-2 px-8 text-sm hover:bg-gray-100">Profile</a>
+                        <a href="/user/logout" onclick="sessionStorage.removeItem('splashShown')" class="block py-2 px-8 text-sm hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
             <% } else { %>
-                <a href="/login" class="block py-2 px-4 text-sm hover:bg-gray-100">
+                <a href="/user/login" class="block py-3 px-4 text-sm hover:bg-gray-100 border-b border-gray-100">
                     <i class="far fa-user mr-2"></i>
                     Login
                 </a>
-                <% } %>
+            <% } %>
+        </div>
     </div>
 </nav>
 
 <!-- Add a spacer to prevent content from hiding behind the fixed navbar -->
-<div class="h-16"></div>
+<div class="h-14 sm:h-16"></div>
 
 <script>
     // Mobile menu toggle
@@ -232,23 +302,62 @@
     const mobileSubmenus = document.querySelectorAll('.mobile-submenu');
 
     mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+        mobileMenu.classList.toggle('active');
+        const isActive = mobileMenu.classList.contains('active');
+        
+        // Animate hamburger to X
+        const svg = mobileMenuButton.querySelector('svg');
+        if (isActive) {
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+        } else {
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
+        }
     });
 
     // Handle mobile submenus
     mobileSubmenus.forEach(submenu => {
         const button = submenu.querySelector('button');
         const content = submenu.querySelector('div');
+        const svg = button.querySelector('svg');
 
         button.addEventListener('click', () => {
+            // Close other submenus
+            mobileSubmenus.forEach(other => {
+                if (other !== submenu) {
+                    const otherContent = other.querySelector('div');
+                    const otherSvg = other.querySelector('svg');
+                    otherContent.classList.add('hidden');
+                    otherSvg.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle current submenu
             content.classList.toggle('hidden');
-            const svg = button.querySelector('svg');
             svg.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         });
     });
 
+    // Mobile search toggle
+    const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+    const mobileSearchBar = document.getElementById('mobileSearchBar');
 
+    if (mobileSearchBtn) {
+        mobileSearchBtn.addEventListener('click', () => {
+            mobileSearchBar.classList.toggle('hidden');
+            if (!mobileSearchBar.classList.contains('hidden')) {
+                mobileSearchBar.querySelector('input').focus();
+            }
+        });
+    }
 
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('active')) {
+            mobileMenu.classList.remove('active');
+            const svg = mobileMenuButton.querySelector('svg');
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
+        }
+    });
 </script>
 
 <script src="/js/search-header.js"></script>

@@ -37,36 +37,75 @@
   </div>
 </div>
 <!-- Return Modal -->
-<div id="return-cancelModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-2xl border-2 border-black max-w-2xl w-full p-6">
-      <!-- Modal Header -->
-      <h2 class="text-2xl font-semibold text-center text-black mb-6">Write your Concern </h2>
-  
-      <!-- Textarea -->
-      <div class="mb-6">
-        <textarea
-          class="w-full h-40 p-4 border border-gray-300 rounded-2xl bg-gray-50 text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-50 resize-none"
-          placeholder="Enter Additional details........"
-        ></textarea>
-      </div>
-  
-      <!-- Action Buttons -->
-      <div onclick="closeModal()" class="flex gap-4 justify-center">
-        <button
-          type="button"
-          class="px-8 py-2 bg-white border-2 border-black rounded-full text-black font-medium hover:bg-gray-100 transition-colors"
-        >
-          Cancel
-        </button>
-        <button id="submitBtn"
-          type="submit" data-order-id=""
-          class="px-8 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
-        >
-          Submit
-        </button>
-      </div>
+<div id="return-cancelModal" class=" hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 ">
+  <div class="bg-white rounded-2xl border-2 border-black max-w-xl w-full p-6">
+    <!-- Modal Header -->
+    <h2 class="text-2xl font-semibold text-center text-black mb-6">Write your Concern</h2>
+
+    <!-- Dropdown for predefined reasons -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Select Return Reason</label>
+      <select
+        id="returnReasonDropdown"
+        class="w-full p-3 border border-gray-300 rounded-2xl bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400"
+        onchange="toggleCustomTextarea()"
+      >
+        <option value="">-- Select a reason --</option>
+        <option value="Defective or damaged product">Defective or damaged product</option>
+        <option value="Wrong item received">Wrong item received</option>
+        <option value="Product not as described">Product not as described</option>
+        <option value="Changed my mind">Changed my mind</option>
+        <option value="Found better price elsewhere">Found better price elsewhere</option>
+        <option value="No longer needed">No longer needed</option>
+        <option value="Quality not satisfactory">Quality not satisfactory</option>
+        <option value="custom">Custom (Type your reason)</option>
+      </select>
+    </div>
+
+    <!-- Textarea (shown only when "Custom" is selected) -->
+    <div id="customTextareaContainer" class="mb-6 hidden">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
+      <textarea
+        id="customReasonTextarea"
+        class="w-full h-40 p-4 border border-gray-300 rounded-2xl bg-gray-50 text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+        placeholder="Enter your custom reason........"
+      ></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4 justify-center">
+      <button
+        type="button"
+        onclick="closeModal()"
+        class="px-8 py-2 bg-white border-2 border-black rounded-full text-black font-medium hover:bg-gray-100 transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        id="submitBtn"
+        type="submit"
+        data-order-id=""
+        class="px-8 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
+      >
+        Submit
+      </button>
     </div>
   </div>
+</div>
+
+<script>
+function toggleCustomTextarea() {
+const dropdown = document.getElementById('returnReasonDropdown');
+const textareaContainer = document.getElementById('customTextareaContainer');
+
+if (dropdown.value === 'custom') {
+  textareaContainer.classList.remove('hidden');
+} else {
+  textareaContainer.classList.add('hidden');
+}
+}
+</script>
+
   
 </div>
 

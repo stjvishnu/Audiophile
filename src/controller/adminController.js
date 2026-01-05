@@ -62,6 +62,7 @@ export const getCategory = productController.getCategory;
 export const getOrders = ordersController.getOrders;
 export const getOrderDetails = ordersController.getOrderDetails;
 export const returnItem = ordersController.returnItem;
+export const returnWholeItem = ordersController.returnWholeItem;
 
 //offers Controller
 
@@ -81,3 +82,4 @@ export const restoreCoupon = couponsController.restoreCoupon;
 //Sales Report controller
 
 export const salesReportRouter = salesReportController.getSalesReport;
+export const downloadSalesReportPdf = salesReportController.downloadSalesReportPdf

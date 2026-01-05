@@ -32,10 +32,10 @@ const endPicker = flatpickr("#endDate", {
     endPicker.set('minDate',dateStr)
   }
 });
-
+let filter;
 document.getElementById('applyBtn').addEventListener('click',async (e)=>{
   e.preventDefault();
-  let filter;
+
   console.log(endDateInput.dataset.value);
   
   console.log('inside submission');
@@ -155,5 +155,46 @@ orderContainer.appendChild(row);
   }
   
 })
+
+async function downloadReport(type){
+  try {
+    if (type === 'pdf'){
+      console.log('download report clicked');
+      console.log('filter',filter);
+      console.log('type of filter',typeof filter);
+      const response = await fetch('/admin/sales-report/download-sales-report',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({filter})
+      });
+      const contentDisposition = response.headers.get('content-disposition');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      let filename = 'Sales Report'
+      if (contentDisposition) {
+        // Simple regex to extract the filename from the header
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch.length === 2) {
+            filename = filenameMatch[1];
+        }
+      }
+  
+      const link = document.createElement('a');
+
+      link.href=url;
+      link.setAttribute('download',filename)
+      document.body.appendChild(link);
+      link.click()
+      setTimeout(()=>{
+        document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
+      },300)
+    }else if(type === 'excel'){
+
+    }
+  } catch (error) {
+    
+  }
+}
 
 

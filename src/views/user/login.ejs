@@ -162,3 +162,10 @@
 </div>
 
 <script src="/js/user/login-validation.js"></script>
+<script>
+    const params =new URLSearchParams(window.location.search);
+    console.log('params',params);
+    if(params.get('msg')=== 'blocked'){
+        showToast('error','Your account has been blocked')
+    }
+</script>

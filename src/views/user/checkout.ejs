@@ -25,8 +25,8 @@
           </div>
         </div>
 
-        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-8 mb-6">
-          <div class="flex items-center justify-between mb-4">
+        <div class="bg-transparent border border-black rounded-[2rem] p-6 sm:p-5 mb-6">
+          <div class="flex items-center justify-between mb-3">
             <h2 class="text-lg sm:text-xl font-bold text-gray-900">Delivery Address</h2>
             <button onclick="openAddressModal()" class="text-gray-400 hover:text-black transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,20 +38,20 @@
 
           <div id="selectedAddress" data-address-id="<%=address?._id || '' %>" 
                class="bg-transparent rounded-lg p-4 border border-gray-200 text-sm sm:text-base">
-            <% if (address) { %>
-              <p class="fullName font-semibold text-gray-900"><%= address.name %></p>
-              <p class="mobile text-gray-600"><%= address.mobile %></p>
-              <p class="houseName text-gray-700 mt-1.5"><%= address.houseName %></p>
-              <p class="streetName text-gray-700"><%= address.streetName %></p>
-              <p class="locality text-gray-700"><%= address.locality %></p>
-              <% if (address.landmark) { %>
-                <p class="landmark text-gray-600 mt-0.5">Near <%= address.landmark %></p>
+            <% if (locals.address) { %>
+              <p class="fullName font-semibold text-gray-900"><%= locals.address.name %></p>
+              <span class="houseName text-gray-700 mt-1.5"><%= locals.address.houseName %>,</span>
+              <span class="streetName text-gray-700"><%= locals.address.streetName %>,</span>
+              <span class="locality text-gray-700"><%= locals.address.locality %>,</span>
+              <% if (locals.address.landmark) { %>
+                <span class="landmark text-gray-600 mt-0.5">Near <%= locals.address.landmark %></span>
               <% } %>
-              <p class="text-sm font-medium text-gray-900 mt-2">
-                <span class="city"><%= address.city %></span>,
-                <span class="state"><%= address.state %></span>
-                - <span class="pincode"><%= address.pincode %></span>
+              <p class="text-sm font-medium text-gray-900">
+                <span class="city"><%= locals.address.city %></span>,
+                <span class="state"><%= locals.address.state %></span>
+                - <span class="pincode"><%= locals.address.pincode %></span>
               </p>
+              <p class="mobile text-gray-600"><%= locals.address.mobile %></p>
             <% } else { %>
               <p class="text-gray-500 text-sm">No address selected. Please add one.</p>
             <% } %>
@@ -271,12 +271,12 @@
   </div>
 
   <!-- Address Modal remains mostly unchanged (just slight padding adjustments) -->
-  <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-[2rem] w-full max-w-lg sm:max-w-2xl mx-auto shadow-2xl">
+  <!-- <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-[2rem] w-full max-w-lg sm:max-w-2xl mx-auto shadow-2xl"> -->
       <!-- rest of modal code unchanged -->
-      <div class="flex items-center justify-between p-6 sm:p-8 border-b border-gray-200">
+      <!-- <div class="flex items-center justify-between p-6 sm:p-8 border-b border-gray-200">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Select Delivery Address</h2>
-        <button onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <button onclick="closeAddressesModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M6 18L18 6M6 6l12 12" />
@@ -284,25 +284,27 @@
         </button>
       </div>
 
-      <div class="p-6 sm:p-8 max-h-[55vh] sm:max-h-[60vh] overflow-y-auto">
+      <div class="p-6 sm:p-8 max-h-[55vh] sm:max-h-[60vh] overflow-y-auto"> -->
         <!-- ... rest unchanged ... -->
-      </div>
+      <!-- </div>
 
       <div class="border-t border-gray-200 p-6 sm:p-8 flex gap-4">
-        <button onclick="closeAddressModal()"
+        <button onclick="closeAddressesModal()"
                 class="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
           Cancel
         </button>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
-  <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<%-include('address-modal.ejs') %>
+
+  <div id="addressesModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 mt-8">
     <div class="bg-white rounded-[2rem] w-full max-w-2xl mx-4 shadow-2xl">
       <div class="flex items-center justify-between p-8 border-b border-gray-200">
         <h2 class="text-2xl font-bold text-gray-900">Select Delivery Address</h2>
-        <button onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <button onclick="closeAddressesModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M6 18L18 6M6 6l12 12" />
@@ -314,23 +316,38 @@
         <div class="space-y-3">
           <% if (addresses && addresses.length > 0) { %>
             <% addresses.forEach(function(address) { %>
-              <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-black transition-all"
-                   onclick="selectAddress(<%= JSON.stringify(address).replace(/\"/g, '&quot;') %>)">
-                <p class="font-semibold text-gray-900"><%= address.name %></p>
-                <p class="text-sm text-gray-600"><%= address.mobile %></p>
-                <p class="text-sm text-gray-700 mt-2"><%= address.houseName %></p>
-                <p class="text-sm text-gray-700"><%= address.streetName %>, <%= address.locality %></p>
-                <p class="text-sm font-medium text-gray-900"><%= address.city %>, <%= address.state %> - <%= address.pincode %></p>
-              </div>
+              <div id="address-<%=address._id%>" class="relative border-2 border-gray-200 rounded-lg p-4  hover:border-black transition-all">
+                <p class="name font-semibold text-gray-900"><%= address.name %></p>
+                <p class="mobile text-sm text-gray-600"><%= address.mobile %></p>
+                <p class="houseName text-sm text-gray-700 mt-2"><%= address.houseName %></p>
+                <p class="text-sm text-gray-700"><span class="streetName"><%= address.streetName %></span>, <span class="locality"><%= address.locality %></span></p>
+                <% if(address.landmark){ %>
+                   <span class="landmark text-gray-600 mt-0.5">Near <%=address.landmark%></span>
+                 <% } %>
+                <p class="city text-sm font-medium text-gray-900"><span class="city"><%= address.city %></span>,<span class="state"> <%= address.state %></span> - <span class="pincode"><%= address.pincode %></span></p>
+                <button onclick="openAddressEditModal('<%= address._id %>')" class="absolute top-1 right-2 text-black"><i class="fa-regular fa-pen-to-square" style="color: #000000;"></i></button>
+                <button onclick="selectAddress('<%= JSON.stringify(address) %>','<%=address._id%>')" class="absolute bottom-1 right-2 text-gray-400 hover:text-black hover:cursor-pointer"><i class="fa-solid fa-circle-check"></i></button>
+              </div> 
             <% }) %>
+            <div class="flex justify-center items-center gap-2 text-gray-500 text-sm">
+              Add new one
+              <span onclick="addAddress()" class="bg-gray-400 px-2 py-0.5 rounded-lg cursor-pointer">
+                <i class="fa-solid fa-plus text-black"></i>
+              </span>
+            </div>
+            
           <% } else { %>
-            <p class="text-gray-500 text-sm">No addresses available. Please add one from your profile.</p>
+            <p class="text-gray-500 text-sm">No addresses available. Please add one
+               <span onclick="addAddress()" class="bg-gray-400 px-2 py-0.5 rounded-lg">
+               <i class="fa-solid fa-plus" style="color: #000000;"></i>
+              </span>
+            </p>
           <% } %>
         </div>
       </div>
 
       <div class="border-t border-gray-200 p-8 flex gap-4">
-        <button onclick="closeAddressModal()"
+        <button onclick="closeAddressesModal()"
                 class="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
           Cancel
         </button>
@@ -338,37 +355,69 @@
     </div>
   </div>
 </div>
-
+<script src="/js/user/checkout-address-script.js"></script>
+<script src="/js/user/address-validation.js"></script>
 <script>
 function openAddressModal() {
-  document.getElementById('addressModal').classList.remove('hidden');
+  document.getElementById('addressesModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
 
-function closeAddressModal() {
-  document.getElementById('addressModal').classList.add('hidden');
+function closeAddressesModal() {
+  document.getElementById('addressesModal').classList.add('hidden');
   document.body.style.overflow = 'auto';
 }
 
-function selectAddress(address) {
+function addAddress(){
+  console.log('call inside add address');
+
+
+   document.getElementById('formSubmitBtn').textContent = 'Save Address';
+   
+   document.getElementById('addressId').value='';
+  const addressModal = document.getElementById('addressModal')
+  const addressForm=addressModal.querySelector('#addressForm')
+  modalTitle.textContent='Add New Address';
+  addressForm.reset();
+  addressForm.dataset.mode='add'
+  document.getElementById('addressesModal').classList.add('hidden');
+  addressModal.classList.remove('hidden')
+  
+}
+
+async function selectAddress(addresses,addressId) {
+
+  console.log('Call inside selectAddress');
+  const response = await axios.get(`/user/profile/address/${addressId}`);
+  const address = response.data.address
+  console.log('address',address);
+  const selectedAddress = JSON.parse(addresses);
   const selectedAddressDiv = document.getElementById('selectedAddress');
   selectedAddressDiv.innerHTML = `
-    <p class="font-semibold text-gray-900">${address.name}</p>
-    <p class="text-sm text-gray-600">${address.mobile}</p>
-    <p class="text-sm text-gray-700 mt-2">${address.houseName}</p>
-    <p class="text-sm text-gray-700">${address.streetName}</p>
-    <p class="text-sm text-gray-700">${address.locality}</p>
-    ${address.landmark ? `<p class="text-sm text-gray-600">Near ${address.landmark}</p>` : ''}
-    <p class="text-sm font-medium text-gray-900 mt-2">${address.city}, ${address.state} - ${address.pincode}</p>
+             <p class="fullName font-semibold text-gray-900">${address.name }</p>
+              <span class="houseName text-gray-700 mt-1.5">${address.houseName },</span>
+              <span class="streetName text-gray-700">${address.streetName },</span>
+              <span class="locality text-gray-700">${address.locality },</span>
+              ${address.landmark?
+               ` <span class="landmark text-gray-600 mt-0.5">Near ${address.landmark }</span>`
+              : ''}
+              <p class="text-sm font-medium text-gray-900">
+                <span class="city">${address.city }</span>,
+                <span class="state">${address.state }</span>
+                - <span class="pincode">${address.pincode }</span>
+              </p>
+              <p class="mobile text-gray-600">${address.mobile }</p>
   `;
-  closeAddressModal();
+  console.log('addressId',addressId);
+  setDefaultAddress(addressId)
+  closeAddressesModal();
 }
 
 
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    closeAddressModal();
+    closeAddressesModal();
   }
 });
 </script>

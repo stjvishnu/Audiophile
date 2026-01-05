@@ -86,6 +86,7 @@ couponForm.addEventListener('submit',async (e)=>{
   
   const isValid = validationCheckBeforeSubmit();
   console.log(isValid);
+
   if(!isValid){
     console.log('Call inside coupon modal close');
     showToast('error','All fields required');
