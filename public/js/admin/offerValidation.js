@@ -239,6 +239,22 @@ function validationCheckBeforeSubmit() {
     } 
   }
 
+  if(offerType==='product'){
+    const productSku = document.getElementById('targetId').value;
+    let result;
+   for(product of targets.products){
+    result = product.variants.find(v => v.sku === productSku);
+  if (result) break;
+   }
+   const productPrice = Math.round(result.attributes.price*(1-(result.attributes.discount/100)));
+   if(discountType==='fixed'){
+    if(discountValue>productPrice){
+      showError('discountValue',`Discount value should be less than seleted product value of ${productPrice}`)
+      isValid=false;
+    }
+   }
+  }
+
   if(!discountType){
     showError('discountType', "Discount Type required");
     isValid = false;
@@ -251,19 +267,27 @@ function validationCheckBeforeSubmit() {
   }
 
   if(discountType=='percentage'){
-    if(Number(discountValue)<=0){
-      showError('discountValue','Discount value cannot be less than 0')
-    }else if(Number(discountValue)>30){
-      showError('discountValue','Discount percentage value cannot be greater than than 30')
+    if(Number(discountValue)<1){
+      showError('discountValue','Discount value cannot be less than 1')
+    }else if(Number(discountValue)>99){
+      showError('discountValue','maximum 99% discount value is allowed')
 
     }
   }
+
+  const today = new Date();
+  today.setHours(0,0,0,0); //makes 00:00 am
 
   // Dates
   if (!validFrom) {
     showError('validFrom', "Start date required");
     isValid = false;
   }
+  if(new Date(validFrom)<today){
+    showError('validFrom','Start date cannot be a day before today')
+    isValid = false;
+  }
+  
 
   if (!validTo) {
     showError('validTo', "End date required");
@@ -274,7 +298,7 @@ function validationCheckBeforeSubmit() {
   const end = new Date(validTo);
 
   if (end <= start) {
-    showError('validTo', "End date must be after start");
+    showError('validTo', "End date must be after start date");
     isValid = false;
   }
 

@@ -32,11 +32,13 @@ async function openModal(mode,couponData=null){
   try {
 
 
+    
 
 
     if(mode=='add'){
       couponForm.reset();
       clearErrors()
+      couponTitle.textContent='Add New Coupon'
       couponModal.classList.remove('hidden');
 
       couponCode.value = "";
@@ -54,9 +56,11 @@ async function openModal(mode,couponData=null){
 
     }
     if(mode==='edit' && couponData){
+      console.log('here is the coupon data',couponData);
+      
       couponData=JSON.parse(couponData)
       editId=couponData._id
-
+      console.log('valid from',couponData.validFrom);
       couponCode.value = couponData.code;
       discountType.value = couponData.discountType;
       description.value = couponData.description;
@@ -67,7 +71,7 @@ async function openModal(mode,couponData=null){
       validTo.value = couponData.validTo.slice(0, 16);
       usageLimit.value = couponData.usageLimit;
       activeStatus.checked = couponData.isActive;
-
+      couponTitle.textContent='Edit Coupon'
       saveBtn.textContent = "Update Coupon";
 
       couponModal.classList.remove('hidden');
@@ -120,6 +124,7 @@ couponForm.addEventListener('submit',async (e)=>{
        const data =  await response.json()
        console.log('checking data',data);
        const updatedCoupon = data?.updatedCoupon
+       console.log('updated coupon',updatedCoupon);
       //  console.log('updated coupon',data.updatedCoupon);
        
         const couponRow = document.getElementById(updatedCoupon._id)
@@ -138,7 +143,9 @@ couponForm.addEventListener('submit',async (e)=>{
           showToast('success',message);
           editId=null
         }
-        // showToast('success','Coupon edited succesfully')
+        setTimeout(()=>{
+          window.location.reload()
+        },3000)
     }else{
       console.log('Hello  add coupon ');
        response = await fetch('/admin/coupons/',{
@@ -193,7 +200,7 @@ async function blockCoupon(couponId){
        const couponRow = document.getElementById(`${couponId}`)
        const blockBtn = document.getElementById(`blockBtn-${couponId}`);
        const unblockBtn = document.getElementById(`unblockBtn-${couponId}`);
-       const statusBtn = document.getElementById(`status-${couponId}`);
+       const statusBtn = document.getElementById(`statusBtn-${couponId}`);
        blockBtn.classList.add('hidden')
        unblockBtn.classList.remove('hidden')
        statusBtn.textContent='InActive'
@@ -230,7 +237,7 @@ async function unblockCoupon(couponId){
         const couponRow = document.getElementById(`${couponId}`)
         const blockBtn = document.getElementById(`blockBtn-${couponId}`);
         const unblockBtn = document.getElementById(`unblockBtn-${couponId}`);
-        const statusBtn = document.getElementById(`status-${couponId}`);
+        const statusBtn = document.getElementById(`statusBtn-${couponId}`);
         blockBtn.classList.remove('hidden')
         unblockBtn.classList.add('hidden')
         statusBtn.textContent='Active'

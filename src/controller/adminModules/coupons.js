@@ -10,7 +10,7 @@ const getCoupons  = async (req,res)=>{
 
     const totalCoupons = await Coupon.countDocuments();
     const totalPages = Math.ceil(totalCoupons/limit)
-    const coupons = await Coupon.find().sort({createdAt:-1}).skip(skip).limit(limit);
+    const coupons = await Coupon.find({}).sort({createdAt:-1}).skip(skip).limit(limit);
 
     
     res.render('admin/coupons.ejs',{layout:"layouts/admin-dashboard-layout",pageTitle :"Coupons",coupons,pageTitle :"Coupons",currentPage:page,totalPages:totalPages})
@@ -91,6 +91,7 @@ const addCoupon = async (req,res)=>{
       validTo,
       usageLimit,
       isActive,
+      isDelete:false,
       usedBy:null
     })
 

@@ -143,28 +143,50 @@ function renderCart(cart){
 productContainer.addEventListener('click',async (e)=>{
 
   if(e.target.classList.contains('increment')){
-    console.log('Increment clicked');
-    console.log(e.target.dataset.product);
-    await axios.post('/user/cart/update-quantity',{
-      productId: e.target.dataset.product,
-      variantId: e.target.dataset.variant,
-      type: 'increment'
-    })
-    refreshCart();
+    try {
+      console.log('Increment clicked');
+      console.log(e.target.dataset.product);
+    const response =  await axios.post('/user/cart/update-quantity',{
+        productId: e.target.dataset.product,
+        variantId: e.target.dataset.variant,
+        type: 'increment'
+      })
+      console.log('response',response);
+      refreshCart();
+    } catch (error) {
+      console.log('error in increasing prorduct quantity',error);
+      const message = error.response.data.customMessage;
+      if(message) showToast('error',message)
+      
+    }
+   
   }
 
   if (e.target.classList.contains('decrement')) {
-    await axios.post('/user/cart/update-quantity', {
-      productId: e.target.dataset.product,
-      variantId: e.target.dataset.variant,
-      type: 'decrement'
-    });
-    refreshCart();
+    try {
+      const response = await axios.post('/user/cart/update-quantity', {
+        productId: e.target.dataset.product,
+        variantId: e.target.dataset.variant,
+        type: 'decrement'
+      });
+      refreshCart();
+    } catch (error) {
+      console.log('error in increasing prorduct quantity',error);
+      const message = error.response.data.customMessage;
+      if(message) showToast('error',message)
+    }
+    
   }
 
   if (e.target.classList.contains('remove')) {
-    await axios.delete(`/user/cart/${e.target.dataset.variant}`);
+    try {
+     const response  = await axios.delete(`/user/cart/${e.target.dataset.variant}`);
     refreshCart();
+    } catch (error) {
+      const message = error.response.data.customMessage;
+      if(message) showToast('error',message)
+    }
+    
   }
 
 })

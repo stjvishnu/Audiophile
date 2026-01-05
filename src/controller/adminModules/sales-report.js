@@ -1,6 +1,9 @@
 import Orders from '../../models/orderModel.js'
 import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js'
 import PDFDocument from 'pdfkit'
+import XLSX from 'xlsx'
+
+
 const getSalesReport = async (req,res) =>{
 
   try {
@@ -420,8 +423,313 @@ console.log('Hi sales report pdf');
   }
 }
 
+const downloadSalesReportXlsx = async(req,res)=>{
+
+  console.log('call inside excel download');
+
+  try {
+
+    let {filter} = req.body
+    const {start:startDate,end:endDate} = filter
+    // console.log(startDate);
+    let start,end;
+
+    if(filter==='daily'){
+      start = new Date();
+      start.setHours(0,0,0,0)
+      end = new Date();
+      end.setHours(23, 59, 59, 999);
+    }
+    if(filter==='monthly'){
+      let today = new Date();
+      start = new Date(today.getFullYear(), today.getMonth(), 1)
+      end = new Date(start.getFullYear(), start.getMonth()+1, 1)
+    }
+
+    if(filter==='weekly'){
+      start = new Date();
+      start.setDate(start.getDate()-7)
+      end = new Date()
+      
+    }
+
+    if(filter === 'yearly'){
+      let today = new Date();
+      start = new Date(today.getFullYear(),0,1)
+      end = new Date(start.getFullYear()+1,0,1)
+    }
+
+    if(filter === 'custom'){
+      start = new Date(startDate);
+      end = new Date(endDate)
+    }
+   
+
+
+    console.log('start',start);
+    console.log('end',end);
+
+    console.log('hello');
+      const orders = await Orders.aggregate([
+        {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
+        
+      ])
+      // const orders = await Orders.aggregate([
+      //   {$match:{createdAt:{$gte:start,$lte:end}}},
+      //   {$unwind:'$items'},
+      // ])
+      console.log('orders',orders);
+      if(orders.length==0) return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'No Orders Found for selected filter range',orders:[]})
+      
+      const orderTotal = await Orders.aggregate([
+      {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
+      {$unwind:'$items'},
+      {$group:{_id:'',salesCount:{$sum:1},totalAmount:{$sum:'$items.totalPrice'},orginalAmount:{$sum:'$items.priceAtPurchase'}}},
+      {$project:{_id:0,totalAmount:1,orginalAmount:1,salesCount:1}}
+    ])
+    console.log('hello');
+    console.log('orders',orders);
+    console.log('order total',orderTotal);
+    const salesCount = orderTotal[0].salesCount;
+    const orderAmount = orderTotal[0].totalAmount;
+    const discountAmount = orderTotal[0].orginalAmount-orderTotal[0].totalAmount;
+
+
+    let startingDate = start.toLocaleDateString('en-IN',{
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+
+    let endingDate = end.toLocaleDateString('en-IN',{
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    
+    let generatedOn = new Date().toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    const reportData = {
+      startDate: startingDate,
+      endDate: endingDate,
+      generatedOn: generatedOn,
+      filterType: filter,
+      totalOrders: salesCount,
+      itemsSold: salesCount,
+      grossSales: orderAmount,
+      totalDiscount: discountAmount,
+      shipping: 0,
+      netRevenue: orderAmount,
+      orders: orders
+    };
+    
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+
+    const summaryData = [
+      ['SALES REPORT'],
+      [],
+      ['Report Period:', `${reportData.startDate} – ${reportData.endDate}`],
+      ['Generated On:', reportData.generatedOn],
+      ['Filter:', reportData.filterType],
+      [],
+      ['SUMMARY STATISTICS'],
+      [],
+      ['Metric', 'Value'],
+      ['Orders (Delivered)', reportData.totalOrders],
+      ['Items Sold', reportData.itemsSold],
+      ['Gross Sales', `₹${reportData.grossSales}`],
+      ['Total Discount', `₹${reportData.totalDiscount || 0}`],
+      ['Coupon Discount', `₹${reportData.couponDiscount || 0}`],
+      ['Delivery Charges', `₹${reportData.deliveryCharges || 0}`],
+      ['Net Revenue', `₹${reportData.netRevenue}`],
+    ];
+    
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+
+    // Set column widths for summary sheet
+    summarySheet['!cols'] = [
+      { wch: 20 },
+      { wch: 30 }
+    ];
+    
+    // Add summary sheet to workbook
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+    
+    // ================= SHEET 2: DELIVERED ORDERS =================
+    
+    // Prepare orders data
+    const ordersData = [
+      ['Order Number', 'User Name', 'Email', 'Payment Method', 'Payment Status', 'Order Status', 'Items', 'Subtotal', 'Discount', 'Coupon Discount', 'Delivery Charge', 'Total', 'Order Date']
+    ];
+    
+    reportData.orders.forEach(order => {
+      // Create items string
+      const itemsList = order.items.map(item => 
+        `${item.productName} - ${item.productColor} (Qty: ${item.quantity})`
+      ).join('; ');
+      
+      ordersData.push([
+        order.orderNumber,
+        order.userName,
+        order.userEmail,
+        order.paymentMethod,
+        order.paymentStatus,
+        order.orderStatus,
+        itemsList,
+        order.subtotal,
+        order.discount,
+        order.couponDiscount || 0,
+        order.deliveryCharge,
+        order.total,
+        order.orderDate
+      ]);
+    });
+    
+    const ordersSheet = XLSX.utils.aoa_to_sheet(ordersData);
+    
+    // Set column widths for orders sheet
+    ordersSheet['!cols'] = [
+      { wch: 12 },  // Order Number
+      { wch: 20 },  // User Name
+      { wch: 25 },  // Email
+      { wch: 15 },  // Payment Method
+      { wch: 15 },  // Payment Status
+      { wch: 15 },  // Order Status
+      { wch: 50 },  // Items
+      { wch: 12 },  // Subtotal
+      { wch: 12 },  // Discount
+      { wch: 15 },  // Coupon Discount
+      { wch: 15 },  // Delivery Charge
+      { wch: 12 },  // Total
+      { wch: 18 }   // Order Date
+    ];
+    
+    // Add orders sheet to workbook
+    XLSX.utils.book_append_sheet(workbook, ordersSheet, 'Delivered Orders');
+    
+    // ================= SHEET 3: DETAILED ITEMS =================
+    
+    const itemsData = [
+      ['Order Number', 'Order Date', 'Product Name', 'Brand', 'Category', 'Color', 'SKU', 'Quantity', 'Price', 'Total Price', 'Offer Applied', 'Item Status']
+    ];
+    
+    reportData.orders.forEach(order => {
+      order.items.forEach(item => {
+        itemsData.push([
+          order.orderNumber,
+          order.orderDate,
+          item.productName,
+          item.brandName,
+          item.categoryName,
+          item.productColor,
+          item.sku,
+          item.quantity,
+          item.priceAtPurchase,
+          item.totalPrice,
+          item.offerApplied ? 'Yes' : 'No',
+          item.itemStatus
+        ]);
+      });
+    });
+    
+    const itemsSheet = XLSX.utils.aoa_to_sheet(itemsData);
+    
+    // Set column widths for items sheet
+    itemsSheet['!cols'] = [
+      { wch: 12 },  // Order Number
+      { wch: 18 },  // Order Date
+      { wch: 25 },  // Product Name
+      { wch: 15 },  // Brand
+      { wch: 12 },  // Category
+      { wch: 12 },  // Color
+      { wch: 15 },  // SKU
+      { wch: 10 },  // Quantity
+      { wch: 12 },  // Price
+      { wch: 12 },  // Total Price
+      { wch: 12 },  // Offer Applied
+      { wch: 15 }   // Item Status
+    ];
+    
+    // Add items sheet to workbook
+    XLSX.utils.book_append_sheet(workbook, itemsSheet, 'Item Details');
+    
+    // ================= SHEET 4: SHIPPING DETAILS =================
+    
+    const shippingData = [
+      ['Order Number', 'Customer Name', 'Mobile', 'House Name', 'Street', 'Locality', 'City', 'State', 'Pincode', 'Landmark']
+    ];
+    
+    reportData.orders.forEach(order => {
+      if (order.shippingAddress) {
+        shippingData.push([
+          order.orderNumber,
+          order.shippingAddress.fullName,
+          order.shippingAddress.mobile,
+          order.shippingAddress.houseName,
+          order.shippingAddress.streetName,
+          order.shippingAddress.locality,
+          order.shippingAddress.city,
+          order.shippingAddress.state,
+          order.shippingAddress.pincode,
+          order.shippingAddress.landmark || 'N/A'
+        ]);
+      }
+    });
+    
+    const shippingSheet = XLSX.utils.aoa_to_sheet(shippingData);
+    
+    // Set column widths for shipping sheet
+    shippingSheet['!cols'] = [
+      { wch: 12 },  // Order Number
+      { wch: 20 },  // Customer Name
+      { wch: 15 },  // Mobile
+      { wch: 15 },  // House Name
+      { wch: 20 },  // Street
+      { wch: 15 },  // Locality
+      { wch: 20 },  // City
+      { wch: 15 },  // State
+      { wch: 10 },  // Pincode
+      { wch: 20 }   // Landmark
+    ];
+    
+    // Add shipping sheet to workbook
+    XLSX.utils.book_append_sheet(workbook, shippingSheet, 'Shipping Details');
+    
+    // ================= GENERATE FILE =================
+    
+    // Generate buffer
+    const excelBuffer = XLSX.write(workbook, { 
+      type: 'buffer', 
+      bookType: 'xlsx',
+      compression: true 
+    });
+    
+    // Set headers
+    const filename = `sales-report-${reportData.startDate}-to-${reportData.endDate}.xlsx`.replace(/ /g, '-');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', excelBuffer.length);
+    
+    // Send file
+    res.send(excelBuffer);
+
+  } catch (error) {
+    console.log('error in excel download',error);
+  }
+}
+
+
 export default {
   getSalesReport,
   getCustomSalesReport,
-  downloadSalesReportPdf
+  downloadSalesReportPdf,
+  downloadSalesReportXlsx
 }

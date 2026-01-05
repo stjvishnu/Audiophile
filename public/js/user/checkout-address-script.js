@@ -144,21 +144,23 @@ function addNewAddress(newAddress){
  const addressCard= document.createElement('div')
 
  addressCard.innerHTML=`
-              <p class="fullName font-semibold text-gray-900">${ newAddress.name }</p>
-              <p class="mobile text-gray-600">${ newAddress.mobile }</p>
-              <p class="houseName text-gray-700 mt-1.5">${ newAddress.houseName }</p>
-              <p class="streetName text-gray-700">${ newAddress.streetName }</p>
-              <p class="locality text-gray-700">${ newAddress.locality }</p>
-               ${newAddress.landmark?
-                `<p class="landmark text-gray-600 mt-0.5">Near ${ newAddress.landmark }</p>`
-                : ''}
-              <p class="text-sm font-medium text-gray-900 mt-2">
-                <span class="city">${ newAddress.city }</span>,
-                <span class="state">${ newAddress.state }</span>
-                <span class="pincode">${ newAddress.pincode }</span>
-              </p>
+ <p class="fullName font-semibold text-gray-900">${newAddress.name }</p>
+ <span class="houseName text-gray-700 mt-1.5">${newAddress.houseName },</span>
+ <span class="streetName text-gray-700">${newAddress.streetName },</span>
+ <span class="locality text-gray-700">${newAddress.locality },</span>
+ ${newAddress.landmark?
+  ` <span class="landmark text-gray-600 mt-0.5">Near ${newAddress.landmark }</span>`
+ : ''}
+ <p class="text-sm font-medium text-gray-900">
+   <span class="city">${newAddress.city }</span>,
+   <span class="state">${newAddress.state }</span>
+   - <span class="pincode">${newAddress.pincode }</span>
+ </p>
+ <p class="mobile text-gray-600">${newAddress.mobile }</p>
  `
  addressContaner.appendChild(addressCard)
+ addressContaner.dataset.addressId=newAddress._id
+ document.getElementById('noAddressTag').classList.add('hidden')
 }
 
 function updateAddress(updatedAddress,addressId){

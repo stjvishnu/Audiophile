@@ -22,13 +22,14 @@ const saveBtn           = offerForm.querySelector("button[type='submit']");
 // const offerModalcancelBtn = offerForm.querySelector("#cp-cancelBtn"); // Not present in offer modal structure
 // const closeBtn          = offerModal.querySelector("button.text-gray-400"); // Close button is handled by closeModal()
 
+let productPrice=null;
 let targets = null;
 const offerTargets = async ()=>{
   const res= await fetch('/admin/offers/loadTargets')
   const data = await res.json()
   targets=data.targets;
-  console.log(targets);
-
+  console.log('targets',targets);
+  
 }
 offerTargets()
 
@@ -102,7 +103,13 @@ async function openModal(mode, offerData = null) {
 
             offerModal.classList.remove('hidden');
             activeStatus.checked = true;
-            // No reset needed as offerForm.reset() is called above
+            const select = document.getElementById('targetId');
+            select.innerHTML = '';
+            select.innerHTML=`
+            <option id="targetOption" value="">Select Target</option>
+            `
+
+            console.log(document.getElementById('targetId'));
 
         }
         if (mode === 'edit' && offerData) {

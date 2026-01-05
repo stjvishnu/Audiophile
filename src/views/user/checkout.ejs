@@ -53,7 +53,7 @@
               </p>
               <p class="mobile text-gray-600"><%= locals.address.mobile %></p>
             <% } else { %>
-              <p class="text-gray-500 text-sm">No address selected. Please add one.</p>
+              <p id="noAddressTag" class="text-gray-500 text-sm">No address selected. Please add one.</p>
             <% } %>
           </div>
         </div>
@@ -270,33 +270,7 @@
     </div>
   </div>
 
-  <!-- Address Modal remains mostly unchanged (just slight padding adjustments) -->
-  <!-- <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-[2rem] w-full max-w-lg sm:max-w-2xl mx-auto shadow-2xl"> -->
-      <!-- rest of modal code unchanged -->
-      <!-- <div class="flex items-center justify-between p-6 sm:p-8 border-b border-gray-200">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Select Delivery Address</h2>
-        <button onclick="closeAddressesModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
 
-      <div class="p-6 sm:p-8 max-h-[55vh] sm:max-h-[60vh] overflow-y-auto"> -->
-        <!-- ... rest unchanged ... -->
-      <!-- </div>
-
-      <div class="border-t border-gray-200 p-6 sm:p-8 flex gap-4">
-        <button onclick="closeAddressesModal()"
-                class="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-</div> -->
 
 <%-include('address-modal.ejs') %>
 
@@ -337,7 +311,7 @@
             </div>
             
           <% } else { %>
-            <p class="text-gray-500 text-sm">No addresses available. Please add one
+            <p  class="text-gray-500 text-sm">No addresses available. Please add one
                <span onclick="addAddress()" class="bg-gray-400 px-2 py-0.5 rounded-lg">
                <i class="fa-solid fa-plus" style="color: #000000;"></i>
               </span>
@@ -569,14 +543,15 @@ async function renderCheckoutCart(cart){
       `
 
       cartItemsListContainer.appendChild(productDiv)
-      orderSummaryContainer.querySelector('#subTotal').textContent=cart.subTotal
-      orderSummaryContainer.querySelector('#discountAmount').textContent=cart.totalDiscount;
+      orderSummaryContainer.querySelector('#subTotal').textContent=`₹ ${cart.subTotal}`
+      orderSummaryContainer.querySelector('#discountAmount').textContent=`₹ ${cart.totalDiscount}`;
+      document.getElementById('totalAmount').value=`₹ ${cart.total}`;
       if(cart.couponDiscount){
         document.getElementById('couponAppliedRow').classList.remove('hidden');
-        couponAppliedRow.querySelector('#couponDiscount').textContent=cart.couponDiscount;
-        orderSummaryContainer.querySelector('#total').textContent=cart.finalPayableAmount;
+        couponAppliedRow.querySelector('#couponDiscount').textContent=`₹ ${cart.couponDiscount}`;
+        orderSummaryContainer.querySelector('#total').textContent=`₹ ${cart.finalPayableAmount}`;
       }else{
-        orderSummaryContainer.querySelector('#total').textContent=cart.total;
+        orderSummaryContainer.querySelector('#total').textContent=`₹ ${cart.total}`;
         document.getElementById('couponAppliedRow').classList.add('hidden');
         couponAppliedRow.querySelector('#couponDiscount').textContent='';
         

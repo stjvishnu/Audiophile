@@ -17,18 +17,25 @@ document.addEventListener('DOMContentLoaded',()=>{
 
       // Small timeout to ensure the splash is seen for at least a moment
       setTimeout(() => {
+        if(splash) {
           splash.classList.add('fade-out');
-          
           componentsToFade.forEach(el => {
             el.classList.add('show-after-splash');
         });
-        mainContent.style.display = 'block';
-        mainContent.style.opacity = '1';
+        if(mainContent){
+          mainContent.style.display = 'block';
+          mainContent.style.opacity = '1';
+        }
+       
         sessionStorage.setItem('splashShown', 'true');
           // Remove from DOM after transition to save resources
           setTimeout(() => {
               splash.remove();
-          }, 1000); 
+          }, 1000);
+        }
+          
+          
+         
       }, 3000); // Adjust time (1500ms) as needed
     });
   }

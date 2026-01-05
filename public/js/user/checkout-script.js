@@ -205,8 +205,9 @@ placeOrderBtn.addEventListener('click',async(e)=>{
 
       } catch (error) {
         console.log('Error in razorpay payament',error)
-        const message = error.data.message || 'Error while placing the order, Please try again later'
-        showToast('error',message)
+        const message = error.response.data.customMessage || 'Error while placing the order, Please try again later'
+        if(message) showToast('error',message)
+        
         document.getElementById('loader').classList.add('hidden')
         document.body.style.overflow = '';
       }
@@ -262,6 +263,8 @@ placeOrderBtn.addEventListener('click',async(e)=>{
         console.log('Error in order placement using wallet',error);
         document.getElementById('loader').classList.add('hidden')
         document.body.style.overflow = '';  
+        const message = error.response.data.customMessage || 'Error while placing the order, Please try again later'
+        if(message) showToast('error',message)
       }
      }
 
@@ -270,5 +273,7 @@ placeOrderBtn.addEventListener('click',async(e)=>{
     document.getElementById('loader').classList.add('hidden')
     document.body.style.overflow = '';
     console.log('Error in checkout script',err);
+    const message = error.response.data.customMessage || 'Error while placing the order, Please try again later'
+    if(message) showToast('error',message)
   }
 })

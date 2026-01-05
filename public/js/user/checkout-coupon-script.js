@@ -93,21 +93,32 @@ async function renderCart(cart){
 }
 
 
+let appliedCouponCode = null;
 
 
 async function applyCoupon(){
-  console.log('call inside apply coupon');
+  console.log('call inside apply couponss');
   try {
     const couponCode =document.getElementById('couponCode').value;
     console.log('coupon code', couponCode);
     const total = document.getElementById('totalAmount').value;
-    if(!couponCode) return showToast('error','Invalid coupon');
+
+    if(!couponCode && !appliedCouponCode) {
+      console.log('hello');
+      return
+    }
+
+    if(!couponCode){
+      showToast('error','Invalid Coupon')
+      return
+    }
 
     const response = await axios.post('/user/checkout/apply-coupon',{couponCode,total})
     console.log('response cart ',response?.data?.cart);
     if(response?.data?.customMessage){
       const message = response?.data?.customMessage;
       const cart = response?.data?.cart;
+      appliedCouponCode=couponCode;
       renderCheckoutCart(cart)
       showToast('success',message)
     }
@@ -145,13 +156,14 @@ async function renderCoupons(coupons){
   if( coupons.length<0) return
   const couponContainer = document.getElementById('couponContainer');
   console.log('couponContainer',couponContainer);
-  couponContainer.innerHTML='';
+  
+  if(couponContainer) couponContainer.innerHTML='';
   
    if (coupons && coupons.length > 0) { 
     coupons.forEach((coupon)=>{
     const div = document.createElement('div')
     div.innerHTML=`
-        <div class="bg-white border border-gray-200 rounded-xl px-5 py-4 flex items-center justify-between">
+        <div class="bg-transparent border border-gray-200 rounded-xl px-5 py-4 flex items-center justify-between">
 
           <!-- Left block: Description + Discount -->
           <div class="flex items-center gap-4 min-w-0">
@@ -179,7 +191,7 @@ async function renderCoupons(coupons){
         
         </div>
         `
-        couponContainer.appendChild(div)
+        if(couponContainer)  couponContainer.appendChild(div)
        }) 
     
   } else { 

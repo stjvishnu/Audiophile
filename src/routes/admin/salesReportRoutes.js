@@ -6,5 +6,6 @@ const router = express.Router();
 router.get('/',salesReportController.getSalesReport)
 router.post('/',salesReportController.getCustomSalesReport)
 router.post('/download-sales-report',salesReportController.downloadSalesReportPdf)
+router.post('/download-sales-report-excel',salesReportController.downloadSalesReportXlsx)
 
 export default router

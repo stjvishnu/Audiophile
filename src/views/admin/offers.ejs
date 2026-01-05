@@ -9,26 +9,25 @@
   }
 </style>
 
-
 <div class="bg-[#0a0a0a] text-white font-sans min-h-screen">
 
   <div class="flex flex-col">
 
-    <div class="flex-1 p-4 sm:p-6 md:p-8">
+    <div class="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
 
       <div id="offerHeader"
-        class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8 bg-black p-4 sm:p-6 rounded-xl border border-gray-800 gap-4"
+        class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6 md:mb-8 bg-black p-3 sm:p-4 md:p-6 rounded-xl border border-gray-800 gap-3 sm:gap-4"
       >
-        <h1 class="text-2xl sm:text-3xl font-bold">Offers</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Offers</h1>
 
-        <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+        <div class="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full lg:w-auto">
 
-          <div class="relative w-full sm:max-w-xs md:w-80">
+          <div class="relative w-full sm:flex-1 lg:w-48 xl:w-64">
             <input
               type="text"
               id="searchInput"
               placeholder="Search offers..."
-              class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 pl-10 w-full focus:outline-none"
+              class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 pl-10 w-full focus:outline-none text-sm sm:text-base"
             >
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
           </div>
@@ -37,7 +36,7 @@
             id="filterType"
             onchange="filterOffers()"
             class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 w-full sm:w-auto
-                   focus:outline-none focus:border-gray-500"
+                   focus:outline-none focus:border-gray-500 text-sm sm:text-base"
           >
             <option value="all">All Offers</option>
             <option value="category">Category Offers</option>
@@ -47,7 +46,7 @@
 
           <button id="addeditBtn"
             onclick="openModal('add')"
-            class="bg-white text-black px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 w-full sm:w-auto justify-center whitespace-nowrap"
+            class="bg-white text-black px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 justify-center whitespace-nowrap text-sm sm:text-base"
           >
             <span class="text-xl">+</span>
             Add Offer
@@ -56,26 +55,25 @@
         </div>
       </div>
 
-
-      <div class="hidden md:block">
+      <!-- Desktop Table View -->
+      <div class="hidden lg:block">
         <div class="bg-black rounded-xl border border-gray-800 overflow-x-auto text-white w-full">
-          <table class="w-full border-collapse min-w-[1200px] xl:table-fixed">
+          <table class="w-full border-collapse">
 
             <thead>
-              <tr class="border-b border-gray-800 text-sm sm:text-base">
-                <th class="w-[5%] px-3 py-4 text-left">NO</th>
-                <th class="w-[15%] px-4 py-4 text-left">Title</th>
-                <th class="w-[20%] px-4 py-4 text-left">Description</th>
-                <th class="w-[10%] px-4 py-4 text-left">Type</th>
-                <th class="w-[15%] px-4 py-4 text-left">Target</th>
-                <th class="w-[10%] px-4 py-4 text-left">Discount</th>
-                <th class="w-[15%] px-4 py-4 text-left">Valid Period</th>
-                <th class="w-[5%] px-4 py-4 text-left">Status</th>
-                <th class="w-[5%] px-4 py-4 text-left">Actions</th>
+              <tr class="border-b border-gray-800 text-sm">
+                <th class="px-3 py-4 text-left whitespace-nowrap">NO</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Title</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Type</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Target</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Discount</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Valid Period</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Status</th>
+                <th class="px-4 py-4 text-left whitespace-nowrap">Actions</th>
               </tr>
             </thead>
 
-            <tbody class="text-sm sm:text-base">
+            <tbody class="text-sm">
 
               <% if(offers) {%>
 
@@ -87,27 +85,25 @@
 
                 <td class="title px-3 py-5 font-semibold"><%=o.offerTitle%></td>
 
-                <td class="description px-4 py-5 text-gray-400 truncate max-w-xs"><%=o.description%></td>
-
                 <td class="offerType px-3 py-5 capitalize">
                   <%=o.offerType%>
                 </td>
 
-                <td class="target px-4 py-5 text-sm text-gray-400">
+                <td class="target px-4 py-5 text-sm text-gray-400 truncate max-w-[150px]">
                   <%=o.targetName || 'N/A'%>
                 </td>
 
                 <td class="discount px-4 py-5">
-                  <%=o.discountValue%><%=o.discountType === 'percentage' ? '%' : '₹'%> 
-                  (<span class="capitalize"><%=o.discountType%></span>)
+                  <div class="font-medium"><%=o.discountValue%><%=o.discountType === 'percentage' ? '%' : '₹'%></div>
+                  <div class="text-xs text-gray-400 capitalize"><%=o.discountType%></div>
                 </td>
 
                 <td class="date px-4 py-5 text-sm text-gray-400">
-                  <%=new Date(o.validFrom).toLocaleDateString()%> -
-                   <%=new Date(o.validTo).toLocaleDateString()%>
+                  <div><%=new Date(o.validFrom).toLocaleDateString()%></div>
+                  <div><%=new Date(o.validTo).toLocaleDateString()%></div>
                 </td>
 
-                <td class="px-6 py-5">
+                <td class="px-4 py-5">
                   <span id="statusBtn-<%=o._id%>"  class="px-3 py-1 rounded-full text-xs font-medium
 
                     <%= o.isDelete ? 'bg-red-900/50 text-red-300' : (o.isActive ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300') %>">
@@ -116,7 +112,7 @@
                 </span>
                 </td>
 
-                <td class="px-6 py-5 flex gap-2 items-center">
+                <td class="px-4 py-5 flex gap-2 items-center">
 
                   <i class="fa-solid fa-pen cursor-pointer hover:text-gray-300
                   <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%>"
@@ -153,13 +149,68 @@
 
       </div>
 
+      <!-- Tablet View (md to lg) -->
+      <div class="hidden md:block lg:hidden">
+        <div class="bg-black rounded-xl border border-gray-800 overflow-x-auto text-white">
+          <table class="w-full border-collapse min-w-[800px]">
+            <thead>
+              <tr class="border-b border-gray-800 text-sm">
+                <th class="px-3 py-3 text-left">Title/Type</th>
+                <th class="px-3 py-3 text-left">Target</th>
+                <th class="px-3 py-3 text-left">Discount</th>
+                <th class="px-3 py-3 text-left">Valid Period</th>
+                <th class="px-3 py-3 text-left">Status</th>
+                <th class="px-3 py-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm">
+              <% if(offers) {%>
+                <% offers.forEach((o,i)=>{ %>
+                  <tr id="tablet-<%=o._id%>" class="border-b <%= o.isDelete ?'bg-gray-600':'' %> border-gray-800 hover:bg-[#191a19] transition">
+                    <td class="px-3 py-4">
+                      <div class="font-semibold"><%=o.offerTitle%></div>
+                      <div class="text-xs text-gray-400 capitalize mt-1"><%=o.offerType%> Offer</div>
+                    </td>
+                    <td class="px-3 py-4 text-gray-400 text-xs truncate max-w-[120px]">
+                      <%=o.targetName || 'N/A'%>
+                    </td>
+                    <td class="px-3 py-4">
+                      <div class="font-medium"><%=o.discountValue%><%=o.discountType === 'percentage' ? '%' : '₹'%></div>
+                      <div class="text-xs text-gray-400 capitalize"><%=o.discountType%></div>
+                    </td>
+                    <td class="px-3 py-4 text-xs text-gray-400">
+                      <div><%=new Date(o.validFrom).toLocaleDateString()%></div>
+                      <div><%=new Date(o.validTo).toLocaleDateString()%></div>
+                    </td>
+                    <td class="px-3 py-4">
+                      <span id="tablet-statusBtn-<%=o._id%>" class="px-2 py-1 rounded-full text-xs font-medium <%= o.isDelete ? 'bg-red-900/50 text-red-300' : (o.isActive ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300') %>">
+                        <%=o.isDelete ? 'Deleted' : (o.isActive ? 'Active' : 'Inactive')%>
+                      </span>
+                    </td>
+                    <td class="px-3 py-4">
+                      <div class="flex gap-2 items-center">
+                        <i class="fa-solid fa-pen cursor-pointer hover:text-gray-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%>" style="color: #ffffff;" onclick="openModal('edit','<%=JSON.stringify(o)%>')"></i>
+                        <i id="tablet-blockBtn-<%=o._id%>" class="fa-solid fa-lock cursor-pointer hover:text-red-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%> <%=o.isActive ? '' : 'hidden'%>" style="color: #cc2424;" onclick="blockOffer('<%= o._id %>')"></i>
+                        <i id="tablet-unblockBtn-<%=o._id%>" class="fa-solid fa-lock-open cursor-pointer hover:text-green-300 <%=o.isActive ? 'hidden':''%>" style="color: #04a978;" onclick="unblockOffer('<%= o._id %>')"></i>
+                        <i id="tablet-deleteBtn-<%=o._id%>" class="fa-solid fa-trash cursor-pointer hover:text-red-300 <%= o.isDelete ? 'hidden' : ''%>" style="color: #ffffff;" onclick="deleteOffer('<%= o._id %>')"></i>
+                        <i id="tablet-restoreBtn-<%=o._id%>" class="fa-solid fa-trash-arrow-up cursor-pointer hover:text-red-400 <%= o.isDelete ? '' : 'hidden'%>" style="color: #ff0000;" onclick="restoreOffer('<%= o._id %>')"></i>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <div class="md:hidden space-y-4">
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-3">
 
         <% if(offers) {%>
             <% offers.forEach((o,i)=>{ %>
 
-            <div class="bg-black border border-gray-700 rounded-xl p-4 space-y-3" id="mobile-card-<%=o._id%>">
+            <div class="bg-black border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3" id="mobile-card-<%=o._id%>">
 
               <div class="flex justify-between items-center pb-2 border-b border-gray-800">
                 <span class="text-xs font-semibold bg-gray-800 px-2 py-1 rounded text-gray-300"># <%=i+1%></span>
@@ -169,59 +220,58 @@
                 </span>
               </div>
 
-              <div class="text-xl text-gray-300 font-bold uppercase"><%=o.offerTitle%></div>
+              <div class="text-lg sm:text-xl text-gray-300 font-bold"><%=o.offerTitle%></div>
 
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm">
-                 <p class="text-gray-300 text-sm mb-2 sm:mb-0 truncate max-w-full"><%=o.description %></p>
-              </div>
-
-              <div class="flex justify-between items-center text-sm pt-1">
-                <p class="font-semibold whitespace-nowrap">
-                    <%=o.discountValue%>
-                    <% if(o.discountType === 'percentage') {%>
-                      % off
-                    <% } else { %>
-                      ₹ off
-                    <% } %>
-                    (<span class="capitalize"><%=o.discountType%></span>)
+              <div class="flex justify-between items-center text-sm">
+                <div>
+                  <p class="text-gray-400 text-xs mb-1">Type</p>
+                  <p class="font-semibold capitalize"><%=o.offerType%> Offer</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-gray-400 text-xs mb-1">Discount</p>
+                  <p class="font-semibold">
+                    <%=o.discountValue%><%=o.discountType === 'percentage' ? '%' : '₹'%> off
                   </p>
-                <p class="text-gray-400 text-sm">Type: <span class="text-white font-medium capitalize"><%=o.offerType%></span></p>
+                </div>
               </div>
               
               <div class="flex justify-between items-center pt-2 border-t border-gray-800">
-                <p class="text-gray-400 text-sm">Target: <span class="text-white font-medium"><%=o.targetName || 'N/A' %></span></p>
+                <div>
+                  <p class="text-gray-400 text-xs mb-1">Target</p>
+                  <p class="text-white font-medium text-sm truncate max-w-[180px]"><%=o.targetName || 'N/A' %></p>
+                </div>
 
-                <span id="mobile-statusBtn-<%=o._id%>" class="px-3 py-1 text-xs rounded-full font-medium
+                <span id="mobile-statusBtn-<%=o._id%>" class="px-2 sm:px-3 py-1 text-xs rounded-full font-medium
                   <%= o.isActive ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300' %>">
                   <%=o.isActive?'Active':'Inactive'%>
                 </span>
               </div>
 
-              <div class="flex gap-4 pt-3 border-t border-gray-800">
+              <div class="flex gap-3 sm:gap-4 pt-3 border-t border-gray-800">
                 <button onclick="openModal('edit','<%=JSON.stringify(o)%>')"
-                  class="text-lg text-white hover:text-gray-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%>"
+                  class="text-base sm:text-lg text-white hover:text-gray-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%>"
                   aria-label="Edit Offer">
                   <i class="fa-solid fa-pen"></i>
                 </button>
 
                 <button onclick="blockOffer('<%= o._id %>')"
-                  class="text-lg text-red-500 hover:text-red-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%> <%=o.isActive ? '' : 'hidden'%>"
+                  class="text-base sm:text-lg text-red-500 hover:text-red-300 <%=o.isDeleted ? 'opacity-50 pointer-events-none':''%> <%=o.isActive ? '' : 'hidden'%>"
                   id="mobile-blockBtn-<%=o._id%>" aria-label="Block Offer">
                   <i class="fa-solid fa-lock"></i>
                 </button>
                 <button onclick="unblockOffer('<%= o._id %>')"
-                  class="text-lg text-green-500 hover:text-green-300 <%=o.isActive ? 'hidden':''%>"
+                  class="text-base sm:text-lg text-green-500 hover:text-green-300 <%=o.isActive ? 'hidden':''%>"
                   id="mobile-unblockBtn-<%=o._id%>" aria-label="Unblock Offer">
                   <i class="fa-solid fa-lock-open"></i>
                 </button>
 
                 <button onclick="deleteOffer('<%= o._id %>')"
-                  class="text-lg text-red-400 hover:text-red-200 <%= o.isDeleted ? 'hidden' : ''%>"
+                  class="text-base sm:text-lg text-red-400 hover:text-red-200 <%= o.isDeleted ? 'hidden' : ''%>"
                   id="mobile-deleteBtn-<%=o._id%>" aria-label="Delete Offer">
                   <i class="fa-solid fa-trash"></i>
                 </button>
                 <button onclick="restoreOffer('<%= o._id %>')"
-                  class="text-lg text-red-600 hover:text-red-400 <%= o.isDeleted ? '' : 'hidden'%>"
+                  class="text-base sm:text-lg text-red-600 hover:text-red-400 <%= o.isDeleted ? '' : 'hidden'%>"
                   id="mobile-restoreBtn-<%=o._id%>" aria-label="Restore Offer">
                   <i class="fa-solid fa-trash-arrow-up"></i>
                 </button>
@@ -233,135 +283,119 @@
 
       </div>
 
-
+      <!-- Modal -->
       <div id="offerModal"
-    class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+    class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-3 sm:p-4">
 
-    <div class="bg-white rounded-[2rem] mt-0 md:mt-12 border border-gray-50 p-6 sm:p-8
+    <div class="bg-white rounded-2xl sm:rounded-[2rem] mt-0 border border-gray-50 p-4 sm:p-6 md:p-8
                 w-full max-w-lg lg:max-w-2xl max-h-[95vh] overflow-y-auto no-scrollbar scroll-smooth
                 text-black">
 
-      <div class="flex justify-between items-center mb-6">
-        <h2 id="modalTitle" class="text-xl sm:text-2xl font-bold">Add New Offer</h2>
-        <button onclick="closeModal()" class="text-gray-400 hover:text-black text-3xl leading-none">&times;</button>
+      <div class="flex justify-between items-center mb-4 sm:mb-6">
+        <h2 id="modalTitle" class="text-lg sm:text-xl md:text-2xl font-bold">Add New Offer</h2>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-black text-2xl sm:text-3xl leading-none">&times;</button>
       </div>
 
-      <form id="offerForm" class="space-y-4">
+      <form id="offerForm" class="space-y-3 sm:space-y-4">
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Offer Title *</label>
+          <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Offer Title *</label>
           <input type="text" id="title"
             placeholder="e.g., Diwali Sale 2025"
-            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
             <div id="title-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Description *</label>
+          <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Description *</label>
           <textarea id="description" rows="2"
             placeholder="Detailed description of the offer"
-            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white"></textarea>
+            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base"></textarea>
             <div id="description-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-2">Offer Type *</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Offer Type *</label>
             <select id="offerType" onchange="toggleTargetField()"
-              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <option value="">Select Offer</option>
               <option value="category">Category Offer</option>
               <option value="product">Product Offer</option>
               <option value="festival">Festival Offer</option>
             </select>
             <div id="offerType-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
           </div>
 
           <div id="targetField">
-            <label class="block text-sm font-semibold mb-2">
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">
               <span id="targetLabel">Target</span> *
             </label>
             <select id="targetId" 
-            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+            class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
             <option id="targetOption" value="">Select Target</option>
-            <!-- <option id="targetIdInput" value="">Target</option> -->
-     
           </select>
               <div id="targetId-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
           </div>
-
-
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-2">Discount Type *</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Discount Type *</label>
             <select id="discountType"
-              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <option value=""> Select Discount Type</option>
               <option value="percentage">Percentage (%)</option>
               <option value="fixed">Fixed Amount (₹)</option>
             </select>
             <div id="discountType-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">Discount Value *</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Discount Value *</label>
             <input type="number" id="discountValue"
               placeholder="0"
-              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <div id="discountValue-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-2">Valid From *</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Valid From *</label>
             <input type="datetime-local" id="validFrom"
-              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <div id="validFrom-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">Valid To *</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Valid To *</label>
             <input type="datetime-local" id="validTo"
-              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:bg-white">
+              class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <div id="validTo-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
-
           </div>
         </div>
-
-
 
         <div class="flex items-start sm:items-center pt-2 sm:pt-4">
-          <label class="flex items-center gap-3 cursor-pointer">
+          <label class="flex items-center gap-2 sm:gap-3 cursor-pointer">
             <input type="checkbox" id="isActive" checked
-              class="w-5 h-5 bg-gray-200 border-gray-700 text-black">
-            <span class="font-semibold">Active Status</span>
+              class="w-4 h-4 sm:w-5 sm:h-5 bg-gray-200 border-gray-700 text-black">
+            <span class="font-semibold text-sm sm:text-base">Active Status</span>
           </label>
         </div>
 
-
-        <div class="flex flex-col-reverse sm:flex-row gap-4 pt-4">
-            <button type="button" onclick="closeModal()" id="cp-cancelBtn" class="px-6 py-3 bg-white text-black border border-gray-400 rounded-2xl font-semibold">
+        <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-3 sm:pt-4">
+            <button type="button" onclick="closeModal()" id="cp-cancelBtn" class="px-4 sm:px-6 py-2 sm:py-3 bg-white text-black border border-gray-400 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base">
                 Cancel
             </button>
-            <button id="saveBtn" type="submit" class="flex-1 bg-black text-white px-6 py-3 rounded-2xl font-semibold order-first sm:order-last">
+            <button id="saveBtn" type="submit" class="flex-1 bg-black text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-semibold order-first sm:order-last text-sm sm:text-base">
                 Save Offer
             </button>
         </div>
 
-
       </form>
     </div>
     </div>
-
 
     <%-include ('./partials/pagination.ejs')%>
 

@@ -158,42 +158,87 @@ orderContainer.appendChild(row);
 
 async function downloadReport(type){
   try {
-    if (type === 'pdf'){
-      console.log('download report clicked');
-      console.log('filter',filter);
-      console.log('type of filter',typeof filter);
-      const response = await fetch('/admin/sales-report/download-sales-report',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({filter})
-      });
-      const contentDisposition = response.headers.get('content-disposition');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      let filename = 'Sales Report'
-      if (contentDisposition) {
-        // Simple regex to extract the filename from the header
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (filenameMatch.length === 2) {
-            filename = filenameMatch[1];
-        }
-      }
-  
-      const link = document.createElement('a');
-
-      link.href=url;
-      link.setAttribute('download',filename)
-      document.body.appendChild(link);
-      link.click()
-      setTimeout(()=>{
-        document.getElementById('loader').classList.add('hidden')
-      document.body.style.overflow = '';
-      },300)
-    }else if(type === 'excel'){
-
+    // Show loader
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
     }
-  } catch (error) {
     
+    console.log('Download report clicked');
+    console.log('Filter:', filter);
+    console.log('Type:', type);
+    
+    let endpoint = '';
+    let filename = 'Sales-Report';
+    
+    if (type === 'pdf') {
+      endpoint = '/admin/sales-report/download-sales-report';
+    } else if (type === 'excel') {
+      endpoint = '/admin/sales-report/download-sales-report-excel';
+    } else {
+      throw new Error('Invalid download type');
+    }
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filter })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+    
+    // Get filename from Content-Disposition header
+    const contentDisposition = response.headers.get('content-disposition');
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+      if (filenameMatch && filenameMatch[1]) {
+        filename = filenameMatch[1].replace(/['"]/g, '');
+      }
+    } else {
+      // Generate default filename with timestamp
+      const extension = type === 'pdf' ? 'pdf' : 'xlsx';
+      const timestamp = new Date().toISOString().split('T')[0];
+      filename = `sales-report-${timestamp}.${extension}`;
+    }
+    
+    // Create blob and download
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    
+    // Hide loader with delay
+    setTimeout(() => {
+      if (loader) {
+        loader.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }, 300);
+    
+    console.log('Download completed successfully');
+    
+  } catch (error) {
+    console.error('Download error:', error);
+    
+    
+    // Hide loader on error
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js"
+import Offer from '../../models/offerModel.js'
 import Wishlist from "../../models/wishlistModel.js"
 import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 
@@ -221,6 +222,7 @@ const singleProduct = async (req,res)=>{
 }
 
 const productPage = async (req,res)=>{
+  
   const productId= req.params.id;
   const product=await Product.findById(productId)
   console.log('rpoduct',product);
@@ -231,10 +233,13 @@ const productPage = async (req,res)=>{
     product.variants.forEach(variant=>{
       variant.attributes.isWishlisted= wishlistedVariants.has(variant.sku)
     });
-    const similarProducts = await Product.find({category:product.category,isActive:true,isDeleted:false,'variants.attributes.isActive':true,'variants.attributes.isDeleted':false})
+    const similarProducts = await Product.find({_id:{$ne:product._id},category:product.category,isActive:true,isDeleted:false,'variants.attributes.isActive':true,'variants.attributes.isDeleted':false})
     console.log('similar products',similarProducts);
     console.log('After edit',product);
-    res.render('user/singleProduct.ejs',{product,similarProducts})
+
+  const offers = await Offer.find({isActive:true,isDelete:false})
+  .sort({ createdAt: -1 })
+    res.render('user/singleProduct.ejs',{product,similarProducts,offers})
   }
 }
 
@@ -263,6 +268,9 @@ const variantProduct = async (req,res)=>{
     product.variants[0].attributes.isWishlisted= wishlistedVariants.has(product.variants[0].sku)
     console.log('npkkattu',product.variants[0].attributes.isWishlisted);
   console.log('hello',product.variants[0].attributes);
+
+
+
   res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,product:product})
   }catch(err){
     console.log('Error in VariantProduct',err);

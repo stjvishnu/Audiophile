@@ -20,29 +20,35 @@ const getOffers = async (req, res) => {
     const totalOffers = await Offer.countDocuments();
     const totalPages = Math.ceil(totalOffers / limit)
 
-    // Populate target details (e.g., category name or product name)
-    const offers = await Offer.find()
-      .populate('targetId') // Assuming targetId can be populated to get the name
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    // // Populate target details (e.g., category name or product name)
+    // const offers = await Offer.find()
+    //   .populate('targetId') // Assuming targetId can be populated to get the name
+    //   .sort({ createdAt: -1 })
+    //   .skip(skip)
+    //   .limit(limit);
 
-    // Map offers to rename targetId field to 'target' object with a 'name' property
-    const offersWithTargetName = offers.map(offer => {
-      const targetName = offer.targetId ? offer.targetId.name || offer.targetId.title : 'N/A';
-      return {
-        ...offer.toObject(),
-        target: {
-          id: offer.targetId ? offer.targetId._id : null,
-          name: targetName
-        }
-      };
-    });
+    // // Map offers to rename targetId field to 'target' object with a 'name' property
+    // const offersWithTargetName = offers.map(offer => {
+    //   const targetName = offer.targetId ? offer.targetId.name || offer.targetId.title : 'N/A';
+    //   return {
+    //     ...offer.toObject(),
+    //     target: {
+    //       id: offer.targetId ? offer.targetId._id : null,
+    //       name: targetName
+    //     }
+    //   };
+    // });
+
+    const offers = await Offer.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean(); 
 
     res.render('admin/offers.ejs', {
       layout: "layouts/admin-dashboard-layout",
       pageTitle: "Offers",
-      offers: offersWithTargetName,
+      offers,
       currentPage: page,
       totalPages: totalPages
     })
@@ -71,7 +77,10 @@ const addOffer = async (req, res) => {
     }
 
     
-
+    const offerTitileExits=await Offer.findOne({offerTitle:offerTitle});
+    if(offerTitileExits){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Same Offer Titile Exists'})
+    }
 
 
 
@@ -140,6 +149,7 @@ const addOffer = async (req, res) => {
       validFrom,
       validTo,
       isActive,
+      isDelete:false,
       targetName
 
     }

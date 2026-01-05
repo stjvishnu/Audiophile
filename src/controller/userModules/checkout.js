@@ -36,7 +36,7 @@ const getCheckout = async (req,res)=>{
     }
     const addresses = await Address.find({userId:req.user})||[]
     const calculatedCart = await calculateCart(cart,charge);
-    const coupons =  await Coupon.find({minPurchase:{$lte:calculatedCart.total}})
+    const coupons =  await Coupon.find({minPurchase:{$lte:calculatedCart.total},isActive:true,isDelete:false})
     
 
     console.log(cart)
@@ -504,11 +504,13 @@ const retryRpzPayment = async (req,res)=>{
 
 const applyCoupon = async (req,res)=>{
   console.log('call recieved in apply coupon controller');
+  console.log(req.body);
 
   try {
     const { couponCode, total} = req.body;
 
-    const coupon = await Coupon.findOne({code:couponCode,isActive:true,isDelete:false}).lean();
+    const coupon = await Coupon.findOne({code:couponCode,isActive:true,}).lean();
+    console.log('coupon',coupon);
   
       if (!coupon) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Coupon code not found'});

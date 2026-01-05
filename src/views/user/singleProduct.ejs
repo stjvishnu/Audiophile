@@ -151,7 +151,7 @@
 
 <div class="py-3 px-4">
     <!-- Main Product Container - Large like Hero Carousel -->
-    <div class="carousel-container bg-transparent mx-2 sm:mx-4 my-3 sm:my-5 mt-2 sm:mt-3 rounded-xl sm:rounded-[2rem] lg:rounded-[5.5rem] relative">
+    <div class="carousel-container bg-transparent mx-2 sm:mx-4 my-3 sm:my-5 mt-2 sm:mt-[-10px] rounded-xl sm:rounded-[2rem] lg:rounded-[5.5rem] relative">
         <div>
             <!-- Product Overview Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 p-4 sm:p-6 md:p-10 lg:p-14 lg:pb-12 lg:pl-12 lg:pr-12">
@@ -204,6 +204,30 @@
                             </span>
                             <span id="price" class="text-lg sm:text-xl text-gray-500 line-through"><%= product.variants[0].attributes.price %> ₹</span>
                             <span id="discount" class="bg-black text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold"><%= product.variants[0].attributes.discount %> % off</span>
+                        </div>
+                    </div>
+
+                    <!-- Available Offers Section -->
+                    <div class="lg:pl-4">
+                        <div class="bg-gray-100  rounded-2xl sm:rounded-[2rem] p-3 sm:p-4 w-fit">
+                            <div class="flex items-start gap-2 mb-1 mt-[-5px]">
+                                <i class="fas fa-gift text-black text-xs"></i>
+                                <h3 class="text-sm sm:text-xs font-semibold text-gray-800">Available Offers</h3>
+                            </div>
+                            <div class="space-y-2">
+                                <!-- Cashback Offer -->
+                               <% if(offers){ %>
+
+                               <% offers.forEach((offer)=>{ %>
+                                    <div class="flex items-start gap-2 text-xs sm:text-xs text-gray-700">
+                                        <i class="fa-solid fa-bolt text-black text-xs  flex-shrink-0"></i>
+                                        <span><strong><%=offer.offerTitle%>:</strong> Get <%=offer.discountType==='percentage'?offer.discountValue + "%" :offer.discountValue + '₹ flat'%>  on <%=offer.targetName%></span>
+                                    </div>
+                               <% }) %>
+                                    
+                               <% } %>
+                               
+                            </div>
                         </div>
                     </div>
     
@@ -393,7 +417,12 @@
 
     <!-- Similar Products Section -->
      <!-- Similar Products Section -->
-<div class="bg-gradient-to-br from-white to-gray-200 mx-2 sm:mx-4 md:mx-6 lg:mx-10 my-6 sm:my-8 lg:my-10 rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[2rem] xl:rounded-[5.5rem] shadow-xl sm:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12">
+  
+     <% if(locals.similarProducts && locals.similarProducts.length>0){ %>
+
+     
+     
+    <div class="bg-gradient-to-br from-white to-gray-200 mx-2 sm:mx-4 md:mx-6 lg:mx-10 my-6 sm:my-8 lg:my-10 rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[2rem] xl:rounded-[5.5rem] shadow-xl sm:shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12">
     <div class="relative mb-6 sm:mb-8">
       <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 tracking-wide">Similar Products</h2>
     </div>
@@ -467,6 +496,8 @@
       </div>
     </div>
   </div>
+
+  <% } %>
   
     
     
@@ -524,55 +555,11 @@
           });
         });
         
-        // Update arrow visibility based on scroll position
-        function updateArrows() {
-          const isAtStart = container.scrollLeft <= 0;
-          const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
-          
-          scrollLeft.style.opacity = isAtStart ? '0.3' : '1';
-          scrollLeft.style.pointerEvents = isAtStart ? 'none' : 'auto';
-          
-          scrollRight.style.opacity = isAtEnd ? '0.3' : '1';
-          scrollRight.style.pointerEvents = isAtEnd ? 'none' : 'auto';
-        }
-        
-        container.addEventListener('scroll', updateArrows);
-        updateArrows();
       }
     });
     </script>
 <script>
-    const scrollContainer = document.getElementById('similarProductsContainer');
-    const scrollLeftBtn = document.getElementById('scrollLeft');
-    const scrollRightBtn = document.getElementById('scrollRight');
 
-    function updateScrollButtons() {
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        scrollLeftBtn.disabled = scrollContainer.scrollLeft <= 0;
-        scrollRightBtn.disabled = scrollContainer.scrollLeft >= maxScroll - 5;
-    }
-
-    scrollLeftBtn.addEventListener('click', () => {
-        const cardWidth = scrollContainer.querySelector('.flex-shrink-0').offsetWidth;
-        const gap = 24;
-        scrollContainer.scrollBy({
-            left: -(cardWidth + gap),
-            behavior: 'smooth'
-        });
-    });
-
-    scrollRightBtn.addEventListener('click', () => {
-        const cardWidth = scrollContainer.querySelector('.flex-shrink-0').offsetWidth;
-        const gap = 24;
-        scrollContainer.scrollBy({
-            left: cardWidth + gap,
-            behavior: 'smooth'
-        });
-    });
-
-    scrollContainer.addEventListener('scroll', updateScrollButtons);
-    window.addEventListener('resize', updateScrollButtons);
-    updateScrollButtons();
 
     function handleWishlist(productId, variantId, element) {
         const icon = element.querySelector('i');
