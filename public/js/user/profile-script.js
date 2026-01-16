@@ -21,10 +21,12 @@ console.log(myProfile);
 myProfile.addEventListener('click',()=>{
   console.log('Profile clicked');
   console.log(profileInfo);
-  profileInfo.classList.remove('hidden')
   addressPage.classList.add('hidden');
   ordersSection.classList.add('hidden');
   walletPage.classList.add('hidden')
+  referralPage.classList.add('hidden')
+  profileInfo.classList.remove('hidden')
+  
 })
 console.log('Hello');
 
@@ -32,7 +34,7 @@ console.log('Hello');
 
 const addressBtn = document.getElementById('addressBtn');
 const addressPage = document.getElementById('addressPage');
-const hello = document.getElementById('hello')
+
 
 addressBtn.addEventListener('click',async(e)=>{
   console.log('Address btn clicked');
@@ -42,7 +44,10 @@ addressBtn.addEventListener('click',async(e)=>{
   // hello.innerHTML=''
   profileInfo.classList.add('hidden')
   walletPage.classList.add('hidden')
+  ordersSection.classList.add('hidden')
+  walletPage.classList.add('hidden')
   addressPage.classList.remove('hidden');
+
   // document.body.style.position = 'fixed';
 
 })

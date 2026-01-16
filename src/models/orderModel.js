@@ -62,7 +62,7 @@ payment:{
   },
   status:{
     type:String,
-    enum:['pending','paid','failed','refunded'],
+    enum:['pending','paid','not_paid','failed','refunded'],
     default:'pending'
   }
 },

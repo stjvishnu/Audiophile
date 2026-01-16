@@ -16,9 +16,9 @@ import adminMiddleware from "../../middlewares/adminMiddleware.js";
 const router = express.Router();
 
 
-router.use('/auth',adminAuthRoutes)
+router.use('/',adminAuthRoutes)
 router.use('/dashboard',adminMiddleware.restrictedAdminLogin,dashboardrouter)
-router.use('/',adminLoadRouter)
+// router.use('/',adminLoadRouter)
 
 
 router.use('/users',adminMiddleware.restrictedAdminLogin,usersRouter) //list users

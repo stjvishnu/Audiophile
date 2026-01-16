@@ -198,7 +198,7 @@ async function renderCoupons(coupons){
     const p = document.createElement('p')
     p.className = "text-gray-500 text-sm"
     p.innerHTML=`No coupons available at the moment.`
-    couponContainer.appendChild(p)
+    if(couponContainer)couponContainer.appendChild(p)
    } 
   
 

@@ -8,6 +8,7 @@ walletBtn.addEventListener('click',async (e)=>{
   profileInfo.classList.add('hidden')
   addressPage.classList.add('hidden');
   ordersSection.classList.add('hidden');
+  referralPage.classList.add('hidden')
   document.getElementById('myProfileEditModal').classList.add('hidden')
   document.getElementById('orderDetailsSection').classList.add('hidden')
   walletPage.classList.remove('hidden')

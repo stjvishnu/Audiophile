@@ -248,6 +248,51 @@ const restoreCoupon = async (req,res)=>{
   }
 }
 
+
+const searchCoupons = async (req,res)=>{
+  console.log('req.query',req.query);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const {searchTerm} = req.query;
+
+    const coupons = await Coupon.find({
+      $or: [
+        { code: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } },
+      ]
+    }).skip(skip).limit(limit)
+    
+    console.log('Coupons in searched result',coupons);
+    
+    if(coupons.length==0){
+      return res.status(HTTP_STATUS.OK).json([]);
+    }
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,coupons})
+
+  } catch (error) {
+    console.log('Error in search coupons',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
+
+  }
+}
+
+const loadCoupons= async (req,res)=>{
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Coupon.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const coupons = await Coupon.find().sort({createdAt:-1}).skip(skip).limit(limit)
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,coupons})
+  } catch (error) {
+    console.log('Error in load coupons');
+  }
+}
+
+
 export default {
   getCoupons,
   addCoupon,
@@ -255,5 +300,7 @@ export default {
   blockCoupon,
   unblockCoupon,
   deleteCoupon,
-  restoreCoupon
+  restoreCoupon,
+  searchCoupons,
+  loadCoupons
 }

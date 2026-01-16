@@ -4,20 +4,35 @@ import Wallet from '../../models/walletModel.js'
 import WalletTransaction from '../../models/walletTransaction.js'
 import {HTTP_STATUS,RESPONSE_MESSAGES} from "../../utils/constants.js"
 import PDFDocument from 'pdfkit'
-import fs from 'fs'
 
+/* ===============================
+   HELPER FUNCTIONS
+   =============================== */
+
+
+/**
+ * Credits amount to user's wallet and creates transaction record
+ * @param {string} userId - The user's ID
+ * @param {number} amount - Amount to credit
+ * @param {string} reason - Reason for credit (e.g., 'cancelled', 'returned')
+ * @param {string} orderId - Related order number/ID
+ */
 
 async function creditWallet(userId,amount,reason,orderId){
-  console.log('Call recieved in credit wallet helper function');
   try {
+    // Find user's wallet
     const wallet = await Wallet.findOne({userId})
+
     if(!wallet){
       throw new Error('Wallet Not Found, Login Again')
     }
+
+    // Calculate new balance and update wallet
     const newBalance = wallet.balance+amount;
     wallet.balance=newBalance;
     await wallet.save();
 
+    // Create wallet transaction record
     await WalletTransaction.create({
       walletId: wallet._id,
       type: "credit",
@@ -32,37 +47,80 @@ async function creditWallet(userId,amount,reason,orderId){
 }
 
 
+/* ===============================
+   ORDER CONTROLLERS
+   =============================== */
 
+
+//------------- Get Orders ------------//
+
+/**
+ * Retrieves all orders for the authenticated user
+ * @route GET /user/cancel
+ * @access Private
+ */
 
 const getOrders = async(req,res)=>{
-  console.log('Call reecieved in getOrders controller');
+
   try{
-    
+    // Fetch all orders for the authenticated user
     const orders = await Order.find({userId:req.user});
-    console.log(orders);
     res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,orders})
   }catch(error){
-
+    console.log('Error occured in getOrders controller',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Request Failed !'
+    })
   }
+
 }
 
+//------------- Cancel Order ------------//
+
+/**
+ * Cancels an order, refunds payment if applicable, and restocks products
+ * @route POST /user/cancel
+ * @access Private
+ */
+
 const cancelOrder =  async (req,res)=>{
-  console.log('Call recived in cancelOrders controller');
+  
   try{
     const {orderId,reason} = req.body;
+
+    // Check if order exists and is not already cancelled
+    const orderFound = await Order.findById(orderId);
+    const isAlreadyCancelled = orderFound.orderStatus;
+
+    if(isAlreadyCancelled==='cancelled'){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Order is already cancelled ! , Please refer order details section'
+      })
+    }
+
+    // Update order status to cancelled
     const cancelOrder = await Order.findOneAndUpdate({_id:orderId},{orderStatus:'cancelled',reason:reason},{new:true})
 
-    if(!cancelOrder){
-      res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Request Failed, try again later !'})
-    }
 
-    //refund money if paid via razorpay
+    if(!cancelOrder){
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Request Failed, try again later !'
+      })
+    }
+ 
+    
+    // Process refund if payment was made via razorpay or wallet
     if(cancelOrder.payment.method==='razorpay' || cancelOrder.payment.method==='wallet'){
-      creditWallet(cancelOrder.userId,cancelOrder.total,cancelOrder.orderStatus,cancelOrder.orderNumber)
+      if(cancelOrder.payment.status==='paid'){
+          creditWallet(cancelOrder.userId,cancelOrder.total,cancelOrder.orderStatus,cancelOrder.orderNumber)
+      }
     }
     
+    // Extract product information for stock update
     const productInfo=[];
-
     cancelOrder.items.forEach((order)=>{
       productInfo.push({
         productId:order.productId,
@@ -70,86 +128,176 @@ const cancelOrder =  async (req,res)=>{
         quantity:order.quantity
       })
     })
-
-
-
+   
+   // Update stock for all products in the order
    const stockUpdated= await Promise.all(
-
       productInfo.map((pInfo)=>{
         return Product.updateOne({_id:pInfo.productId,'variants.sku':pInfo.variantId},{$inc:{'variants.$.attributes.stock':pInfo.quantity}})
       })
-
     )  
-    
-    console.log('Stock updated',stockUpdated);
-    
 
-    
-    console.log('Cancelled order',cancelOrder);
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Your order has been cancelled successfully !'})
+    // Update payment status based on payment method
+    if(cancelOrder.payment.method==='cod'){
+      cancelOrder.payment.status='not_paid'
+      await cancelOrder.save()
+    }else if(cancelOrder.payment.method==='razorpay' || cancelOrder.payment.method==='wallet'){
+      cancelOrder.payment.status='refunded'
+      await cancelOrder.save()
+    }
+
+    res.status(HTTP_STATUS.OK).json({
+      message:RESPONSE_MESSAGES.OK,
+      customMessage:'Your order has been cancelled successfully !'
+    })
+
   }catch(error){
     console.log('Error in cancel order controller',error);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Request Failed, try again later !'})
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Request Failed, try again later !'
+    })
   }
+
 }
 
+//------------- Return Order ------------//
+
+/**
+ * Requests return for an entire order
+ * @route POST /user/return
+ * @access Private
+ */
+
+
 const returnOrder = async (req,res) =>{
-  console.log('Call recived in returnOrder controller');
+
   try {
     const {orderId,reason} = req.body;
+
+    // Check if order exists and is not already returned
+    const orderFound = await Order.findById(orderId);
+    const isAlreadyReturned = orderFound.orderStatus==='returned';
+    if(isAlreadyReturned){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Order is already returned !, Please refer order details section'
+      })
+    }
+
+    // Update order status to return-requested
     const returnOrder = await Order.findOneAndUpdate({_id:orderId},{orderStatus:'return-requested',reason:reason},{new:true});
 
     if(!returnOrder){
-      res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Request Failed, try again later !'})
+      res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Request Failed, try again later !'
+      })
     }
 
-  //   const productInfo=[];
+    res.status(HTTP_STATUS.OK).json({
+      message:RESPONSE_MESSAGES.OK,
+      customMessage:'Return - Requested !'
+    })
 
-  //   returnOrder.items.forEach((order)=>{
-  //     productInfo.push({
-  //       productId:order.productId,
-  //       variantId:order.variantId,
-  //       quantity:order.quantity
-  //     })
-  //   })
-
-  //  const stockUpdated= await Promise.all(
-
-  //     productInfo.map((pInfo)=>{
-  //       return Product.updateOne({_id:pInfo.productId,'variants.sku':pInfo.variantId},{$inc:{'variants.$.attributes.stock':pInfo.quantity}})
-  //     })
-
-  //   )  
-
-    // creditWallet(req.user,returnOrder.total,returnOrder.orderStatus,returnOrder.orderNumber)
-
-    // console.log('Stock Updated',stockUpdated);
-
-   
-    // console.log('Returned order',returnOrder);
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Return - Requested !'})
   } catch (error) {
     console.log('Error in cancel return controller',error);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Request Failed, try again later !'})
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Request Failed, try again later !'
+    })
+
   }
 }
 
+
+//------------- Return Single Item ------------//
+
+/**
+ * Requests return for a single item in an order
+ * @route POST /user/return-item/:itemId
+ * @access Private
+ */
+
+const returnSingleItem = async (req,res)=>{
+  try {
+    const {itemId} = req.params;
+    const {orderId,reason} = req.body;
+
+    // Find order containing the specific item
+    const order = await Order.findOne({_id:orderId,'items._id':itemId})
+
+    if(!order) return res.status(HTTP_STATUS.NOT_FOUND).json({
+      message:RESPONSE_MESSAGES.NOT_FOUND,
+      customMessage:'Order not found'
+    })
+
+    // Get the specific item using Mongoose subdocument method
+    const item = order.items.id(itemId); //mongoose method
+
+    // Check if order is in a returnable state
+    if(order.orderStatus!=='delivered' && order.orderStatus!=='partial-return'){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'"Only delivered items can be returned'
+      })
+    }
+
+    // Check if return is already requested
+    const isReturnAlreadyRequested = item.itemStatus==='return-requested';
+    if(isReturnAlreadyRequested){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage:'Item is already returned !'
+      })
+    }
+
+    // Update item status to return-requested
+    item.itemStatus='return-requested';
+    item.itemReturnReason = reason;
+
+    await order.save();
+
+    res.status(HTTP_STATUS.OK).json({
+      message:RESPONSE_MESSAGES.OK,
+      customMessage:'Return requested'
+    })
+
+  } catch (error) {
+    console.log('Error in returnSingleItem controller',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Something went wrong'})
+  }
+  
+}
+
+
+//------------- Download Invoice ------------//
+
+/**
+ * Generates and downloads PDF invoice for an order
+ * @route GET /orders/download-invoice/:orderId
+ * @access Private
+ */
+
 const downloadInvoice = async (req, res) => {
-  console.log('Call received in downloadInvoice controller');
   try {
     const { orderId } = req.params;
-    console.log('orderId', orderId);
+
+    // Fetch order with user details populated
     const order = await Order.findOne({ _id: orderId }).populate('userId');
-    console.log('order', order);
+
+    // Initialize PDF document
     const doc = new PDFDocument({ margin: 50 });
     
-    // ================= HEADERS =================
+    // ================= SET RESPONSE HEADERS =================
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename=${order.orderNumber}-invoice.pdf`
     );
     
+    // Pipe PDF to response
     doc.pipe(res);
     
     // ================= WATERMARK =================
@@ -159,7 +307,9 @@ const downloadInvoice = async (req, res) => {
 
     const response = await fetch(logoPath);
     const arrayBuffer = await response.arrayBuffer();
-    const logoBuffer = Buffer.from(arrayBuffer)
+    const logoBuffer = Buffer.from(arrayBuffer);
+
+    // Calculate centered position for watermark
     const imageWidth = 320;
     const wmX = (doc.page.width - imageWidth) / 2;
     const wmY = (doc.page.height - imageWidth) / 2;
@@ -167,16 +317,17 @@ const downloadInvoice = async (req, res) => {
     doc.image(logoBuffer, wmX, wmY, { width: imageWidth });
     doc.opacity(1);
     
-    // ================= HEADER =================
+    // ================= INVOICE HEADER =================
     doc.fontSize(20).text('Invoice', { align: 'center' });
     doc.moveDown(2);
     
+    // Order information
     doc.fontSize(12);
     doc.text(`Order ID: #${order.orderNumber}`);
     doc.text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`);
     doc.moveDown(1.5);
     
-    // ================= SHIPPING =================
+    // ================= SHIPPING ADDRESS =================
     doc.text('Ship To:');
     doc.font('Helvetica-Bold').text(order.shippingAddress.fullName);
     doc.font('Helvetica').text(order.shippingAddress.mobile);
@@ -208,7 +359,7 @@ const downloadInvoice = async (req, res) => {
     doc.moveDown(0.5);
     generateHr(doc, doc.y);
     
-    // ================= TABLE ROWS =================
+    // ================= TABLE ROWS - ORDER ITEMS =================
     let position = doc.y + 10;
     doc.font('Helvetica');
     
@@ -224,10 +375,11 @@ const downloadInvoice = async (req, res) => {
       position += 30;
     });
     
-    // ================= TOTALS =================
+    // ================= INVOICE TOTALS =================
     doc.moveDown(0.5);
     generateHr(doc, doc.y);
     
+    // Define positions for total section
     const labelX = 380;
     const valueX = 490;
     
@@ -236,20 +388,23 @@ const downloadInvoice = async (req, res) => {
     const hrPos = discountPos + 20;
     const totalPos = hrPos + 15;
     
+    // Display subtotal
     doc.font('Helvetica');
     doc.text('Sub Total:', labelX, subTotalPos);
     doc.text(`Rs.${order.subTotal}`, valueX, subTotalPos, { width: 60, align: 'right' });
     
+    // Display total discount
     doc.text('Total Discount:', labelX, discountPos);
     doc.text(`-Rs.${order.totalDiscount||0}`, valueX, discountPos, { width: 60, align: 'right' });
     
     generateHr(doc, hrPos);
     
+    // Display grand total
     doc.font('Helvetica-Bold');
     doc.text('Grand Total:', labelX, totalPos);
     doc.text(`Rs.${order.total}`, valueX, totalPos, { width: 60, align: 'right' });
     
-    // ================= FOOTER =================
+    // ================= INVOICE FOOTER =================
     doc.moveDown(4);
     generateHr(doc, doc.y);
     
@@ -265,9 +420,10 @@ const downloadInvoice = async (req, res) => {
       }
     );
     
+    // Finalize PDF and end stream
     doc.end();
     
-    // ================= HELPER =================
+    // Helper function to draw horizontal line
     function generateHr(doc, y) {
       doc.strokeColor("#aaaaaa")
         .lineWidth(1)
@@ -275,37 +431,23 @@ const downloadInvoice = async (req, res) => {
         .lineTo(550, y)
         .stroke();
     }
-    console.log('hi pdf');
+    
+
   } catch (error) {
     console.log('Error in download invoice controller', error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage: 'Failed to generate invoice'
+    })
   }
 };
 
-const returnSingleItem = async (req,res)=>{
-  try {
-    const {itemId} = req.params;
-    const {orderId,reason} = req.body;
-    const order = await Order.findOne({_id:orderId,'items._id':itemId})
 
-    if(!order) return res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND,customMessage:'Order not found'})
 
-    const item = order.items.id(itemId); //mongoose method
 
-    if(order.orderStatus!=='delivered' && order.orderStatus!=='partial-return'){
-     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'"Only delivered items can be returned'})
-    }
-
-    item.itemStatus='return-requested';
-    item.itemReturnReason = reason;
-
-    await order.save();
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Return requested'})
-
-  } catch (error) {
-    console.log('Error in returnSingleItem controller',error);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,customMessage:'Something went wrong'})
-  }
-}
+/* ===============================
+   EXPORTS
+   =============================== */
 
 export default{
   getOrders,

@@ -6,6 +6,9 @@ const router = express.Router();
 
 router.get('/', offersController.getOffers)
 router.post('/', offersController.addOffer)
+router.get('/search',offersController.searchOffers)
+router.get('/loadOffers',offersController.loadOffers)
+router.get('/filter',offersController.filterOffers)
 router.put('/:editId', offersController.editOffer)
 router.patch('/block/:offerId', offersController.blockOffer)
 router.patch('/unblock/:offerId', offersController.unblockOffer)

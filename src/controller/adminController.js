@@ -56,6 +56,8 @@ export const restoreSoftDeleteProducts = productController.restoreSoftDeleteProd
 export const blockProducts = productController.blockProducts;
 export const unblockProducts = productController.unblockProducts;
 export const getCategory = productController.getCategory;
+export const searchProducts = productController.searchProducts;
+export const loadProducts = productController.loadProducts;
 
 //orders Controller
 
@@ -63,11 +65,17 @@ export const getOrders = ordersController.getOrders;
 export const getOrderDetails = ordersController.getOrderDetails;
 export const returnItem = ordersController.returnItem;
 export const returnWholeItem = ordersController.returnWholeItem;
+export const searchOrders = ordersController.searchOrders;
+export const loadOrders = ordersController.loadOrders;
+export const filterOrders = ordersController.filterOrders;
 
 //offers Controller
 
 export const getOffers = offersController.getOffers;
 export const getTargets = offersController.getTargets
+export const searchOffers = offersController.searchOffers
+export const loadOffers = offersController.loadOffers
+export const filterOffers = offersController.filterOffers
 
 //coupons Controller
 
@@ -78,8 +86,11 @@ export const blockCoupon = couponsController.blockCoupon;
 export const unblockCoupon = couponsController.unblockCoupon;
 export const deleteCoupon = couponsController.deleteCoupon;
 export const restoreCoupon = couponsController.restoreCoupon;
+export const searchCoupons = couponsController.searchCoupons;
+export const loadCoupons = couponsController.loadCoupons;
 
 //Sales Report controller
 
 export const salesReportRouter = salesReportController.getSalesReport;
+export const paginatedgetCustomSalesReport = salesReportController.paginatedgetCustomSalesReport;
 export const downloadSalesReportPdf = salesReportController.downloadSalesReportPdf

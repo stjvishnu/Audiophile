@@ -59,7 +59,6 @@ let previousUsers = [];
 
 
 async function loadUsers() {
-  console.log('hello');
   const res = await fetch('/admin/users/loadUsers');
   const data = await res.json();
    previousUsers = data.users;
@@ -71,7 +70,9 @@ async function loadUsers() {
 }
 
 
-
+let searchMode=false;
+let filterMode=false;
+const searchInput= document.getElementById('searchInput');
 
 function debounce(fn, wait) {
   let timerId = null;
@@ -83,15 +84,20 @@ function debounce(fn, wait) {
     }, wait)
   }
 }
+let searchTerm;
 
 async function handleSearch() {
 
 
 
   try {
-
+    searchMode=true;
+    if(searchInput.value.trim()===''){
+      searchMode=false;
+    }
+    
     //input element always emit input event whenever input value changes
-    let searchTerm = document.getElementById('searchInput').value.trim();
+     searchTerm = searchInput.value.trim();
     const usersContainer = document.getElementById('usersContainer');
 
     //show loading state
@@ -115,7 +121,8 @@ async function handleSearch() {
       throw new Error('Search Failed')
     }
 
-    const users = await response.json();
+    const data = await response.json();
+    const users = data.users;
     renderUsers(users);
   } catch (error) {
     console.log('Error in get handleSearch: ', error);
@@ -123,15 +130,32 @@ async function handleSearch() {
   }
 }
 
+    /**
+     * Handles pagination
+     * @param {String} pageNumber
+     */
+
+    async function loadURL(pageNumber){
+      try {
+        console.log('inside load url',searchTerm);
+        const response = await fetch(`/admin/users/search?searchTerm=${encodeURIComponent(searchTerm)}&page=${pageNumber}`);
+        const data = await response.json();
+        const users = data.users;
+        renderUsers(users);
+      } catch (error) {
+        console.log('Error in loadURL',error);
+      }
+   }
+
+
+
 async function renderUsers(users) {
   const usersContainer = document.getElementById('usersContainer');
 
   if (!users || users.length == 0) {
     usersContainer.innerHTML = '<div class="text-center py-8 text-gray-400">No users found</div>';
-    // usersContainer.appendChild(userElement);
     return
   }
-
 
   usersContainer.innerHTML = '';
 

@@ -74,6 +74,7 @@
 </style>
 
 <script>
+  let pageNum;
   document.addEventListener('DOMContentLoaded',()=>{
 
     //dynamic page numbers
@@ -158,8 +159,19 @@
       return btn
     }
 
+    
     function changePage(pageNumber){
-      window.location.href=`?page=${pageNumber}`
+      console.log('search mode',searchMode);
+      console.log('filter mode',filterMode)
+      if(!searchMode && !filterMode){
+        pageNum = pageNumber;
+        window.location.href=`?page=${pageNumber}`
+      }else if (filterMode){
+        loadFilter(pageNumber)
+      }else if (searchMode){
+        loadURL(pageNumber)
+      }
+      
     }
   })
 </script>

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js'
 
 const getLoadAdmin = (req, res) => {
-  res.redirect('admin/auth/login')
+  res.redirect('admin/login')
 }
 const getAdminLogin = (req, res) => {
   res.render('admin/adminLogin.ejs', {
@@ -10,11 +10,10 @@ const getAdminLogin = (req, res) => {
   })
 }
 
-const postAdminLogin = (req, res) => {
+const postAdminLogin = async (req,res) => {
   const userName = req.body.username;
   const password = req.body.password;
   try {
-
     if (userName == process.env.ADMIN_USERNAME && password == process.env.ADMIN_PASSWORD) {
       const adminToken = jwt.sign({
         userName: process.env.ADMIN_USERNAME,
@@ -22,6 +21,7 @@ const postAdminLogin = (req, res) => {
       }, process.env.JWT_ADMIN_KEY, {
         expiresIn: '15m'
       })
+      
 
       res.cookie('adminToken', adminToken, {
         httpOnly: true
@@ -49,10 +49,10 @@ const getAdminLogout=(req,res)=>{
     httpOnly: true,
     secure: false,
   })
-   res.redirect('/admin/auth/login')
+   res.redirect('/admin/login')
   }catch(err){
     console.log('Error in Get Admin Logout',err)
-    return res.redirect('/admin/auth/login')
+    return res.redirect('/admin/login')
   }
 }
 

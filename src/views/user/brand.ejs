@@ -5,20 +5,90 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
       <!-- Left Side: Logo (unchanged) -->
       <div class="flex justify-center items-start rounded-[4.2rem] shadow-2xl overflow-hidden">
-        <div class="relative group w-full max-w-xs sm:max-w-sm">
-          <img 
+        <div class="relative group w-full max-w-xs sm:max-w-sm sm:min-h-[550px]">
+          <!-- <img 
             src="images/Black-logo.png"  
             alt="Audiophile Logo"
             class="w-full h-full p-6 opacity-80 object-contain 
                   transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                   group-hover:scale-105 group-hover:-translate-y-2"
-          >
+          > -->
+          <div class="bg-transparent rounded-3xl mt-3  p-8 ">
+                <!-- Album Art -->
+            <div class="mb-5">
+              <div class="w-48 h-48  mx-auto mb-4 bg-transparent rounded-[2rem] flex items-center justify-center">
+
+                  <img  id="albumCover"  class="object-cover w-48 h-48 rounded-[2rem]" src="" alt="">
+              </div>
+              
+              <h3 id="trackTitle" class="text-2xl font-bold text-center text-black mb-1">
+                  Midnight Jazz
+              </h3>
+              <p id="trackArtist" class="text-gray-600 text-center">Studio Session</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-1">
+                <input 
+                    type="range" 
+                    id="progressBar" 
+                    min="0" 
+                    max="100" 
+                    value="0" 
+                    class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                    style="accent-color: black;"
+                >
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <button id="prevBtn" class="py-1 px-3 bg-gray-600  hover:bg-black rounded-full transition">
+                    <i class="fas fa-backward text-xl"></i>
+                </button>
+                
+                <button id="playPauseBtn" class="py-2 px-5 bg-black text-white rounded-full hover:bg-gray-800 transition">
+                    <i class="fas fa-play text-2xl"></i>
+                </button>
+                
+                <button id="nextBtn" class="py-1 px-3 bg-gray-600  hover:bg-black rounded-full transition">
+                    <i class="fas fa-forward text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="flex items-center  gap-3 mb-5">
+                <button id="muteBtn" class="py-1 px-2 bg-gray-600 hover:bg-black rounded-full">
+                    <i class="fas fa-volume-up text-lg"></i>
+                </button>
+                <input 
+                    type="range" 
+                    id="volumeBar" 
+                    min="0" 
+                    max="100" 
+                    value="100" 
+                    class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                    style="accent-color: black;"
+                >
+            </div>
+
+            <!-- Playlist -->
+            <!-- <div id="playlist" class="space-y-1"> -->
+                <!-- Playlist items will be generated here -->
+            <!-- </div> -->
+
+            <audio id="audioPlayer"></audio>
+        </div>
+            
         </div>
       </div>
 
       
       <!-- Right Side: Clean Vertical Stack with Professional Style -->
-<div class="flex flex-col justify-center items-center text-center bg-transparent rounded-[4rem] shadow-2xl p-6 sm:p-10 space-y-6 h-full w-full">
+<div class="flex flex-col justify-center items-center text-center bg-transparent  rounded-[4rem] shadow-2xl p-6 sm:p-10 space-y-6 h-full w-full">
   
   <!-- Heading -->
   <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 drop-shadow-sm leading-tight">
@@ -65,3 +135,208 @@
     animation-delay: 100ms;
   }
 </style>
+
+
+<script>
+  // ========== REPLACE THESE URLs WITH YOUR CLOUD-HOSTED AUDIO FILES ==========
+  const playlist = [
+      { 
+          id: 1, 
+          title: "F1", 
+          artist: "Hans Zimmer", 
+          url: "https://res.cloudinary.com/ds9zva1di/video/upload/v1768132798/Don_Toliver_Doja_Cat_-_Lose_My_Mind__mp3.pm_yvs84u.mp3" ,
+          cover : "https://res.cloudinary.com/dsvedpviz/image/upload/v1768130465/Screenshot_2026-01-11_at_4.50.58_PM_s6sxpr.png"
+      },
+      { 
+          id: 2, 
+          title: "Rolex", 
+          artist: "Anirudh Ravichandran", 
+          url: "https://res.cloudinary.com/ds9zva1di/video/upload/v1768131543/Rolex_Theme_-_Anirudh_Ravichander_cwzddq.flac" ,
+          cover : "https://res.cloudinary.com/dsvedpviz/image/upload/v1768130893/Screenshot_2026-01-11_at_4.57.38_PM_tmobbj.png"
+      },
+      { 
+          id: 3, 
+          title: "Sundari Onnu Parayu", 
+          artist: "Noyal Augustine x Jimmy Godrick Mashup", 
+          url: "https://res.cloudinary.com/ds9zva1di/video/upload/v1768135769/Sundari_Onnu_Parayu_x_Take_My_Breath_Noyal_August_xlm66w.m4a" ,
+          cover:"https://res.cloudinary.com/ds9zva1di/image/upload/v1768135594/lion_movie_arzrux.jpg"
+      },
+      { 
+          id: 4, 
+          title: "Urban Rhythm", 
+          artist: "Beat Collection", 
+          url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" 
+      }
+  ];
+  // ============================================================================
+
+  // DOM Elements
+  const audio = document.getElementById('audioPlayer');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const progressBar = document.getElementById('progressBar');
+  const volumeBar = document.getElementById('volumeBar');
+  const currentTimeEl = document.getElementById('currentTime');
+  const durationEl = document.getElementById('duration');
+  const trackTitle = document.getElementById('trackTitle');
+  const trackArtist = document.getElementById('trackArtist');
+  const albumCover =  document.getElementById('albumCover')
+  // const playlistEl = document.getElementById('playlist');
+
+  // State
+  let currentTrack = 0;
+  let isPlaying = false;
+
+  // Initialize
+  function init() {
+      loadTrack(currentTrack);
+      // renderPlaylist();
+      
+      // Event Listeners
+      playPauseBtn.addEventListener('click', togglePlay);
+      prevBtn.addEventListener('click', prevTrack);
+      nextBtn.addEventListener('click', nextTrack);
+      muteBtn.addEventListener('click', toggleMute);
+      
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('loadedmetadata', updateDuration);
+      audio.addEventListener('ended', nextTrack);
+      
+      progressBar.addEventListener('input', seek);
+      volumeBar.addEventListener('input', changeVolume);
+  }
+
+  // Load Track
+  function loadTrack(index) {
+      const track = playlist[index];
+      audio.src = track.url;
+      trackTitle.textContent = track.title;
+      trackArtist.textContent = track.artist;
+      albumCover.src = track.cover
+      // updatePlaylistUI();
+  }
+
+  // Toggle Play/Pause
+  function togglePlay() {
+      if (isPlaying) {
+          audio.pause();
+          playPauseBtn.innerHTML = '<i class="fas fa-play text-2xl"></i>';
+      } else {
+          audio.play();
+          playPauseBtn.innerHTML = '<i class="fas fa-pause text-2xl"></i>';
+      }
+      isPlaying = !isPlaying;
+  }
+
+  // Previous Track
+  function prevTrack() {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrack);
+      if (isPlaying) audio.play();
+  }
+
+  // Next Track
+  function nextTrack() {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      loadTrack(currentTrack);
+      if (isPlaying) audio.play();
+  }
+
+  // Toggle Mute
+  function toggleMute() {
+      if (audio.muted) {
+          audio.muted = false;
+          muteBtn.innerHTML = '<i class="fas fa-volume-up text-lg"></i>';
+          volumeBar.value = audio.volume * 100;
+      } else {
+          audio.muted = true;
+          muteBtn.innerHTML = '<i class="fas fa-volume-mute text-lg"></i>';
+      }
+  }
+
+  // Update Progress
+  function updateProgress() {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      progressBar.value = progress || 0;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+  }
+
+  // Update Duration
+  function updateDuration() {
+      durationEl.textContent = formatTime(audio.duration);
+  }
+
+  // Seek
+  function seek(e) {
+      const seekTime = (e.target.value / 100) * audio.duration;
+      audio.currentTime = seekTime;
+  }
+
+  // Change Volume
+  function changeVolume(e) {
+      audio.volume = e.target.value / 100;
+      audio.muted = false;
+      
+      if (audio.volume === 0) {
+          muteBtn.innerHTML = '<i class="fas fa-volume-mute text-lg"></i>';
+      } else if (audio.volume < 0.5) {
+          muteBtn.innerHTML = '<i class="fas fa-volume-down text-lg"></i>';
+      } else {
+          muteBtn.innerHTML = '<i class="fas fa-volume-up text-lg"></i>';
+      }
+  }
+
+  // Format Time
+  function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  // Render Playlist
+//   function renderPlaylist() {
+//     playlistEl.innerHTML = '';
+//     const track = playlist[currentTrack];
+//     const div = document.createElement('div');
+//     div.className = 'playlist-item p-3 rounded-[1.4rem] bg-black text-white';
+//     div.innerHTML = `
+//         <p class="font-semibold text-sm">${track.title}</p>
+//         <p class="text-xs text-gray-300">${track.artist}</p>
+//     `;
+//     playlistEl.appendChild(div);
+
+// }
+  // function renderPlaylist() {
+  //     playlistEl.innerHTML = '';
+  //     playlist.forEach((track, index) => {
+  //         const div = document.createElement('div');
+  //         div.className = 'playlist-item p-3 rounded-lg cursor-pointer transition';
+  //         div.dataset.index = index;
+  //         div.innerHTML = `
+  //             <p class="font-semibold text-sm">${track.title}</p>
+  //             <p class="text-xs track-artist">${track.artist}</p>
+  //         `;
+  //         div.addEventListener('click', () => {
+  //             currentTrack = index;
+  //             loadTrack(currentTrack);
+  //             audio.play();
+  //             isPlaying = true;
+  //             playPauseBtn.innerHTML = '<i class="fas fa-pause text-2xl"></i>';
+  //         });
+  //         playlistEl.appendChild(div);
+          
+  //     });
+  //     updatePlaylistUI();
+  // }
+
+  // Update Playlist UI
+  // function updatePlaylistUI() {
+  //   renderPlaylist();
+  // }
+
+  // Start
+  init();
+</script>

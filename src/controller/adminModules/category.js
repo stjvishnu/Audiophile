@@ -2,65 +2,99 @@ import  mongoose  from 'mongoose'
 import Category from '../../models/categoryModel.js';
 import Products from '../../models/productModel.js'
 import { HTTP_STATUS,RESPONSE_MESSAGES } from '../../utils/constants.js'
+
+
+/* ===============================
+   CATEGORY CONTROLLERS
+   =============================== */
+
+
+//------------- Get Categories ------------//
+
+/**
+ * Fetches paginated list of categories for admin panel
+ * @route GET /admin/category
+ * @access Admin
+ */
+
 const getCategory = async (req,res)=>{
   try{
-
+     // Pagination parameters
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page -1) * limit;
     
+    // Total count for pagination UI
     const totalCategories = await Category.countDocuments();
     const totalPages = Math.ceil(totalCategories/limit);
 
-
+     // Fetch categories sorted by latest first
     const categories = await Category.find().sort({createdAt:-1}).skip(skip).limit(limit);
-    res.status(HTTP_STATUS.OK).render('admin/categories.ejs',{categories,layout:"layouts/admin-dashboard-layout",pageTitle :"Category",currentPage:page,totalPages:totalPages})
+    res.status(HTTP_STATUS.OK).render('admin/categories.ejs',{
+      categories,
+      layout:"layouts/admin-dashboard-layout",
+      pageTitle :"Category",
+      currentPage:page,
+      totalPages:totalPages})
   }
   catch(err){
     console.log("Error in getCategory",err);
-  
-  }
-
-  
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Request Failed !'
+    })
+  }  
 }
 
 
-//-------------- add Category ---------------------------
+//------------- Add Category ------------//
 
 /**
- * Create a new category document in the Category Scheme
- * 
- * @param {Object} req - Express request object that holds fomr data
- * @param {Object} res - Express response object 
- * 
+ * Creates a new category
+ * @route POST /admin/category/add
+ * @access Admin
  */
 
 const addCategory = async (req,res)=>{
-
   try{
-    const {name}= req.body;
-    const categoryName = name.toLowerCase().trim();
+      const {name}= req.body;
+      const categoryName = name.toLowerCase().trim();
 
-    if(!name || name.trim() === ''){
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Category name Cannot be empty'});
-    }
+      // Validation: empty name
+      if(!name || name.trim() === ''){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          message:RESPONSE_MESSAGES.BAD_REQUEST,
+          customMessage:'Category name cannot be empty'
+        });
+      }
 
-    const categoryExist= await Category.findOne({name:categoryName});
-   if(categoryExist){
-    return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Category Already Exists'});
-   }
+      // Check for duplicate category
+      const categoryExist= await Category.findOne({name:categoryName});
+      if(categoryExist){
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          message:RESPONSE_MESSAGES.BAD_REQUEST,
+          customMessage:'Category Already Exists'
+        });
+      }
 
-    const category = new Category({name}) //create a new document
-    await category.save(); //save the document to collection the tha model is mapped to
-    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED})
+      const category = new Category({name}) //create a new document
+      await category.save(); //save the document to collection the tha model is mapped to
+      res.status(HTTP_STATUS.OK).json({
+        message:RESPONSE_MESSAGES.CREATED,
+        customMessage:'Category Created'
+      })
   }catch(err){
-    console.log('Add Category',err);
-    res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
+      console.log('Error in Add Category',err);
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+        customMessage:"Request Failed, try again latee"
+      })
   }
 
 } 
 
-//-------------------------------------------------------
+
+//------------- Add Category ------------//
 
 
 
@@ -205,17 +239,20 @@ const unblockCategory = async (req,res)=>{
 }
 
 const searchCategory = async (req,res)=>{
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  console.log('req.query',req.query);
   console.log('Search Categories');
   try {
     const {searchTerm} = req.query;
     const categories = await Category.find({
       name:{$regex:searchTerm,$options:'i'}
-    })
+    }).skip(skip).limit(limit)
 
     if(categories.length==0){
       return res.status(HTTP_STATUS.OK).json([]);
     }
-    console.log('Categories',categories);
     res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,categories})
   } catch (error) {
     console.log('Error in search category',error);
@@ -227,7 +264,6 @@ const searchCategory = async (req,res)=>{
 
 
 const loadCategories = async (req,res)=>{
-  console.log('Call inside loadCategories');
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;

@@ -19,7 +19,7 @@ const restrictedAdminLogin = (req,res,next)=>{
   try{
     const adminToken = req.cookies.adminToken;
     if(!adminToken){
-      return res.redirect('/admin/auth/login')
+      return res.redirect('/admin/login')
     }
     next();
   }catch (err){

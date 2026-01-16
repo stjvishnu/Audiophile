@@ -54,7 +54,10 @@
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
               <button id="processing" onclick="changeStatus('<%=orders.id%>','processing')" class="w-6 h-6 <%=orders.orderStatus==='processing'||orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested' || orders.orderStatus==='partial-return'  ? "bg-white":"bg-black" %>  rounded-full">
-                <%if(orders.orderStatus==='processing' || orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return' ){%>
+
+                <%if(orders.orderStatus==='cancelled'){ %>
+
+                <%}else if(orders.orderStatus==='processing' || orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return' ){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
                 
@@ -69,7 +72,8 @@
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
               <button id="shipped" onclick="changeStatus('<%=orders.id%>','shipped')" class="w-6 h-6 <%=orders.orderStatus==='shipped'||orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %> rounded-full">
-                <%if(orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
+                <%if(orders.orderStatus==='cancelled'){ %>
+                <%} else if(orders.orderStatus==='shipped' || orders.orderStatus==='delivered' || orders.orderStatus==='outfordelivery' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
               </button>
@@ -83,7 +87,9 @@
             <div class="flex flex-col items-center">
               <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
                 <button id="outfordelivery" onclick="changeStatus('<%=orders.id%>','outfordelivery')" class="w-6 h-6 <%= orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %> rounded-full">
-                  <%if(orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
+
+                  <%if(orders.orderStatus==='cancelled'){ %>
+                  <%}else if(orders.orderStatus==='outfordelivery' || orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                     <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                     <%}%>
                 </button>
@@ -97,7 +103,9 @@
           <div class="flex flex-col items-center">
             <div class="w-10 h-10 bg-white border-4 border-black rounded-full flex items-center justify-center">
               <button id="delivered" onclick="changeStatus('<%=orders.id%>','delivered')" class="w-6 h-6 <%=orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'? "bg-white":"bg-black" %>  rounded-full">
-                <%if(orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
+
+                <%if(orders.orderStatus==='cancelled'){ %>
+                <%}else if(orders.orderStatus==='delivered' || orders.orderStatus==='cancelled' || orders.orderStatus==='returned' || orders.orderStatus==='return-requested'  || orders.orderStatus==='partial-return'){%>
                   <i class="fa-regular fa-circle-check fa-2xl" style="color: #000000;"></i>
                   <%}%>
               </button>

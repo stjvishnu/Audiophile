@@ -225,6 +225,8 @@ const productPage = async (req,res)=>{
   
   const productId= req.params.id;
   const product=await Product.findById(productId)
+  const variantIds = product.variants.map((v)=>v.sku)
+  console.log('variantIds',variantIds);
   console.log('rpoduct',product);
   const wishlist = await Wishlist.findOne({userId:req.user}).lean();
   const wishlistedVariants = new Set(wishlist?.items.map(item=>item.variantId));
@@ -237,7 +239,7 @@ const productPage = async (req,res)=>{
     console.log('similar products',similarProducts);
     console.log('After edit',product);
 
-  const offers = await Offer.find({isActive:true,isDelete:false})
+  const offers = await Offer.find({isActive:true,isDelete:false,$or:[{targetId:product.category},{targetSku:{$in:variantIds}}]})
   .sort({ createdAt: -1 })
     res.render('user/singleProduct.ejs',{product,similarProducts,offers})
   }

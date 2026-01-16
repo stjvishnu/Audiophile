@@ -13,6 +13,7 @@ ordersBtn.addEventListener('click', async (e)=>{
   addressPage.classList.add('hidden');
   ordersSection.classList.remove('hidden')
   walletPage.classList.add('hidden')
+  referralPage.classList.add('hidden')
   try{
 
     const response  = await axios.get('/user/profile/orders');
@@ -195,7 +196,7 @@ async function viewDetails(orderId){
 
         <button 
           onclick="retryPayment('${order._id}','${order.total}')"
-          class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white ${order.payment.status=='pending'?'bg-red-500':'bg-green-500'}" ${order.payment.status=='pending'?'':'disabled'}>
+          class="w-full sm:w-auto px-6 md:px-8 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white ${order.payment.status=='pending'?'bg-red-500':'bg-green-500'}" ${order.orderStatus=='cancelled'?'disabled':''}  ${order.payment.status=='pending'?'':'disabled'}>
           ${order.payment.status}
         </button>
       </div>   
@@ -218,7 +219,7 @@ async function viewDetails(orderId){
               </button>
             `
             : `
-              <button class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg 
+              <button class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg pointer-events-none
                       ${order.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-gray-200'}
                       text-black">
                 ${order.orderStatus}
@@ -279,8 +280,8 @@ async function viewDetails(orderId){
     Hide Details
   </button>
 
-  <button onclick="downloadInvoice('${order._id}')"
-          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all">
+  <button ${order.orderStatus=='cancelled'?'hidden':''} ${order.payment.status=='pending'?'hidden':''}  onclick="downloadInvoice('${order._id}')"
+          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all ${order.orderStatus=='cancelled'?'hidden':''} ${order.payment.status=='pending'?'hidden':''} ">
     <i class="fa-solid fa-file-lines" style="color: #ffffff;"></i> 
     <span class="ml-1 font-semibold text-white">Invoice</span>
   </button>

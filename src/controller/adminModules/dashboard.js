@@ -109,7 +109,7 @@ return { labels,values}
   const topSellingCategories = await Orders.aggregate([
     {$match:{orderStatus:{$in:['delivered','partial-return']}}},
     {$unwind:'$items'},
-    {$match:{'items.itemStatus':{$in:['delivered','partial-return']}}},
+    {$match:{'items.itemStatus':{$in:['delivered']}}},
     {$group:{_id:'$items.categoryName',totalSold:{$sum:'$items.quantity'},revenue:{$sum:'$items.totalPrice'}}},
     {$project:{_id:0,category:'$_id',totalSold:1,revenue:1}}
   ])
@@ -118,7 +118,7 @@ return { labels,values}
   const topSellingBrands = await Orders.aggregate([
     {$match:{orderStatus:{$in:['delivered','partial-return']}}},
     {$unwind:'$items'},
-    {$match:{'items.itemStatus':{$in:['delivered','partial-return']}}},
+    {$match:{'items.itemStatus':{$in:['delivered']}}},
     {$group:{_id:'$items.brandName',totalSold:{$sum:'$items.quantity'},revenue:{$sum:'$items.totalPrice'}}},
     {$project:{_id:0,brand:'$_id',totalSold:1,revenue:1}}
   ])
@@ -133,7 +133,7 @@ return { labels,values}
   const orders = await Orders.aggregate([
     {$match:{orderStatus:{$in:['delivered','partial-return']}}},
     {$unwind:'$items'},
-    {$match:{'items.itemStatus':{$in:['delivered','partial-return']}}},
+    {$match:{'items.itemStatus':{$in:['delivered']}}},
     {$group:{_id:'',orderCount:{$sum:1}}}
   ])
 
@@ -141,7 +141,7 @@ return { labels,values}
   const totalRevenue = await Orders.aggregate([
     {$match:{orderStatus:{$in:['delivered','partial-return']}}},
     {$unwind:'$items'},
-    {$match:{'items.itemStatus':{$in:['delivered','partial-return']}}},
+    {$match:{'items.itemStatus':{$in:['delivered']}}},
     {$group:{_id:'',totalRevenue:{$sum:'$items.totalPrice'}}},
     {$project:{_id:0,totalRevenue:1}},
   ])

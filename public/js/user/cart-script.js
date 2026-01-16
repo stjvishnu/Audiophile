@@ -206,3 +206,16 @@ async function refreshCart(){
     console.log('Error in refreshing cart',error);
   }
 }
+
+
+const cartModal = document.getElementById('cartModal');
+console.log('1');
+const cartOverlay = document.getElementById('cartOverlay');
+cartPanel.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+cartOverlay.addEventListener('click',()=>{
+  console.log('gdvv hello');
+  cartModal.classList.add('hidden');
+})

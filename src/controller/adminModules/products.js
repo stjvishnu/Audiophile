@@ -327,7 +327,7 @@ const blockProducts= async (req,res)=>{
     if(!mongoose.Types.ObjectId.isValid(productId)){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Id'})
     }
-    const product = Products.findById(productId);
+    const product = await Products.findById(productId);
     if(!product){
       return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product doesn't exist"})
     }
@@ -345,7 +345,7 @@ const unblockProducts= async (req,res)=>{
     if(!mongoose.Types.ObjectId.isValid(productId)){
       return res.status(HTTP_STATUS.BAD_REQUEST).json({message:'Invalid Id'})
     }
-    const product = Products.findById(productId);
+    const product = await Products.findById(productId);
     if(!product){
       return res.status(HTTP_STATUS.NOT_FOUND).json({message:"Product doesn't exist"})
     }
@@ -360,10 +360,47 @@ const unblockProducts= async (req,res)=>{
 const  getCategory = async (req,res)=>{
   try{
     console.log('Call recieved at getCategory');
-    const category=await Category.find()
+    const category=await Category.find({isActive:true,isDeleted:false})
     res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,category:category})
   }catch (err){
     console.log('Error in Get Category in add Modal',err);
+  }
+}
+
+const searchProducts = async (req,res)=>{
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const {searchTerm} = req.query;
+    const products = await Products.find({
+      name:{$regex:searchTerm,$options:'i'}
+    }).skip(skip).limit(limit).populate('category')
+
+    if(products.length==0){
+      return res.status(HTTP_STATUS.OK).json([]);
+    }
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,products})
+
+  } catch (error) {
+    console.log('Error in search products',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
+
+  }
+}
+
+const loadProducts = async (req,res)=>{
+  console.log('Call recieved in load products');
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Products.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const products = await Products.find({isActive:true,isDeleted:false}).sort({createdAt:-1}).skip(skip).limit(limit).populate('category');
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,products})
+  } catch (error) {
+    console.log('Error in load products');
   }
 }
 
@@ -377,6 +414,8 @@ export default{
   restoreSoftDeleteProducts,
   blockProducts,
   unblockProducts,
-  getCategory
+  getCategory,
+  searchProducts,
+ loadProducts
 }
 

@@ -1,12 +1,12 @@
 
 <div id="cartModal" class="hidden z-40 rounded-xl">
   <div id="drawer" aria-labelledby="drawer-title" class="fixed inset-0   size-auto max-h-none max-w-none overflow-hidden bg-transparent not-open:hidden backdrop:bg-transparent ">
-    <div class="absolute inset-0 bg-gray-500/75 transition-opacity duration-500  ease-in-out data-closed:opacity-0"></div>
-    <div tabindex="0" class="absolute inset-0 pl-10 focus:outline-none sm:pl-16">
-      <div class="ml-auto block size-full max-w-md  transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700">
-        <div class="flex h-full flex-col  overflow-y-auto bg-white rounded-l-3xl shadow-xl ">
-          <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-            <div class="flex items-start justify-between">
+    <div  class="absolute inset-0 bg-gray-500/75 transition-opacity duration-500  ease-in-out data-closed:opacity-0"></div>
+    <div id="cartOverlay" tabindex="0" class="absolute inset-0 pl-10 focus:outline-none sm:pl-16">
+      <div  class="ml-auto block size-full max-w-md  transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700">
+        <div id="cartPanel"  class="flex h-full flex-col  overflow-y-auto bg-white rounded-l-3xl shadow-xl ">
+          <div  class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+            <div   class="flex items-start justify-between">
               <h2 id="drawer-title" class="text-lg font-medium text-gray-900">Shopping cart</h2>
               <div class="ml-3 flex h-7 items-center">
                 <button id="cancelBtn" type="button"  class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
@@ -52,3 +52,5 @@
     </div>
   </div>
 </div>
+
+

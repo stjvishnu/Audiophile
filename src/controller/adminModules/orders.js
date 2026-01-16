@@ -28,6 +28,7 @@ const getOrders = async (req,res)=>{
 
 const getOrderDetails = async (req,res)=>{
   console.log('Call recieved in getOrderDetails');
+  console.log('Trouble');
   try {
     const {orderId} = req.params;
     const orders=await Orders.findById(orderId).populate('userId');
@@ -170,6 +171,121 @@ const returnItem  = async (req,res)=>{
   }
 }
 
+const searchOrders = async (req,res)=>{
+  console.log('call recived in search orders');
+  console.log('req.query',req.query);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const {searchTerm} = req.query;
+
+    const orders = await Orders.aggregate([
+      {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+      {$unwind:'$user'},
+      {
+        $match: {
+          $or: [
+            { orderNumber: { $regex: searchTerm, $options: 'i' } },
+            { 'payment.method': { $regex: searchTerm, $options: 'i' } },
+            { orderStatus: { $regex: searchTerm, $options: 'i' } },
+            { 'user.firstName': { $regex: searchTerm, $options: 'i' } }
+          ]
+        }
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ])
+
+
+
+
+    // const orders = await Orders.find({
+    //   $or:[
+    //    {orderNumber:{$regex:searchTerm,$options:'i'}},
+    //    {'payment.method':{$regex:searchTerm,$options:'i'}},
+    //    {orderStatus:{$regex:searchTerm,$options:'i'}}
+    //   ]
+      
+    // }).skip(skip).limit(limit).populate('userId')
+
+    if(orders.length==0){
+      return res.status(HTTP_STATUS.OK).json([]);
+    }
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,orders})
+
+  } catch (error) {
+    console.log('Error in search orders',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
+
+  }
+}
+
+const loadOrders= async (req,res)=>{
+  console.log('Call recieved in load products');
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Orders.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const orders = await Orders.find().sort({createdAt:-1}).skip(skip).limit(limit).populate('userId');
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,orders})
+  } catch (error) {
+    console.log('Error in load products');
+  }
+}
+
+const filterOrders = async(req,res)=>{
+  console.log('Call inside filter orders');
+  console.log(req.query);
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const {orderStatus} = req.query;
+    const {paymentMethod} = req.query;
+    const {searchTerm} = req.query;
+
+    let matchStage = {};
+    if(orderStatus){
+      matchStage.orderStatus = orderStatus
+    }
+    if(paymentMethod){
+      matchStage['payment.method'] = paymentMethod;
+    }
+    if(searchTerm){
+      matchStage.$or=[
+        { orderNumber: { $regex: searchTerm, $options: 'i' } },
+        { 'payment.method': { $regex: searchTerm, $options: 'i' } },
+        { orderStatus: { $regex: searchTerm, $options: 'i' } },
+        { 'user.firstName': { $regex: searchTerm, $options: 'i' } }
+      ]
+    }
+   
+      console.log('match stage',matchStage);
+    
+
+    const orders = await Orders.aggregate([
+      {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+      {$unwind:'$user'},
+      {
+        $match: matchStage
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ])
+
+
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,orders})
+    // const orders = await Orders.find({'payment.paymentMethod':option}).skip(skip).limit(limit)
+  } catch (error) {
+    console.log('Error in filter orders',error);
+  }
+}
+
 
 export default{
   getOrders,
@@ -177,5 +293,7 @@ export default{
   changeOrderStatus,
   returnWholeItem,
   returnItem,
-
+  searchOrders,
+  loadOrders,
+  filterOrders
 }

@@ -3,10 +3,12 @@ import Cart from '../../models/cartModal.js'
 import Wishlist from "../../models/wishlistModel.js"
 import calculateCart from '../../utils/cartCalculator.js'
 import Address from '../../models/addressModel.js';
+import DeliveryZone from "../../models/deliveryZoneModel.js";
 
 
 import jwt from "jsonwebtoken";
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
+
 
 const getCart = async (req,res)=>{
   console.log('Call Recieved at getCart controller');
@@ -20,10 +22,19 @@ const getCart = async (req,res)=>{
         return  res.status(HTTP_STATUS.NOT_FOUND).json({message:RESPONSE_MESSAGES.NOT_FOUND})
       }
       console.log('cart before calculatecart',cart);
-      const calculatedCart = await calculateCart(cart);
+      const {pincode} = req.query
+      let charge=null
+      if(pincode){
+        const zip = pincode.toString().slice(0,1)
+        const deliveryzone = await DeliveryZone.find().lean()
+         charge = deliveryzone.find(d=>d.pincode.toString()===zip.toString()).charge
+      }
+     
+      const calculatedCart = await calculateCart(cart,charge);
       res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.CREATED,cart:calculatedCart})
 
   }catch(err){
+    console.log('error in get cart controller',err);
     return res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST})
   }
 }

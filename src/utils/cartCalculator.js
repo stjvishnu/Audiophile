@@ -15,6 +15,9 @@ const calculateCart = async (cart,charge=null)=>{
     console.log('festivaloffer',festivalOffers);
   const resultItems = [];
 
+
+  
+
   for(let item of cart.items){
 
     let appliedOffer = null;
@@ -83,6 +86,7 @@ const calculateCart = async (cart,charge=null)=>{
     totalDiscount,
     cartCount
   }
+
   } catch (error) {
     console.log('error in calculatecart',error);
   }

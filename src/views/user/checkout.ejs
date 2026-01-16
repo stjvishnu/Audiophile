@@ -239,7 +239,7 @@
 
             <div class="flex justify-between text-gray-700">
               <span>Delivery Fee</span>
-              <span class="font-medium" id="deliveryFeeDisplay">₹ <%=cart.charge%></span>
+              <span class="font-medium" id="deliveryFee">₹ <%=cart.charge%></span>
             </div>
 
             <div class="flex justify-between text-gray-700" id="discountRow">
@@ -457,7 +457,13 @@ if (btn.classList.contains('remove')) {
 
 async function refreshCheckoutCart(){
 try {
-  const res = await axios.get('/user/cart')
+  const selectedAddress = document.getElementById('selectedAddress');
+  console.log(selectedAddress);
+  const pincode = selectedAddress.querySelector('.pincode').textContent
+  console.log('pincode',pincode);
+  const res = await axios.get('/user/cart',{
+    params: { pincode: pincode }
+})
   if(res.data.cart){
     renderCheckoutCart(res.data.cart);
     cartCountContainer.textContent = res.data.cart.cartCount;
@@ -546,12 +552,15 @@ async function renderCheckoutCart(cart){
       orderSummaryContainer.querySelector('#subTotal').textContent=`₹ ${cart.subTotal}`
       orderSummaryContainer.querySelector('#discountAmount').textContent=`₹ ${cart.totalDiscount}`;
       document.getElementById('totalAmount').value=`₹ ${cart.total}`;
+      document.getElementById('deliveryFee').textContent = `₹ ${cart.charge||0}`
+      console.log('this is trouble shooting',cart);
       if(cart.couponDiscount){
         document.getElementById('couponAppliedRow').classList.remove('hidden');
         couponAppliedRow.querySelector('#couponDiscount').textContent=`₹ ${cart.couponDiscount}`;
         orderSummaryContainer.querySelector('#total').textContent=`₹ ${cart.finalPayableAmount}`;
       }else{
         orderSummaryContainer.querySelector('#total').textContent=`₹ ${cart.total}`;
+        document.getElementById('totalAmount').value= `₹ ${cart.total}`;
         document.getElementById('couponAppliedRow').classList.add('hidden');
         couponAppliedRow.querySelector('#couponDiscount').textContent='';
         

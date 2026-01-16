@@ -224,20 +224,20 @@ const editOffer = async (req, res) => {
     }
     console.log('hello');
     // 6. Check for duplicate offers (e.g., a specific product already having an active offer)
-    if (offerType !== 'festival') {
-      if(offerType =='product'){
-        const existingOffer = await Offer.findOne({ offerType, targetSku:targetId, isDelete: false, validTo: { $gt: new Date() } });
-        if (existingOffer) {
-          return res.status(HTTP_STATUS.CONFLICT).json({ message: RESPONSE_MESSAGES.CONFLICT, customMessage: `An active ${offerType} offer already exists for this target.` })
-        }
-      }else if (offerType =='category'){
-        const existingOffer = await Offer.findOne({ offerType, targetId, isDelete: false, validTo: { $gt: new Date() } });
-        if (existingOffer) {
-          return res.status(HTTP_STATUS.CONFLICT).json({ message: RESPONSE_MESSAGES.CONFLICT, customMessage: `An active ${offerType} offer already exists for this target.` })
-        }
+  //   if (offerType !== 'festival') {
+  //     if(offerType =='product'){
+  //       const existingOffer = await Offer.findOne({ offerType, targetSku:targetId, isDelete: false, validTo: { $gt: new Date() } });
+  //       if (existingOffer) {
+  //         return res.status(HTTP_STATUS.CONFLICT).json({ message: RESPONSE_MESSAGES.CONFLICT, customMessage: `An active ${offerType} offer already exists for this target.` })
+  //       }
+  //     }else if (offerType =='category'){
+  //       const existingOffer = await Offer.findOne({ offerType, targetId, isDelete: false, validTo: { $gt: new Date() } });
+  //       if (existingOffer) {
+  //         return res.status(HTTP_STATUS.CONFLICT).json({ message: RESPONSE_MESSAGES.CONFLICT, customMessage: `An active ${offerType} offer already exists for this target.` })
+  //       }
       
-    }
-  }
+  //   }
+  // }
 
   let targetName=null;
   if(offerType=='product'){
@@ -365,6 +365,93 @@ const getTargets = async (req,res) =>{
   }
 }
 
+const searchOffers = async (req,res)=>{
+  console.log('call recived in search offers');
+  console.log('req.query',req.query);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const {searchTerm} = req.query;
+
+    const offers = await Offer.find({
+      $or: [
+        { offerTitle: { $regex: searchTerm, $options: 'i' } },
+        { targetName: { $regex: searchTerm, $options: 'i' } },
+      ]
+    }).skip(skip).limit(limit)
+    
+
+    if(offers.length==0){
+      return res.status(HTTP_STATUS.OK).json([]);
+    }
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,offers})
+
+  } catch (error) {
+    console.log('Error in search offers',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
+
+  }
+}
+
+const loadOffers= async (req,res)=>{
+  console.log('Call recieved in load products');
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Offer.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+    const offers = await Offer.find().sort({createdAt:-1}).skip(skip).limit(limit)
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,offers})
+  } catch (error) {
+    console.log('Error in load products');
+  }
+}
+
+const filterOffers = async(req,res)=>{
+  console.log('Call inside filter offers');
+  console.log(req.query);
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+    const {offer} = req.query;
+    const {searchTerm} = req.query;
+
+    let matchStage = {};
+    if(offer){
+      matchStage.offerType = offer;
+    }
+   
+    if(searchTerm){
+      matchStage.$or=[
+        { offerTitle: { $regex: searchTerm, $options: 'i' } },
+        { targetName: { $regex: searchTerm, $options: 'i' } },
+      ]
+    }
+   
+      console.log('match stage',matchStage);
+    
+
+    const offers = await Offer.aggregate([
+      {
+        $match: matchStage
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ])
+
+
+    res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,offers})
+    // const offers = await Orders.find({'payment.paymentMethod':option}).skip(skip).limit(limit)
+  } catch (error) {
+    console.log('Error in filter offers',error);
+  }
+}
+
+
 
 export default {
   getOffers,
@@ -374,5 +461,8 @@ export default {
   unblockOffer,
   deleteOffer,
   restoreOffer,
-  getTargets
+  getTargets,
+  searchOffers,
+  loadOffers,
+  filterOffers
 }

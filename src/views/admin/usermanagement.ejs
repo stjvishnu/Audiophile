@@ -1,34 +1,24 @@
 <div class="min-h-screen bg-black text-white p-4 md:p-6 lg:p-8">
   <div class="max-w-7xl mx-auto">
-    <!-- Header section -->
-<!-- Users Header -->
-<div class="bg-black text-white rounded-[1.5rem] p-4 flex flex-col md:flex-row justify-between items-center border border-white border-opacity-40 shadow-lg">
-  
-  <!-- Title -->
-  <h1 class="text-2xl font-bold mb-4 md:mb-0">Users</h1>
-  
-  <!-- Search -->
-  <div class="relative w-full md:w-80">
-    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
+    <div class="bg-black text-white rounded-[1.5rem] p-4 flex flex-col md:flex-row justify-between items-center border border-white border-opacity-40 shadow-lg">
+      <h1 class="text-2xl font-bold mb-4 md:mb-0">Users</h1>
+      <div class="relative w-full md:w-80">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input 
+          type="search" 
+          id="searchInput" 
+          placeholder="Search users..." 
+          class="w-full pl-10 pr-4 py-2 bg-gray-800 bg-opacity-50 rounded-lg border border-white border-opacity-20 focus:outline-none transition-all duration-200"
+        >
+      </div>
     </div>
-    <input 
-      type="text"
-      id="searchInput" 
-      placeholder="Search users..." 
-      class="w-full pl-10 pr-4 py-2 bg-gray-800 bg-opacity-50 rounded-lg border border-white border-opacity-20 focus:outline-none transiton-all duration-200"
-    >
-  </div>
-</div>
 
-    
-    <!-- Users list -->
     <div class="mt-8">
-      <!-- Table header -->
-      <div class="bg-black text-white rounded-[1.5rem] p-4 mb-4 grid grid-cols-12 gap-4 items-center font-semibold border border-white border-opacity-40">
+      <div class="hidden md:grid bg-black text-white rounded-[1.5rem] p-4 mb-4 grid-cols-12 gap-4 items-center font-semibold border border-white border-opacity-40">
         <div class="col-span-1">Photo</div>
         <div class="col-span-2">Name</div>
         <div class="col-span-3">Email</div>
@@ -36,83 +26,75 @@
         <div class="col-span-2">Status</div>
         <div class="col-span-2">Actions</div>
       </div>
-      
-      <!-- Users list -->
-      <div class="space-y-4" id="usersContainer" >
+
+      <div class="space-y-4" id="usersContainer">
         <% users.forEach((user, index) => { %>
-          <div  id="user-<%=user._id%>"
-            class=" user-container  <%=user.isActive? 'bg-black bg-opacity-90': 'bg-gray-600' %>  backdrop-blur-sm text-white rounded-[1.5rem] p-4 grid grid-cols-12 gap-4 items-center transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40"
+          <div id="user-<%=user._id%>"
+            class="user-container <%=user.isActive? 'bg-black bg-opacity-90': 'bg-gray-600' %> backdrop-blur-sm text-white rounded-[1.5rem] p-5 md:p-4 grid grid-cols-2 md:grid-cols-12 gap-y-3 md:gap-4 items-center transform transition-all duration-500 hover:scale-[1.01] md:hover:scale-[1.02] hover:shadow-xl border border-white border-opacity-40"
             style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: <%= index * 0.1 %>s; opacity: 0; transform: translateY(20px);"
           >
-            <div class="col-span-1">
+            <div class="col-span-2 md:col-span-1 flex justify-center md:justify-start mb-2 md:mb-0">
               <img 
                 src="<%= user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png' %>" 
                 alt="<%= user.firstName %>" 
-                class="w-10 h-10 rounded-full object-cover"
+                class="w-16 h-16 md:w-10 md:h-10 rounded-full object-cover border-2 border-white border-opacity-20"
               >
             </div>
-            <div class="col-span-2 font-medium"><%= user.firstName %></div>
-            <div class="col-span-3 "><%= user.email %></div>
-            <div class="col-span-2 "><%= user.mobile?user.mobile:'XXXXXXXXXX' %></div>
-            
-            <div class="col-span-2 ">
-              <span id="statusBtn" class=" <%= user.isActive ? "text-green-500" : "text-red-500 " %> </span>w-16 py-1 rounded-full text-sm font-medium text-center inline-block">
+
+            <div class="md:col-span-2 font-bold md:font-medium text-lg md:text-base">
+              <span class="block md:hidden text-xs uppercase text-gray-400 font-normal">Name</span>
+              <%= user.firstName %>
+            </div>
+
+            <div class="md:col-span-3 truncate">
+              <span class="block md:hidden text-xs uppercase text-gray-400">Email</span>
+              <span class="text-sm md:text-base"><%= user.email %></span>
+            </div>
+
+            <div class="md:col-span-2">
+              <span class="block md:hidden text-xs uppercase text-gray-400">Mobile</span>
+              <span class="text-sm md:text-base"><%= user.mobile ? user.mobile : 'XXXXXXXXXX' %></span>
+            </div>
+
+            <div class="md:col-span-2">
+              <span class="block md:hidden text-xs uppercase text-gray-400 mb-1">Status</span>
+              <span id="statusBtn" class="<%= user.isActive ? 'text-green-500' : 'text-red-500' %> w-20 md:w-16 py-1 rounded-full text-sm font-medium text-center inline-block border border-current md:border-none">
                 <%= user.isActive ? "Active" : "InActive" %>
               </span>
             </div>
 
+            <div class="md:col-span-2 flex items-center md:space-x-3">
+              <span class="block md:hidden text-xs uppercase text-gray-400 mr-4">Action:</span>
+              <div class="flex space-x-4 md:space-x-3 text-xl md:text-base">
+                <i id="blockBtn" class="fa-solid fa-lock cursor-pointer <%= user.isActive ? '':'hidden'%>" 
+                   style="color: #991B1B;" onclick="toggleUserStatus('<%=user._id %>',true)"></i>
 
-            <div  class="col-span-2 flex space-x-3">
-
-
-              <i id="blockBtn" class="
-              fa-solid fa-lock cursor-pointer
-              <%= user.isActive ? '':'hidden'%>
-              " 
-              style="color: #991B1B;" onclick="toggleUserStatus('<%=user._id %>',true)"></i>
-
-              <i id="unblockBtn" class="
-              fa-solid fa-lock-open cursor-pointer
-              <%= user.isActive ? 'hidden':''%>
-              " 
-              style="color: #16A34A;" onclick="toggleUserStatus('<%=user._id %>',false)"></i>
-
-
+                <i id="unblockBtn" class="fa-solid fa-lock-open cursor-pointer <%= user.isActive ? 'hidden':''%>" 
+                   style="color: #16A34A;" onclick="toggleUserStatus('<%=user._id %>',false)"></i>
+              </div>
             </div>
-
-
           </div>
         <% }); %>
       </div>
-      
-      <!-- Include pagination component -->
-      <%# include('../partials/pagination.ejs', { currentPage, totalPages, limit }) %>
     </div>
   </div>
 
   <%-include ('./partials/pagination.ejs') %>
-
 </div>
 
 <style>
   @keyframes slideIn {
-    from { 
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to { 
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .modal-open {
-    overflow: hidden;
-  }
-
-  #modalContent.show {
-    transform: scale(1);
-    opacity: 1;
+  .modal-open { overflow: hidden; }
+  #modalContent.show { transform: scale(1); opacity: 1; }
+  
+  /* Smooth wrap for small screens */
+  @media (max-width: 767px) {
+    .user-container {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 </style>
 

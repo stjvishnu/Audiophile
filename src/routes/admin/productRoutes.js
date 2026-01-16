@@ -14,6 +14,9 @@ router.patch('/block-product/:id',adminController.blockProducts);
 router.patch('/unblock-product/:id',adminController.unblockProducts);
 router.get('/getCategory',adminController.getCategory)
 
+router.get('/search',adminController.searchProducts)
+router.get('/loadProducts',adminController.loadProducts)
+
 
 export default router
 

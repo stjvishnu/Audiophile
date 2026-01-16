@@ -7,57 +7,75 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+ 
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+
 </style>
 
-<div class="bg-[#0a0a0a] text-white font-sans min-h-screen">
+<div class="bg-black text-white font-sans min-h-screen">
 
   <div class="flex flex-col">
 
     <div class="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
 
       <div id="offerHeader"
-        class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6 md:mb-8 bg-black p-3 sm:p-4 md:p-6 rounded-xl border border-gray-800 gap-3 sm:gap-4"
+  class="flex flex-col mb-4 sm:mb-6 bg-black p-3 sm:p-4 md:p-6 rounded-xl border border-white/40 gap-3 sm:gap-4"
+>
+  <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Offers</h1>
+
+  <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
+
+    <div class="relative flex-1 min-w-0">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search offers..."
+        class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 pl-10 w-full focus:outline-none text-sm sm:text-base"
       >
-        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Offers</h1>
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </span>
+    </div>
 
-        <div class="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full lg:w-auto">
+    <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3">
+      <select
+        id="offerFilter"
+        class="flex-1 sm:flex-none bg-[#0a0a0a] border border-gray-700 rounded-lg px-3 sm:px-4 py-2 min-w-0
+               focus:outline-none focus:border-gray-500 text-sm sm:text-base"
+      >
+        <option value="">Offers</option>
+        <option value="category">Category Offers</option>
+        <option value="product">Product Offers</option>
+        <option value="festival">Festival Offers</option>
+      </select>
 
-          <div class="relative w-full sm:flex-1 lg:w-48 xl:w-64">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Search offers..."
-              class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 pl-10 w-full focus:outline-none text-sm sm:text-base"
-            >
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
-          </div>
+      <a href="/admin/offers" class="flex-shrink-0 bg-gray-800/50 text-white px-3 sm:px-4 py-2 rounded-lg border border-white/20 cursor-pointer focus:outline-none hover:bg-black text-center text-sm sm:text-base">
+        Reset
+      </a>
 
-          <select
-            id="filterType"
-            onchange="filterOffers()"
-            class="bg-[#0a0a0a] border border-gray-700 rounded-lg px-4 py-2 w-full sm:w-auto
-                   focus:outline-none focus:border-gray-500 text-sm sm:text-base"
-          >
-            <option value="all">All Offers</option>
-            <option value="category">Category Offers</option>
-            <option value="product">Product Offers</option>
-            <option value="festival">Festival Offers</option>
-          </select>
+      <button id="addeditBtn"
+        onclick="openModal('add')"
+        class="flex-shrink-0 bg-white text-black px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 justify-center whitespace-nowrap text-sm sm:text-base"
+      >
+        <span class="text-xl">+</span>
+        Add Offer
+      </button>
+    </div>
 
-          <button id="addeditBtn"
-            onclick="openModal('add')"
-            class="bg-white text-black px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 justify-center whitespace-nowrap text-sm sm:text-base"
-          >
-            <span class="text-xl">+</span>
-            Add Offer
-          </button>
-
-        </div>
-      </div>
+  </div>
+</div>
 
       <!-- Desktop Table View -->
       <div class="hidden lg:block">
-        <div class="bg-black rounded-xl border border-gray-800 overflow-x-auto text-white w-full">
+        <div class="bg-black rounded-xl border border-white/40 overflow-x-auto text-white w-full">
           <table class="w-full border-collapse">
 
             <thead>
@@ -73,13 +91,15 @@
               </tr>
             </thead>
 
-            <tbody class="text-sm">
+            <tbody id="offersContainerDesktop" class="text-sm">
 
               <% if(offers) {%>
 
                 <% offers.forEach((o,i)=>{ %>
 
-               <tr id="<%=o._id%>" class=" border-b <%= o.isDelete ?'bg-gray-600':'' %>  border-gray-800 hover:bg-[#191a19] transition">
+               <tr id="<%=o._id%>" class=" border-b <%= o.isDelete ?'bg-gray-600':'' %>  border-gray-800 hover:bg-[#191a19] slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards ${index * 0.1}s`  transition"
+                style="animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay:<%= i * 0.1 %>s; opacity:0;"
+                >
 
                 <td class="index px-3 py-5"><%=i+1%></td>
 
@@ -163,7 +183,7 @@
                 <th class="px-3 py-3 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody class="text-sm">
+            <tbody id="offersContainerTablet" class="text-sm">
               <% if(offers) {%>
                 <% offers.forEach((o,i)=>{ %>
                   <tr id="tablet-<%=o._id%>" class="border-b <%= o.isDelete ?'bg-gray-600':'' %> border-gray-800 hover:bg-[#191a19] transition">
@@ -205,12 +225,14 @@
       </div>
 
       <!-- Mobile Card View -->
-      <div class="md:hidden space-y-3">
+      <div id="offersContainerMobile" class="md:hidden space-y-3">
 
         <% if(offers) {%>
             <% offers.forEach((o,i)=>{ %>
 
-            <div class="bg-black border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3" id="mobile-card-<%=o._id%>">
+            <div class="bg-black border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3" id="mobile-card-<%=o._id%>"
+              style="animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay:<%=i*0.1%>s; opacity:0; transform:translateY(20px);"
+              >
 
               <div class="flex justify-between items-center pb-2 border-b border-gray-800">
                 <span class="text-xs font-semibold bg-gray-800 px-2 py-1 rounded text-gray-300"># <%=i+1%></span>
@@ -363,14 +385,14 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Valid From *</label>
-            <input type="datetime-local" id="validFrom"
+            <input type="text" value="" placeholder="YYYY/MM/DD" id="validFrom"
               class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <div id="validFrom-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
           </div>
 
           <div>
             <label class="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Valid To *</label>
-            <input type="datetime-local" id="validTo"
+            <input type="text" value="" placeholder="YYYY/MM/DD" id="validTo"
               class="w-full bg-gray-200 border border-gray-700 rounded-lg px-3 sm:px-4 py-2 focus:bg-white text-sm sm:text-base">
               <div id="validTo-error" class="top-full left-0 text-red-500 text-xs mt-0.5 h-4 invisible"></div>
           </div>
@@ -405,5 +427,6 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="/js/admin/offerScript.js"></script>
 <script src="/js/admin/offerValidation.js"></script>

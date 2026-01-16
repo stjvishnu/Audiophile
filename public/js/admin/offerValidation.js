@@ -123,58 +123,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ===================== VALID FROM =====================
-  validFromContainer.addEventListener('blur', () => {
-    const validFrom = new Date(validFromContainer.value.trim());
+  // validFromContainer.addEventListener('blur', () => {
+  //   const validFrom = new Date(validFromContainer.value.trim());
 
-    if (!validFromContainer.value.trim()) {
-      showError('validFrom', "Please select a date");
-      isValid = false;
-      return;
-    }
+  //   if (!validFromContainer.value.trim()) {
+  //     showError('validFrom', "Please select a date");
+  //     isValid = false;
+  //     return;
+  //   }
 
-    if (isNaN(validFrom.getTime())) {
-      showError('validFrom', "Invalid date");
-      isValid = false;
-      return;
-    }
+  //   if (isNaN(validFrom.getTime())) {
+  //     showError('validFrom', "Invalid date");
+  //     isValid = false;
+  //     return;
+  //   }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
 
-    if (validFrom < today) {
-      showError('validFrom', "Start date cannot be before today");
-      isValid = false;
-      return;
-    }
-  });
+  //   if (validFrom < today) {
+  //     showError('validFrom', "Start date cannot be before today");
+  //     isValid = false;
+  //     return;
+  //   }
+  // });
 
   validFromContainer.addEventListener('focus', () => removeError('validFrom'));
 
 
 
   // ===================== VALID TO =====================
-  validToContainer.addEventListener('blur', () => {
-    const start = new Date(validFromContainer.value.trim());
-    const end = new Date(validToContainer.value.trim());
+  // validToContainer.addEventListener('blur', () => {
+  //   const start = new Date(validFromContainer.value.trim());
+  //   const end = new Date(validToContainer.value.trim());
 
-    if (!validToContainer.value.trim()) {
-      showError('validTo', "Please select a date");
-      isValid = false;
-      return;
-    }
+  //   if (!validToContainer.value.trim()) {
+  //     showError('validTo', "Please select a date");
+  //     isValid = false;
+  //     return;
+  //   }
 
-    if (isNaN(end.getTime())) {
-      showError('validTo', "Invalid expiry date");
-      isValid = false;
-      return;
-    }
+  //   if (isNaN(end.getTime())) {
+  //     showError('validTo', "Invalid expiry date");
+  //     isValid = false;
+  //     return;
+  //   }
 
-    if (end <= start) {
-      showError('validTo', "End date must be AFTER start date");
-      isValid = false;
-      return;
-    }
-  });
+  //   if (end <= start) {
+  //     showError('validTo', "End date must be AFTER start date");
+  //     isValid = false;
+  //     return;
+  //   }
+  // });
 
   validToContainer.addEventListener('focus', () => removeError('validTo'));
 

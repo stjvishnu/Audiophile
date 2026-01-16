@@ -61,8 +61,9 @@ placeOrderBtn.addEventListener('click',async(e)=>{
 
     
     if(paymentMethod==='cod'){
-
-          if(totalAmount>1000){
+      let cartAmount = document.getElementById('totalAmount').value;
+      console.log('cartAmount',cartAmount);
+          if(cartAmount>1000){
             showToast('error','COD not allowed for orders above ₹1000')
             document.getElementById('loader').classList.add('hidden')
             document.body.style.overflow = '';

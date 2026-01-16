@@ -131,6 +131,8 @@ const postPlaceOrderInCheckout = async (req,res)=>{
    
 
       const calculatedCart = await calculateCart(cart,charge);
+      console.log('calculated calculated cart',calculatedCart);
+      
 
       if(couponCode){
         const coupon = await Coupon.findOne({code:couponCode});
@@ -192,6 +194,7 @@ const postPlaceOrderInCheckout = async (req,res)=>{
           }
 
           let codPayment =   calculatedCart.finalPayableAmount || calculatedCart.total ;
+          console.log('cod payment',codPayment);
 
           if(codPayment){
             if(codPayment>1000){
@@ -210,7 +213,7 @@ const postPlaceOrderInCheckout = async (req,res)=>{
             subTotal:parseInt(calculatedCart.subTotal),
             discount:parseInt(calculatedCart.totalDiscount),
             couponDiscount:parseInt(calculatedCart.couponDiscount)||null,
-            total: parseInt(calculatedCart.finalPayableAmount+charge)|| parseInt(calculatedCart.total+charge),
+            total: parseInt(calculatedCart.finalPayableAmount)|| parseInt(calculatedCart.total),
           })
 
           console.log('orders',orders);
@@ -389,8 +392,23 @@ const getOrderFailed = async(req,res)=>{
 
 const createRazorpayOrder = async (req,res)=>{
   console.log('Call recieved in createRazorpayorder');
+  
+
   try {
     const {amount,orderId} = req.body
+    const orderFound = await Order.findById(orderId)
+    if(orderFound){
+      console.log('orderFound',orderFound);
+      const isPaid=orderFound.payment.status==='paid';
+      const isCancelled = orderFound.orderStatus ==='cancelled'
+      if(isPaid){
+      return  res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Already Paid, Please check order deails section'})
+      }
+      if(isCancelled){
+        return  res.status(HTTP_STATUS.BAD_REQUEST).json({message:RESPONSE_MESSAGES.BAD_REQUEST,customMessage:'Order Already Cancelled, Unable to proceed !'})
+
+      }
+    }
 
     console.log(req.body);
     const razorpay = new Razorpay({

@@ -147,43 +147,7 @@ isValid = false;
 } 
 })
 
-validFromContainer.addEventListener('blur',()=>{
-  const validFrom = validFromContainer.value.trim();
-  if(!validFrom){
-    showError('validFrom','Please select a valid date')
-    isValid = false;
-  }
 
-  const today = new Date();
-  today.setHours(0,0,0,0); //makes 00:00 am 
-
-  if(new Date(validFrom)< today){
-    showError('validFrom','Start date cannot be a day before today')
-    isValid = false;
-  }
-
-})
-
-validToContainer.addEventListener('blur',()=>{
-  const validTo = validToContainer.value.trim();
-  const validFrom = validFromContainer.value.trim();
-
-  if(!validTo){
-    showError('validTo','Please select a valid date')
-    isValid = false;
-  }
-
-  if(isNaN(new Date(validTo).getTime())){
-    showError('validTo', "Please select a valid expiry date");
-    return;
-  }
-
-  if(new Date(validTo)<new Date(validFrom)){
-    showError('validTo', "Expiry date must be AFTER start date");
-    return;
-  }
-
-})
 
 perUserLimitContainer.addEventListener('blur',()=>{
   const perUserLimit= perUserLimitContainer.value.trim();

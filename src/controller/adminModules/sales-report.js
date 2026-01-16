@@ -18,8 +18,10 @@ const getSalesReport = async (req,res) =>{
       {
         $match: {
           orderStatus: { $in: ['delivered', 'partial-return'] }
-        }
+        },
       },
+      {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+        {$unwind:'$user'},
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit }
@@ -47,25 +49,28 @@ const getCustomSalesReport = async (req,res) =>{
   console.log('call received in getCuatomSales report');
   try {
     console.log('req body',req.body);
-    const {filter} = req.body;
+    const {filter,range} = req.body;
     console.log('filter',filter);
-    const {start:startDate,end:endDate} = filter
+    // const {start:startDate,end:endDate} = filter
     // console.log(startDate);
     let start,end;
 
     if(filter==='daily'){
       start = new Date();
       start.setHours(0,0,0,0)
-      end = new Date();
+      end = new Date()
       end.setHours(23, 59, 59, 999);
+      console.log('end dfd',end.toISOString());
     }
     if(filter==='monthly'){
+      console.log('HI monthly');
       let today = new Date();
       start = new Date(today.getFullYear(), today.getMonth(), 1)
       end = new Date(start.getFullYear(), start.getMonth()+1, 1)
     }
 
     if(filter==='weekly'){
+      console.log('HIi weekly');
       start = new Date();
       start.setDate(start.getDate()-7)
       end = new Date()
@@ -79,19 +84,114 @@ const getCustomSalesReport = async (req,res) =>{
     }
 
     if(filter === 'custom'){
-      start = new Date(startDate);
-      end = new Date(endDate)
+      console.log('its custom');
+      start = new Date(range.start);
+      end = new Date(range.end)
     }
    
 
 
-    console.log('start',start);
-    console.log('end',end);
+    console.log('start troubleshooting',start);
+    console.log('end troubleshooting',end);
 
     console.log('hello');
       const orders = await Orders.aggregate([
         {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
         {$unwind:'$items'},
+        {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+        {$unwind:'$user'}
+      ])
+      // const orders = await Orders.aggregate([
+      //   {$match:{createdAt:{$gte:start,$lte:end}}},
+      //   {$unwind:'$items'},
+      // ])
+      console.log('orders',orders);
+      if(orders.length==0) return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'No Orders Found for selected filter range',orders:[]})
+      
+      const orderTotal = await Orders.aggregate([
+      {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
+      {$unwind:'$items'},
+      {$group:{_id:'',salesCount:{$sum:1},totalAmount:{$sum:'$items.totalPrice'},orginalAmount:{$sum:'$items.priceAtPurchase'}}},
+      {$project:{_id:0,totalAmount:1,orginalAmount:1,salesCount:1}}
+    ])
+    console.log('hello');
+    console.log('orders',orders);
+    console.log('order total',orderTotal);
+    const salesCount = orderTotal[0].salesCount;
+    const orderAmount = orderTotal[0].totalAmount;
+    const discountAmount = orderTotal[0].orginalAmount-orderTotal[0].totalAmount;
+    console.log('ordertotal',orderTotal);
+    console.log('salesCount',salesCount,'orderAmount',orderAmount,'discountAmount',discountAmount);
+    return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,orders,salesCount,orderAmount,discountAmount})
+
+  } catch (error) {
+    console.log('error in get custom sales report',error);
+  }
+}
+
+const paginatedgetCustomSalesReport =  async (req,res) =>{
+  console.log('call received in getCuatomSales report');
+  try {
+    const page = parseInt(req.body.pageNumber) || 1;
+    const limit = parseInt(req.body.limit) || 10;
+    const skip = (page-1) * limit;
+    const totalDocuments = await Orders.countDocuments()
+    const totalPages = Math.ceil(totalDocuments / limit); 
+
+    console.log('req body',req.body);
+    const {filter,range} = req.body;
+    console.log('filter',filter);
+    // const {start:startDate,end:endDate} = filter
+    // console.log(startDate);
+    let start,end;
+
+    if(filter==='daily'){
+      start = new Date();
+      start.setHours(0,0,0,0)
+      end = new Date()
+      end.setHours(23, 59, 59, 999);
+      console.log('end dfd',end.toISOString());
+    }
+    if(filter==='monthly'){
+      console.log('HI monthly');
+      let today = new Date();
+      start = new Date(today.getFullYear(), today.getMonth(), 1)
+      end = new Date(start.getFullYear(), start.getMonth()+1, 1)
+    }
+
+    if(filter==='weekly'){
+      console.log('HIi weekly');
+      start = new Date();
+      start.setDate(start.getDate()-7)
+      end = new Date()
+      
+    }
+
+    if(filter === 'yearly'){
+      let today = new Date();
+      start = new Date(today.getFullYear(),0,1)
+      end = new Date(start.getFullYear()+1,0,1)
+    }
+
+    if(filter === 'custom'){
+      console.log('its custom');
+      start = new Date(range.start);
+      end = new Date(range.end)
+    }
+   
+
+
+    console.log('start troubleshooting',start);
+    console.log('end troubleshooting',end);
+
+    console.log('hello');
+      const orders = await Orders.aggregate([
+        {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
+        {$unwind:'$items'},
+        {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+        {$unwind:'$user'},
+        {$skip:skip},
+        {$limit:limit}
       ])
       // const orders = await Orders.aggregate([
       //   {$match:{createdAt:{$gte:start,$lte:end}}},
@@ -127,10 +227,22 @@ const downloadSalesReportPdf = async (req,res)=>{
   
   try {
 
-    let {filter} = req.body
-    const {start:startDate,end:endDate} = filter
-    // console.log(startDate);
+    let {filter,range} = req.body
     let start,end;
+    if (!filter || filter=='' || filter=={}) {
+      console.log('hi');
+      start = new Date('2015-01-01'); 
+      
+      end = new Date();
+      end.setHours(23, 59, 59, 999);
+    }else{
+
+    
+    // const {start:startDate,end:endDate} = filter
+    // console.log(startDate);
+   
+
+  
 
     if(filter==='daily'){
       start = new Date();
@@ -158,11 +270,11 @@ const downloadSalesReportPdf = async (req,res)=>{
     }
 
     if(filter === 'custom'){
-      start = new Date(startDate);
-      end = new Date(endDate)
+      start = new Date(range.start);
+      end = new Date(range.end)
     }
    
-
+  }
 
     console.log('start',start);
     console.log('end',end);
@@ -170,6 +282,8 @@ const downloadSalesReportPdf = async (req,res)=>{
     console.log('hello');
       const orders = await Orders.aggregate([
         {$match:{orderStatus:{$in:['delivered','partial-return']},createdAt:{$gte:start,$lte:end}}},
+        {$lookup:{from:'users',localField:'userId',foreignField:'_id',as:'user'}},
+        {$unwind:'$user'}
         
       ])
       // const orders = await Orders.aggregate([
@@ -354,6 +468,7 @@ const downloadSalesReportPdf = async (req,res)=>{
     doc.font('Helvetica').fontSize(9);
     
     reportData.orders.forEach((order, index) => {
+      console.log('order',order);
       // Check if we need a new page
       if (position > 700) {
         doc.addPage();
@@ -364,21 +479,21 @@ const downloadSalesReportPdf = async (req,res)=>{
       doc.text(order.orderNumber, orderNoX, position, { width: 60 });
       
       // User Name
-      doc.text(order.userName, userNameX, position, { width: 90 });
+      doc.text(order.user.firstName, userNameX, position, { width: 90 });
       
       // Items List (abbreviated if too long)
-      const itemsList = order.items.map(item => `${item.name} (${item.quantity})`).join(', ');
+      const itemsList = order.items.map(item => `${item.productName} (${item.quantity})`).join(', ');
       const truncatedItems = itemsList.length > 50 ? itemsList.substring(0, 50) + '...' : itemsList;
       doc.text(truncatedItems, itemsX, position, { width: 120 });
       
       // Subtotal
-      doc.text(`₹${order.subtotal}`, subtotalX, position, { width: 60, align: 'right' });
+      doc.text(`Rs. ${order.subTotal}`, subtotalX, position, { width: 60, align: 'right' });
       
       // Discount
-      doc.text(`₹${order.discount}`, discountX, position, { width: 60, align: 'right' });
+      doc.text(`Rs. ${order.discount}`, discountX, position, { width: 60, align: 'right' });
       
       // Total
-      doc.text(`₹${order.total}`, totalX, position, { width: 60, align: 'right' });
+      doc.text(`Rs. ${order.total || order.finalPayableAmount}`, totalX, position, { width: 60, align: 'right' });
       
       position += 25;
       
@@ -430,9 +545,20 @@ const downloadSalesReportXlsx = async(req,res)=>{
   try {
 
     let {filter} = req.body
-    const {start:startDate,end:endDate} = filter
+    
     // console.log(startDate);
     let start,end;
+
+    if (!filter || filter=='' || filter=={}) {
+      console.log('hi');
+      start = new Date('2015-01-01'); 
+      
+      end = new Date();
+      end.setHours(23, 59, 59, 999);
+    }else{
+
+      const {start:startDate,end:endDate} = filter
+    
 
     if(filter==='daily'){
       start = new Date();
@@ -465,7 +591,7 @@ const downloadSalesReportXlsx = async(req,res)=>{
     }
    
 
-
+  }
     console.log('start',start);
     console.log('end',end);
 
@@ -730,6 +856,7 @@ const downloadSalesReportXlsx = async(req,res)=>{
 export default {
   getSalesReport,
   getCustomSalesReport,
+  paginatedgetCustomSalesReport,
   downloadSalesReportPdf,
   downloadSalesReportXlsx
 }
