@@ -14,6 +14,8 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import usermiddleware from "./middlewares/usermiddleware.js";
 import createDebug from "debug";
+import cors from 'cors'
+import startOfferCouponCron from "./utils/cronJob.js";
 
 const debug = createDebug('app');
 
@@ -27,16 +29,17 @@ dotenv.config();
 
 connectDb()
   .then(() =>{ 
-    console.log("✅ Database connected successfully");
+    startOfferCouponCron();
     app.listen(PORT, () => {
       console.log(`Server starts to listen at port ${PORT}`)
     });
 })
-  .catch(err => debug("❌ Database connection error:", err));
+
 
 
 
 const PORT = process.env.PORT || 3000;
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
@@ -51,6 +54,7 @@ app.use(usermiddleware.loadUserAuth);
 
 // app.use(usermiddleware.setName)
 app.use(usermiddleware.setCategories)
+app.use(usermiddleware.setBrands)
 app.use(usermiddleware.wishListCount)
 app.use(usermiddleware.cartCount)
 

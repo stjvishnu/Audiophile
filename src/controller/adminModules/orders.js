@@ -140,9 +140,9 @@ const returnItem  = async (req,res)=>{
       await order.save();
       if(order.payment.method=='razorpay' || order.payment.method=='wallet'){
         let amount=null;
-        if(item.offerApplied){
+
           amount=item.totalPrice
-        }
+        
         if(order.couponDiscount){
           let couponValue = Math.round(order.couponDiscount);
           let returnOrderValue = item.totalPrice;
@@ -150,7 +150,11 @@ const returnItem  = async (req,res)=>{
           let itemValueAfterApplyCoupon = Math.round(returnOrderValue-(returnOrderValue/order.total*couponValue))
           amount=itemValueAfterApplyCoupon;
           creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
+          updateStock(item.productId,item.variantId,item.quantity)
+          return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated,Refund Intiated'})
+
         }
+        creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
         updateStock(item.productId,item.variantId,item.quantity)
         console.log('Tetsting response');
        return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated,Refund Intiated'})

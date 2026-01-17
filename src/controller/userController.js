@@ -112,6 +112,7 @@ export const profileResentOtp = profileController.profileResentOtp;
  export const cancelOrder = ordersController.cancelOrder;
  export const returnOrder = ordersController.returnOrder;
  export const returnSingleItem = ordersController.returnSingleItem;
+ export const cancelSingleItem = ordersController.cancelSingleItem;
  export const downloadInvoice = ordersController.downloadInvoice;
 
  //wallet controller

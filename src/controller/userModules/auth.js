@@ -47,6 +47,8 @@ const getUserHome = async (req,res)=>{
   ])
 
   console.log('topSellingProducts',topSellingProducts[0]);
+  console.log('topSellingProducts',topSellingProducts[0].product.variants);
+
 
   return res.status(HTTP_STATUS.OK).render("user/home.ejs",{title:'home',newProducts,topSellingProducts,msg:req.query || null});
   }catch(err){

@@ -5,7 +5,13 @@ import Products from "../../models/productModel.js"
 import {HTTP_STATUS,RESPONSE_MESSAGES} from '../../utils/constants.js'
 
 const getWishlist = async (req,res)=>{
-  const wishlist = await Wishlist.findOne({user:req.user}).populate('items.productId')
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page-1) * limit;
+  const totalDocuments = await Wishlist.countDocuments() || 5;
+  const totalPages = Math.ceil(totalDocuments/limit);
+
+  const wishlist = await Wishlist.findOne({user:req.user}).populate('items.productId').skip(skip).limit(limit)
 
   if(!wishlist){
     return res.render('user/wishlist.ejs',{wishlistProducts:[]})
@@ -30,7 +36,7 @@ const getWishlist = async (req,res)=>{
   console.log('wishlist',wishlistProducts);
   wishlistProducts.forEach((item)=>console.log(item.variant))
 
-  res.render('user/wishlist.ejs',{wishlistProducts})
+  res.render('user/wishlist.ejs',{wishlistProducts,currentPage:page,totalPages:totalPages})
 }
 
 const postWishlist = async (req,res)=>{

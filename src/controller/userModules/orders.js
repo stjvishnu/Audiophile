@@ -20,6 +20,7 @@ import PDFDocument from 'pdfkit'
 
 async function creditWallet(userId,amount,reason,orderId){
   try {
+    console.log('Call inside credit wallet',userId,amount,reason,orderId);
     // Find user's wallet
     const wallet = await Wallet.findOne({userId})
 
@@ -43,6 +44,16 @@ async function creditWallet(userId,amount,reason,orderId){
     })
   } catch (error) {
     console.log('Error in creditWallet helper function',error);
+  }
+}
+
+//update stock
+async function updateStock(productId,variantId,quantity){
+  try {
+    console.log('Inside update stock');
+    await Product.findOneAndUpdate({_id:productId,'variants.sku':variantId},{$inc:{'variants.$.attributes.stock':quantity}})
+  } catch (error) {
+    console.log('Error in updating stock',error);
   }
 }
 
@@ -206,6 +217,81 @@ const returnOrder = async (req,res) =>{
       customMessage:'Request Failed, try again later !'
     })
 
+  }
+}
+
+//------------- Cancel Single Item ------------//
+const cancelSingleItem = async (req,res)=>{
+  console.log('call inside cancelSingleItem');
+  try {
+    const {itemId} = req.params;
+    const {orderId,reason} = req.body;
+
+    // Find order containing the specific item
+    const order = await Order.findOne({_id:orderId,'items._id':itemId})
+
+    if(!order) return res.status(HTTP_STATUS.NOT_FOUND).json({
+      message:RESPONSE_MESSAGES.NOT_FOUND,
+      customMessage:'Order not found'
+    })
+
+    // Get the specific item using Mongoose subdocument method
+    const item = order.items.id(itemId); //mongoose method
+
+    if(item.itemStatus==='cancelled'){
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        message:RESPONSE_MESSAGES.BAD_REQUEST,
+        customMessage: 'Item is already cancelled, please check details !'
+      })
+    }
+
+        // Check if order is in a returnable state
+        if(order.orderStatus=='delivered' || order.orderStatus=='partial-return' || order.orderStatus=='returned'){
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message:RESPONSE_MESSAGES.BAD_REQUEST,
+            customMessage:'This item is not eligile for cancellation'
+          })
+        }
+
+
+      // Update item status to return-requested
+      item.itemStatus='cancelled';
+      item.itemCancelReason = reason;
+      order.orderStatus = 'partial-cancel'
+      const itemStatuses = order.items.map((item)=>item.itemStatus)
+      const isAllItemsCancelled = itemStatuses.every((status)=>status==='cancelled')
+      if(isAllItemsCancelled) order.orderStatus='cancelled'
+
+      await order.save();
+
+      if(order.payment.method=='razorpay' || order.payment.method=='wallet'){
+        let amount=null;
+       
+          amount=item.totalPrice
+        
+        if(order.couponDiscount){
+          let couponValue = Math.round(order.couponDiscount);
+          let returnOrderValue = item.totalPrice;
+          // let remainingOrderValue = order.total-item.totalPrice;
+          let itemValueAfterApplyCoupon = Math.round(returnOrderValue-(returnOrderValue/order.total*couponValue))
+          amount=itemValueAfterApplyCoupon;
+          creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
+          updateStock(item.productId,item.variantId,item.quantity)
+          return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated,Refund Intiated',order})
+        }
+        creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
+        updateStock(item.productId,item.variantId,item.quantity)
+        return res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated,Refund Intiated',order})
+      }
+      
+      updateStock(item.productId,item.variantId,item.quantity)
+      console.log('checking response');
+      res.status(HTTP_STATUS.OK).json({message:RESPONSE_MESSAGES.OK,customMessage:'Order Status Updated',order})
+  } catch (error) {
+    console.log('Error in cancelSingleItem controller',error);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
+      customMessage:'Something went wrong'})
   }
 }
 
@@ -454,5 +540,6 @@ export default{
   cancelOrder,
   returnOrder,
   returnSingleItem,
+  cancelSingleItem,
   downloadInvoice,
 }

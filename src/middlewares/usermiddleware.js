@@ -212,6 +212,19 @@ const setCategories = async (req, res, next) => {
   }
 };
 
+const setBrands = async (req,res,next)=>{
+  try {
+    const products = await Products.find({isActive:true,isDeleted:false}).lean();
+    const brandsMap = products.map((product)=>product.brand)
+    const brands = [ ... new Set(brandsMap)];
+    res.locals.brands=brands;
+    next();
+  } catch (error) {
+    console.error("Error in fetching Brands", error);
+    next();
+  }
+}
+
 // ----------------------- User Name Middleware -----------------------
 
 /**
@@ -454,6 +467,7 @@ export default {
   authLogin,
   restrcitedLogin,
   setCategories,
+  setBrands,
   setName,
   wishListCount,
   cartCount,

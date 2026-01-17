@@ -133,70 +133,91 @@
               <ul id="cartItemsList" role="list" class="-my-4 sm:-my-6 divide-y divide-gray-200">
                 <% cart.items.forEach((item)=> { %>
                   <li class="flex py-4 sm:py-6">
+                    <!-- Product Image -->
                     <div class="size-20 sm:size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
                       <img src="<%= item.imgUrl %>"
                            alt="<%= item.name %>"
                            class="size-full object-cover" />
                     </div>
-
-                    <div class="ml-3 sm:ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div class="flex flex-col sm:flex-row sm:justify-between text-base font-medium text-gray-900 gap-1 sm:gap-0">
-                          <h3 class="text-sm sm:text-base">
-                            <a href="#" class="line-clamp-2"><%= item.name %></a>
-                          </h3>
-                          <p class="item-price text-sm sm:text-base whitespace-nowrap">₹<%= item.itemTotal %></p>
+              
+                    <!-- Product Details -->
+                    <div class="ml-3 sm:ml-4 flex flex-1 flex-col min-w-0">
+                      <div class="flex-1">
+                        <!-- Product Info and Price Row -->
+                        <div class="flex justify-between gap-3 mb-2">
+                          <!-- Left: Product Info -->
+                          <div class="flex-1 min-w-0">
+                            <h3 class="text-sm sm:text-base font-medium text-gray-900 line-clamp-2 mb-1">
+                              <a href="#"><%= item.name %></a>
+                            </h3>
+                            
+                            <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-xs sm:text-sm text-gray-500">
+                              <p><%= item.category.toUpperCase() %></p>
+                              <p><%= item.color.toUpperCase() %></p>
+                            </div>
+                            
+                            <% if (item.appliedOffer) { %>
+                              <p class="text-[10px] sm:text-xs text-gray-400 mt-1 flex items-center gap-1">
+                                <i class="fas fa-gift text-black"></i>
+                                <span><%= item.appliedOffer.toUpperCase() %> OFFER APPLIED</span>
+                              </p>
+                            <% } %>
+                          </div>
+              
+                          <!-- Right: Price Info -->
+                          <div class="flex flex-col items-end shrink-0 text-right">
+                            <p class="text-xs sm:text-sm text-gray-400 line-through">₹ <%= item.currentPrice %></p>
+                            <p class="text-xs sm:text-sm text-green-600 font-medium">-₹ <%= item.discount %></p>
+                            <p class="text-sm sm:text-base font-semibold text-gray-900 mt-0.5">₹ <%= item.itemTotal %></p>
+                          </div>
                         </div>
-
-                        <p class="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500"><%= item.color %></p>
-                        <% if (item.appliedOffer) { %>
-                          <p class="text-xs text-green-600 mt-0.5"><%= item.appliedOffer %> offer applied</p>
-                        <% } %>
-                      </div>
-
-                      <div class="flex flex-1 items-end justify-between text-sm mt-2 sm:mt-3">
-                        <div class="flex items-center space-x-2">
-                          <p class="text-gray-500 text-sm">Qty</p>
-                          
-                          <form class="max-w-xs">
-                            <div class="relative flex items-center">
+              
+                        <!-- Quantity and Remove Row -->
+                        <div class="flex items-center justify-between mt-3 sm:mt-4 gap-3">
+                          <!-- Quantity Controls -->
+                          <div class="flex items-center gap-2">
+                            <span class="text-xs sm:text-sm text-gray-500 shrink-0">Qty</span>
+                            
+                            <div class="flex items-center gap-1.5">
                               <button type="button" 
                                       data-input-counter-decrement="counter-input-<%= item.productId %>"
                                       data-product="<%= item.productId %>"
                                       data-product-color="<%= item.color %>"
                                       data-variant="<%= item.variantId %>"
-                                      class="decrement shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
-                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 2">
+                                      class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-lg h-4 w-4 sm:h-5.5 sm:w-5.5">
+                                <svg class="w-1 h-1 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 2">
                                   <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
                                 </svg>
                               </button>
-
+              
                               <input type="text"
                                      data-input-counter
-                                     class="qtyInput shrink-0 text-gray-900 border-0 bg-transparent text-sm sm:text-base font-normal focus:outline-none focus:ring-0 max-w-[2.8rem] sm:max-w-[3.2rem] text-center"
+                                     class="qtyInput shrink-0 text-gray-900 border-0 bg-transparent text-sm sm:text-base font-normal focus:outline-none focus:ring-0 w-8 sm:w-10 text-center"
                                      value="<%= item.quantity %>"
                                      readonly />
-
+              
                               <button type="button" 
                                       data-input-counter-increment="counter-input-<%= item.productId %>"
                                       data-product="<%= item.productId%>"
                                       data-product-color="<%= item.color %>"
                                       data-variant="<%= item.variantId %>"
-                                      class="increment shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
-                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 18">
+                                      class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-lg h-4 w-4 sm:h-5.5 sm:w-5.5">
+                                <svg class="w-1 h-2 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 18">
                                   <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
                                 </svg>
                               </button>
                             </div>
-                          </form>
+                          </div>
+              
+                          <!-- Remove Button -->
+                          <button 
+                                  data-variant="<%= item.variantId %>"
+                                  type="button"
+                                  class="remove flex items-center gap-1.5 font-medium text-gray-700 hover:text-red-600 transition-colors text-xs sm:text-sm shrink-0">
+                            <i class="fa-regular fa-trash-can"></i>
+                            <span class="hidden xs:inline sm:inline">Remove</span>
+                          </button>
                         </div>
-
-                        <button 
-                                data-variant="<%= item.variantId %>"
-                                type="button"
-                                class="remove font-medium text-indigo-600 hover:text-indigo-500 text-sm sm:text-base">
-                          Remove
-                        </button>
                       </div>
                     </div>
                   </li>
@@ -332,6 +353,10 @@
 <script src="/js/user/checkout-address-script.js"></script>
 <script src="/js/user/address-validation.js"></script>
 <script>
+
+  const cartBtn=document.getElementById('cartBtn')
+  cartBtn.disabled=true;
+
 function openAddressModal() {
   document.getElementById('addressesModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -499,53 +524,99 @@ async function renderCheckoutCart(cart){
   
       let productDiv = document.createElement('div');
       productDiv.innerHTML=`
-      <li class="flex py-6">
-      <div class="size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
-          <img src="${item.imgUrl}" alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt." class="size-full object-cover" />
+      <li class="flex py-4 sm:py-6">
+  <!-- Product Image -->
+  <div class="size-20 sm:size-24 shrink-0 overflow-hidden rounded-[2rem] border border-gray-200">
+    <img src="${item.imgUrl}" 
+         alt="${item.name}" 
+         class="size-full object-cover" />
+  </div>
+
+  <!-- Product Details -->
+  <div class="ml-3 sm:ml-4 flex flex-1 flex-col min-w-0">
+    <div class="flex-1">
+      <!-- Product Info and Price Row -->
+      <div class="flex justify-between gap-3 mb-2">
+        <!-- Left: Product Info -->
+        <div class="flex-1 min-w-0">
+          <h3 class="text-sm sm:text-base font-medium text-gray-900 line-clamp-2 mb-1">
+            <a href="#">${item.name}</a>
+          </h3>
+          
+          <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-xs sm:text-sm text-gray-500">
+            <p id='categoryName'>${item.category.toUpperCase()}</p>
+            <p>${item.color.toUpperCase()}</p>
+          </div>
+          
+          ${item.appliedOffer ? `
+            <p class="text-[10px] sm:text-xs text-gray-400 mt-1 flex items-center gap-1">
+              <i class="fas fa-gift text-black"></i>
+              <span>${item.appliedOffer.toUpperCase()} OFFER APPLIED</span>
+            </p>
+          ` : ''}
+        </div>
+
+        <!-- Right: Price Info -->
+        <div class="flex flex-col items-end shrink-0 text-right">
+          <p class="text-xs sm:text-sm text-gray-400 line-through">₹ ${item.currentPrice}</p>
+          <p class="text-xs sm:text-sm text-green-600 font-medium">-₹ ${item.discount}</p>
+          <p id='productPrice' class="text-sm sm:text-base font-semibold text-gray-900 mt-0.5">₹ ${item.itemTotal}</p>
+        </div>
       </div>
-  
-      <div class="ml-4 flex flex-1 flex-col">
-          <div>
-          <div class="flex justify-between text-base font-medium text-gray-900">
-              <h3>
-              <a href="#">${item.name}</a>
-              </h3>
-              <p id='productPrice' class="ml-1">${item.itemTotal} ₹</p>
+
+      <!-- Quantity and Remove Row -->
+      <div class="flex items-center justify-between mt-3 sm:mt-4 gap-3">
+        <!-- Quantity Controls -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs sm:text-sm text-gray-500 shrink-0">Qty</span>
+          
+          <div class="flex items-center gap-1.5">
+            <button type="button" 
+                    id="decrement-button" 
+                    data-input-counter-decrement="counter-input" 
+                    data-product="${item.productId}" 
+                    data-product-color="${item.color}" 
+                    data-variant="${item.variantId}"
+                    class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-6 w-6 sm:h-7 sm:w-7">
+              <svg class="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" fill="none" viewBox="0 0 18 2">
+                <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
+              </svg>
+            </button>
+
+            <input type="text"
+                   id="counter-input"
+                   data-input-counter
+                   class="shrink-0 text-gray-900 border-0 bg-transparent text-sm sm:text-base font-normal focus:outline-none focus:ring-0 w-8 sm:w-10 text-center"
+                   value="${item.quantity}"
+                   readonly />
+
+            <button type="button" 
+                    id="increment-button" 
+                    data-input-counter-increment="counter-input" 
+                    data-product="${item.productId}" 
+                    data-product-color="${item.color}" 
+                    data-variant="${item.variantId}"
+                    class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-6 w-6 sm:h-7 sm:w-7">
+              <svg class="w-2 h-2 sm:w-3 sm:h-3 text-white" fill="none" viewBox="0 0 18 18">
+                <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
+              </svg>
+            </button>
           </div>
-          <p id='categoryName' class="mt-1 text-sm  text-gray-600">${item.category}</p>
-          <p class="mt-1 text-sm text-gray-500">${item.color}</p>
-          ${
-              item.appliedOffer
-              ? `<p class="text-xs text-green-600">${item.appliedOffer} offer applied</p>`
-              : ``
-          }
-          </div>
-          <div class="flex flex-1 items-end justify-between text-sm">
-          <div class="flex items-center space-x-2">
-              <p class="text-gray-500 text-md">Qty</p>
-              <form class="max-w-xs">
-                  <div class="relative flex items-center">
-                      <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId}   class="decrement shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
-                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 2">
-                                  <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
-                                </svg>
-                      </button>
-                      <input type="text" id="counter-input" data-input-counter class="shrink-0 text-gray-900 border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value=${item.quantity} required />
-                      <button type="button" id="increment-button" data-input-counter-increment="counter-input" data-product=${item.productId} data-product-color=${item.color} data-variant=${item.variantId}  class="increment shrink-0 bg-black hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-6 sm:w-6">
-                                <svg class="w-2 h-2 sm:w-3 sm:h-3" fill="none" viewBox="0 0 18 18">
-                                  <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
-                                </svg>
-                      </button>
-                  </div>
-              </form>
-          </div>
-      
-          <div class="flex">
-          <button id='remove-Button' data-variant=${item.variantId} type="button" class="remove font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
-          </div>
+        </div>
+
+        <!-- Remove Button -->
+        <button 
+                id='remove-Button'
+                data-variant="${item.variantId}"
+                type="button"
+                class="remove flex items-center gap-1.5 font-medium text-gray-700 hover:text-red-600 transition-colors text-xs sm:text-sm shrink-0">
+          <i class="fa-regular fa-trash-can"></i>
+          <span class="hidden xs:inline sm:inline">Remove</span>
+        </button>
       </div>
-      </div>
-      </li>
+    </div>
+  </div>
+</li>
       `
 
       cartItemsListContainer.appendChild(productDiv)

@@ -4,7 +4,7 @@ const ordersBtn= document.getElementById('ordersBtn');
 const orderDetailsSectionContainer = document.getElementById('orderDetailsSection');
 
 let orders;
-let itemReturnRequested=false;
+let disableRequestBtn=false;
 
 ordersBtn.addEventListener('click', async (e)=>{
   console.log('orders btn clciked');
@@ -131,8 +131,8 @@ async function viewDetails(orderId){
 
     order.items.forEach((item)=>{
 
-      if(item.itemStatus==='return-requested' || item.itemStatus==='return-rejected' || item.itemStatus==='returned'){
-        itemReturnRequested=true
+      if(item.itemStatus==='return-requested' || item.itemStatus==='return-rejected' || item.itemStatus==='returned' || order.orderStatus==='partial-cancel' || order.orderStatus==='cancelled'){
+        disableRequestBtn=true;
       }
       
     
@@ -153,8 +153,34 @@ async function viewDetails(orderId){
                   class="w-28 h-28 rounded-2xl bg-white object-cover">
               <p class="text-gray-600 font-semibold">Qty : ${item.quantity}</p>
               ${order.items.length>1
-                ?`<button id="itemStatus-${item._id}" onclick=returnSingleItem('${order._id}','${item._id}') class="item-status ${order.orderStatus==='delivered'||order.orderStatus=== 'partial-return'?'':'hidden'} px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" ${item.itemStatus=='return-rejected'||item.itemStatus=='returned' || item.itemStatus=='return-requested' ?'disabled':''}>
-                ${item.itemStatus==='delivered'?'Return' :item.itemStatus||''}
+                ?`<button id="itemStatus-${item._id}" onclick=returnSingleItem('${order._id}','${item._id}') class="item-status
+
+                
+                
+                px-8 py-1 text-sm font-semibold rounded-lg text-white bg-red-500" ${item.itemStatus=='return-rejected'||item.itemStatus=='returned' || item.itemStatus=='return-requested' || item.itemStatus=='cancelled' ?'disabled':''}>
+                
+                ${(() => {
+                  const status = item.itemStatus ?? 'placed';
+
+                  if (status === 'cancelled') return 'Cancelled';
+                
+                  if (status === 'delivered') return 'Return';
+
+                  if(status === 'return-rejected') return 'Return - Rejected'
+
+                  if(status === 'return-requested') return 'Return - Requested'
+                
+                  const nonCancellableStatuses = [
+                    'cancelled',
+                    'return-requested',
+                    'return-rejected',
+                    'returned'
+                  ];
+                
+                  if (!nonCancellableStatuses.includes(status)) return 'Cancel';
+                
+                  return '';
+                })()}
               </button>`
               :''
               }
@@ -219,7 +245,7 @@ async function viewDetails(orderId){
               </button>
             `
             : `
-              <button class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg pointer-events-none
+              <button id="order-status" class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg pointer-events-none
                       ${order.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-gray-200'}
                       text-black">
                 ${order.orderStatus}
@@ -227,7 +253,7 @@ async function viewDetails(orderId){
 
               <button id="returnCancelBtn" onclick="orderReturnCancel('${order._id}', '${order.orderStatus === 'delivered' ? 'return' : 'cancel'}')"
                 class="w-full sm:w-auto px-4 md:px-5 py-2 md:py-1 text-xs md:text-sm font-semibold rounded-lg text-white 
-                      ${order.orderStatus === 'delivered' ? 'bg-red-500' : 'bg-red-500'}" ${itemReturnRequested?'disabled':''}>
+                      ${order.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-red-500'}" ${disableRequestBtn ?'disabled':''}>
                 ${order.orderStatus == 'partial-return' ? 'Return' : order.orderStatus==='delivered'?'Return':'Cancel'}
               </button>
             `
@@ -280,8 +306,8 @@ async function viewDetails(orderId){
     Hide Details
   </button>
 
-  <button ${order.orderStatus=='cancelled'?'hidden':''} ${order.payment.status=='pending'?'hidden':''}  onclick="downloadInvoice('${order._id}')"
-          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all ${order.orderStatus=='cancelled'?'hidden':''} ${order.payment.status=='pending'?'hidden':''} ">
+  <button id="invoice-btn" ${order.orderStatus=='cancelled'?'hidden':''} ${order.payment.status=='pending'?'hidden':''}  onclick="downloadInvoice('${order._id}')"
+          class="w-full sm:w-auto bg-black text-white px-6 md:px-5 py-2 rounded-[2rem] text-xs md:text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all ${order.orderStatus=='cancelled' || order.orderStatus=='returned' ?'hidden':''} ${order.payment.status=='pending'?'hidden':''} ">
     <i class="fa-solid fa-file-lines" style="color: #ffffff;"></i> 
     <span class="ml-1 font-semibold text-white">Invoice</span>
   </button>
@@ -456,9 +482,12 @@ async function downloadInvoice(orderId){
 //single order return
 
 async function returnSingleItem(orderId,itemId){
+  const action=document.getElementById(`itemStatus-${itemId}`).innerText.trim().toLocaleLowerCase()
+
   try {
     console.log('itemId',itemId);
-    const result=await sweetAlert('error','Are you sure ?',`You want to return the order`,true,true)
+    console.log('action',action);
+    const result=await sweetAlert('error','Are you sure ?',`You want to ${action} the order`,true,true)
     if(result.isConfirmed){
      const modal= document.getElementById('return-cancelModal')
      modal.classList.remove('hidden')
@@ -490,10 +519,28 @@ async function returnSingleItem(orderId,itemId){
               modal.querySelector('#customReasonTextarea').value=''
               console.log('User typed',reason);
               console.log('OrderId',orderId)
-
-        const response = await axios.patch(`/user/orders/return-item/${itemId}`,{orderId,reason:reason})
+              console.log('trouble action',action);
+        const response = await axios.patch(`/user/orders/${action}-item/${itemId}`,{orderId,reason:reason})
         if(!response?.data?.customMessage) throw new Error('Issue in returning item')
-
+        if(action=='cancel'){
+          const orderStatus = response?.data?.order?.orderStatus;
+          if(orderStatus=='cancelled'){
+           const invoiceBtn= document.getElementById('invoice-btn');
+           invoiceBtn.classList.add('hidden')
+          }
+          const orderStatusBtn = document.getElementById('order-status');
+          orderStatusBtn.innerText=response?.data?.order?.orderStatus;
+          const itemStatusBtn = document.getElementById(`itemStatus-${itemId}`)
+          itemStatusBtn.textContent='cancelled';
+          itemStatusBtn.classList.add('bg-red-500');
+          const cancelBtn=document.getElementById('returnCancelBtn');
+          cancelBtn.disabled=true;
+          showToast('success','Item Cancelled');
+          showToast('success',response?.data?.customMessage);
+          modal.classList.add('hidden')
+          modal.querySelector('textarea').value=''
+          return
+        }
         const itemStatusBtn = document.getElementById(`itemStatus-${itemId}`)
         itemStatusBtn.textContent='return-requested';
         itemStatusBtn.classList.add('bg-red-500')

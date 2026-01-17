@@ -29,11 +29,34 @@
           </div>
 
           <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-            <div class="flex justify-between text-base font-medium text-gray-900">
-              <p>Subtotal</p>
-              <p id="subTotal" ></p>
+            <div class="space-y-0.5 sm:space-y-1">
+              <!-- Subtotal Row -->
+              <div class="flex justify-between items-center text-base sm:text-md font-medium text-gray-900">
+                <p>Subtotal</p>
+                <p id="subTotal" class="font-semibold"></p>
+              </div>
+              
+              <!-- Discount Row -->
+              <div class="flex justify-between items-center text-base sm:text-md font-medium text-gray-900">
+                <p>Discount</p>
+                <p id="discount" class="font-semibold text-green-600"></p>
+              </div>
+              
+              <!-- Divider -->
+              <div class="border-t border-gray-200 pt-3 sm:pt-4"></div>
+              
+              <!-- Total Row -->
+              <div class="flex justify-between items-center text-sm sm:text-lg font-bold text-gray-900">
+                <p>Total</p>
+                <p id="total" class="text-md sm:text-lg"></p>
+              </div>
+              
+              <!-- Tax Notice -->
+              <p class="text-xs sm:text-sm text-gray-500 text-center sm:text-left">
+                Shipping and taxes calculated at checkout.
+              </p>
             </div>
-            <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+       
             <div class="mt-6">
               <a href="/user/checkout" class="flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-black">Checkout</a>
             </div>

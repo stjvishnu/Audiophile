@@ -24,6 +24,9 @@ const orderSchema =  new mongoose.Schema({
     itemReturnReason:{
       type:String,
     },
+    itemCancelReason:{
+      type:String,
+    },
     categoryName:{
       type:String,
       required:true
@@ -72,7 +75,7 @@ orderNumber:{
 },
 orderStatus:{
   type:String,
-  enum:['processing','shipped','out for delivery','delivered','cancelled','returned','partial-return'],
+  enum:['processing','shipped','out for delivery','delivered','cancelled','returned','partial-return','partial-cancel'],
   default:'processing'
 },
 reason:{

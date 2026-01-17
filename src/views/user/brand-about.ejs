@@ -1,21 +1,54 @@
-
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-  <section class="max-w-7xl mx-auto px-4 py-12 sm:py-16">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-      <!-- Left Side: Logo and Brand Name -->
-      <div class="flex flex-col items-center md:items-start text-center md:text-left">
-        <img src="/images/Black-logo.png" alt="Brand Logo" class="w-32 h-32 object-contain mb-4">
-        <h1 class="text-2xl font-bold text-gray-800">Brand Name</h1>
+<section class="py-12 md:py-16 bg-transparent">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Changed to grid for better equal height control -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+      <!-- Left Side: Logo (unchanged) -->
+      <div class="flex justify-center items-start rounded-[4.2rem] shadow-2xl overflow-hidden">
+        <div class="relative group w-full max-w-xs sm:max-w-sm sm:min-h-[550px]">
+          <img 
+            src="images/Black-logo.png"  
+            alt="Audiophile Logo"
+            class="w-full h-full p-6 opacity-90 object-contain 
+                  transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                  group-hover:scale-105 group-hover:-translate-y-2"
+          > 
+          
+            
+        </div>
       </div>
 
-      <!-- Right Side: Brand Info -->
-      <div class="max-w-prose text-gray-600 space-y-4">
-        <p class="text-base leading-relaxed">
-          Welcome to Brand Name, a company dedicated to delivering high-quality audio solutions. Founded with a passion for music and innovation, we strive to create products that enhance your listening experience. Our commitment to excellence drives us to combine cutting-edge technology with timeless design.
-        </p>
-        <p class="text-base leading-relaxed">
-          With years of expertise in the audio industry, we cater to audiophiles and casual listeners alike. Explore our range of headphones, speakers, and accessories designed to bring your music to life.
-        </p>
-      </div>
+      
+      <!-- Right Side: Clean Vertical Stack with Professional Style -->
+<div class="flex flex-col justify-center items-center text-center bg-transparent  rounded-[4rem] shadow-2xl p-6 sm:p-10 space-y-6 h-full w-full">
+  
+  <!-- Heading -->
+  <!-- <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 drop-shadow-sm leading-tight">
+    Like You, We Love Music
+  </h2> -->
+
+  
+
+  <!-- Subtext -->
+  <!-- <p class="text-sm text-gray-400 font-mono tracking-wide">
+    A commitment to delivering high-fidelity Audio.
+  </p> -->
+
+  <!-- Tagline -->
+  <p class="text-lg sm:text-xl md:text-2xl italic font-semibold text-gray-900 leading-relaxed">
+    At Audiophile, we are driven by a passion 
+for precision sound. Our brand represents 
+a commitment to delivering high-fidelity
+ headsets that enhance every note, beat, 
+and rhythm. Designed for true audio enthusiasts,
+ Audiophile blends cutting-edge technology with
+ unmatched clarity, ensuring an immersive listening 
+experience like no other.
+“Experience sound at its purest.”
+  </p>
+</div>
+
     </div>
-  </section>
+  </div>
+</section>
+
+
