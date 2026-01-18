@@ -9,7 +9,7 @@ const getUsers = async (req,res)=>{
     const totalDocuments = await User.countDocuments()
     const totalPages = Math.ceil(totalDocuments / limit); 
     const users = await User.find({}).sort({createdAt:-1}).skip(skip).limit(limit);
-    res.status(HTTP_STATUS.OK).render('admin/userManagement.ejs',{users,layout:"layouts/admin-dashboard-layout.ejs",pageTitle :"User Management",currentPage:page,totalPages:totalPages})
+    res.status(HTTP_STATUS.OK).render('admin/usermanagement.ejs',{users,layout:"layouts/admin-dashboard-layout.ejs",pageTitle :"User Management",currentPage:page,totalPages:totalPages})
   }
   catch(err){
     console.log("Error in Get Users: ",err)

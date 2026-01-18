@@ -32,5 +32,4 @@ router.use('/sales-report',adminMiddleware.restrictedAdminLogin,salesReportRoute
 
 
 
-
 export default router
