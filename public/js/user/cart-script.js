@@ -1,6 +1,7 @@
 
 const cartmodal=document.getElementById('cartModal');
 const cartCountContainer = document.getElementById('cartCountContainer')
+const mobcartCountContainer = document.getElementById('mobcartCountContainer')
 const cancelBtn = document.getElementById('cancelBtn');
 const addToCartBtn= document.querySelectorAll('.addToCartBtn')
 const productContainer = document.getElementById('productContainer')
@@ -39,7 +40,12 @@ btn.addEventListener('click',async (e)=>{
         const cartCount = Number(res.data.cart.cartCount);
         console.log(cartCount);
         cartCountContainer.innerText=cartCount; 
+        if(mobcartCountContainer){
+          mobcartCountContainer.innerText=cartCount;
+          mobcartCountContainer.classList.remove('opacity-50')
+        }
         cartCountContainer.classList.remove('opacity-50');
+       
         renderCart(res.data.cart);
 
         document.getElementById('loader').classList.add('hidden')
@@ -72,7 +78,10 @@ function renderCart(cart){
 
   if (!cart || !cart.items.length) {
     productContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
-    subTotalEl.textContent = `0 ₹`
+    subTotalEl.textContent = `₹ 0`
+    totalEl.textContent= `₹ 0`
+    totalEl.textContent= `₹ 0`
+    discountEl.textContent= `₹ 0`
     document.getElementById('loader').classList.add('hidden')
     document.body.style.overflow = '';
     document.getElementById('cartModal').classList.remove('hidden')
@@ -186,6 +195,8 @@ function renderCart(cart){
       discountEl.textContent = `-₹ ${cart.totalDiscount} `;
       totalEl.textContent = `₹ ${cart.total} `;
 })
+  document.getElementById('loader').classList.add('hidden')
+  document.body.style.overflow = '';
 
 }
 
@@ -214,6 +225,8 @@ productContainer.addEventListener('click',async (e)=>{
 
   if (btn.classList.contains('decrement')) {
     try {
+      document.getElementById('loader').classList.remove('hidden')
+      document.body.style.overflow = 'hidden';
       const response = await axios.post('/user/cart/update-quantity', {
         productId: btn.dataset.product,
         variantId: btn.dataset.variant,
@@ -221,6 +234,8 @@ productContainer.addEventListener('click',async (e)=>{
       });
       refreshCart();
     } catch (error) {
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       console.log('error in increasing prorduct quantity',error);
       const message = error.response.data.customMessage;
       if(message) showToast('error',message)
@@ -230,9 +245,13 @@ productContainer.addEventListener('click',async (e)=>{
 
   if (btn.classList.contains('remove')) {
     try {
-     const response  = await axios.delete(`/user/cart/${e.target.dataset.variant}`);
+      document.getElementById('loader').classList.remove('hidden')
+      document.body.style.overflow = 'hidden';
+     const response  = await axios.delete(`/user/cart/${btn.dataset.variant}`);
     refreshCart();
     } catch (error) {
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       const message = error.response.data.customMessage;
       if(message) showToast('error',message)
     }
@@ -243,16 +262,35 @@ productContainer.addEventListener('click',async (e)=>{
 
 async function refreshCart(){
   try {
+    let mobcartCountContainer = document.getElementById('mobcartCountContainer')
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
     const res = await axios.get('/user/cart')
     if(res.data.cart){
       renderCart(res.data.cart);
       cartCountContainer.textContent = res.data.cart.cartCount;
-      cartCountContainer.classList.toggle(
-      'opacity-50',
-      res.data.cart.cartCount === 0
-  );
+      mobcartCountContainer.textContent = res.data.cart.cartCount;
+      console.log('hello cart count in removal',cartCountContainer);
+
+      console.log('hello cart count in removal',res.data.cart.cartCount);
+      const cartCount = res.data.cart.cartCount || res.data.cart.items.length;
+  cartCountContainer.textContent = cartCount;
+  mobcartCountContainer.textContent = cartCount;
+  if (cartCount === 0) {
+    console.log('HIt 1');
+    cartCountContainer.classList.add('opacity-50');
+    mobcartCountContainer.classList.add('opacity-50');
+    
+  } else {
+    console.log('hit 2');
+    cartCountContainer.classList.remove('opacity-50');
+    mobcartCountContainer.classList.remove('opacity-50');
+    console.log('cartCountContainer',cartCountContainer);
+  }
     }
   } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
     console.log('Error in refreshing cart',error);
   }
 }

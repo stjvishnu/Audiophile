@@ -1,125 +1,147 @@
-
 /**
- * Implemenets Search Functionality once the DOM is fully loaded.
- * 
- * - Sets up debounced event handler to search bar.
- * - Fetches matching products from the server using Axios.
- * - Renders the search results dynamically in the searc result container.
+ * Implements debounced search functionality for desktop and mobile.
+ * - Fetches products from server
+ * - Renders results dynamically
+ * - Handles outside-click closing
  */
 
-document.addEventListener('DOMContentLoaded',()=>{
-  const search=document.getElementById('searchInput');
+document.addEventListener('DOMContentLoaded', () => {
+  /* -------------------- DOM REFERENCES -------------------- */
+  const searchInput = document.getElementById('searchInput');
   const searchIcon = document.getElementById('searchIcon');
 
-  /**
-   * 
-   * @param {Function} fn - Function to Debounce
-   * @param {number} timer - Delay in milliseconds before executing the function
-   * @returns {Function} fn -Debounced Function
-   */
+  const mobileSearchBar = document.getElementById('mobileSearchBar');
+  const mobileSearchInput = mobileSearchBar?.querySelector('input');
 
-      function debounce(fn,timer){
-        let timeout;
-        return function(...args){
-            clearTimeout(timeout);
-            timeout=setTimeout(()=>{
-                fn.apply(this,args)
-            },timer)
-        }
-      }
+  const searchResultContainer = document.getElementById('searchResult');
+  const searchMobileResultContainer = document.getElementById('searchMobileResult');
 
+  /* -------------------- UTILITIES -------------------- */
 
-      /**
-       * Abstract input field, fetches products from the server and calls render function
-       * 
-       * @param {Event} event - Input event object from search field 
-       */
+  function debounce(fn, delay = 400) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  }
 
-      function productSearch(event){
-        const searchIcon = document.getElementById('searchIcon');
-          const searchQuery=encodeURIComponent(event.target.value); //input value
+  function sanitizeQuery(value) {
+    return value.replace(/[*%$?\\]/g, '').trim();
+  }
 
-          if(/[*%$?\\]/.test(searchQuery)){ //avoid special characters that may crash the server
-            searchQuery=searchQuery.replaceAll(/[*%$?\\]/g,'').trim()
-          }
-          if(searchQuery && searchQuery!==''){
-            searchIcon.classList.remove('pointer-events-none');
-            searchIcon.classList.add('pointer-events-auto');
-          }else{
-            searchIcon.classList.remove('pointer-events-auto');
-            searchIcon.classList.add('pointer-events-none');
-          }
-          console.log(searchQuery);
-          axios.get(`/user/products/searchProducts?search=${searchQuery}`) //fetches the product
-          .then((response)=>{
-            if(!response){
-              throw new Error ('Search Failed')
-            }
-            const products=response.data;
-            console.log(products);
-            renderSearchProducts(products) // to render the products below search bar
-          })
-          .catch((err)=>console.log(err))
-      }
+  /* -------------------- SEARCH HANDLER -------------------- */
 
-        /**
-         * Retrieve product name and product image from product object and render it by injecting into the webpage as strings.
-         * Browseer will parse the string and convert into html elements accordingly.
-         * 
-         * @param {Array<objects>} products - Array of product objects
-         * @param {string} -product[].name - Product name
-         * @param {string} -product[].profductImages - Array of image URLs of the product
-         */
+  async function productSearch(event) {
+    let searchQuery = sanitizeQuery(event.target.value);
 
-        function renderSearchProducts(products){
-          console.log('product from search',products)
-          const searchResultContainer=document.getElementById('searchResult');
-          const searchInput=document.getElementById('searchInput');
-          const query=searchInput.value.trim();
+    toggleSearchIcon(searchQuery);
 
-          //clear search results ,if the user clearns the input
-          if(query===''){
-            searchResultContainer.innerHTML=''; //empty the box
-            searchResultContainer.classList.add('hidden'); //hide the result box
-            return
-          }
+    if (!searchQuery) {
+      clearResults();
+      return;
+    }
 
-        
-            if(products.length==0){
-              searchResultContainer.innerHTML= '<div class= "gap-6 p-2 bg-white hover:bg-gray-100 cursor-none border border-gray-200 rounded-[2rem]"> <p class="p-1 text-sm text-0gray-500">No Products Found</p> </div>'
-              searchResultContainer.classList.remove('hidden');
-              return
-            }
-            
-            searchResultContainer.innerHTML = products.map((product) => (
-              `<div class='flex items-center gap-6 p-2 bg-white hover:bg-gray-100 cursor-pointer border border-gray-200 rounded-[2rem]'>
-              <a href='/user/products/productPage/${product._id}' class="flex items-center gap-6">
-                <img src='${product.variants[0].attributes.productImages[0]}' alt='${product.name}' class='w-8 h-6 object-contain rounded'>
-                <span class='text-sm text-gray-800 font-medium'>${product.name}</span>
-              </a>
-            </div>
-            `
-          )).join('');
+    try {
+      const response = await axios.get(
+        `/user/products/searchProducts?search=${encodeURIComponent(searchQuery)}`
+      );
 
-          document.addEventListener('click',(e)=>{
-            if(!searchInput.contains(e.target) && !searchResultContainer.contains(e.target)){
-                searchResultContainer.classList.add('hidden');
-                search.value='';
-            }
-          })
+      renderSearchProducts(response.data || []);
+    } catch (err) {
+      console.error('Search failed:', err);
+    }
+  }
 
-            searchResultContainer.classList.remove('hidden')
-        }
+  const handleSearch = debounce(productSearch);
 
-    const handleSearch=debounce(productSearch,400) 
-    search.addEventListener('input',handleSearch) // event handler statement for search field
+  /* -------------------- RENDERING -------------------- */
 
-    searchIcon.addEventListener('click',()=>{
-      const searchQuery = search.value
-      if(/[*$%\\]/.test(searchQuery)){
-        searchQuery=searchQuery.replaceAll(/[*$%\\]/g,'')
-      }
-      window.location.href=`/user/products/searchProductsPage?${searchQuery}`
-    })
-})
+  function renderSearchProducts(products) {
+    if (!products.length) {
+      renderNoResults();
+      return;
+    }
 
+    const html = products.map(buildProductHTML).join('');
+
+    searchResultContainer.innerHTML = html;
+    searchMobileResultContainer.innerHTML = html;
+
+    showResults();
+  }
+
+  function buildProductHTML(product) {
+    const image =
+      product?.variants?.[0]?.attributes?.productImages?.[0] || '/placeholder.png';
+
+    return `
+      <div class="flex items-center gap-4 p-2 bg-white cursor-pointer border border-gray-200 rounded-[1.1rem]">
+        <a href="/user/products/productPage/${product._id}" class="flex items-center gap-4 w-full">
+          <img src="${image}" alt="${product.name}" class="w-8 h-6 object-contain rounded">
+          <span class="text-sm text-gray-800 font-medium">${product.name}</span>
+        </a>
+      </div>
+    `;
+  }
+
+  function renderNoResults() {
+    const html = `
+      <div class="p-2 bg-white border border-gray-200 rounded-xl">
+        <p class="text-sm text-gray-500">No Products Found</p>
+      </div>
+    `;
+
+    searchResultContainer.innerHTML = html;
+    searchMobileResultContainer.innerHTML = html;
+
+    showResults();
+  }
+
+  /* -------------------- VISIBILITY HELPERS -------------------- */
+
+  function showResults() {
+    searchResultContainer.classList.remove('hidden');
+    searchMobileResultContainer.classList.remove('hidden');
+  }
+
+  function clearResults() {
+    searchResultContainer.innerHTML = '';
+    searchMobileResultContainer.innerHTML = '';
+    searchResultContainer.classList.add('hidden');
+    searchMobileResultContainer.classList.add('hidden');
+  }
+
+  function toggleSearchIcon(value) {
+    searchIcon.classList.toggle('pointer-events-none', !value);
+    searchIcon.classList.toggle('pointer-events-auto', !!value);
+  }
+
+  /* -------------------- EVENT LISTENERS -------------------- */
+
+  searchInput.addEventListener('input', handleSearch);
+  mobileSearchInput?.addEventListener('input', handleSearch);
+
+  document.addEventListener('click', (e) => {
+    const clickedOutsideDesktop =
+      !searchInput.contains(e.target) &&
+      !searchResultContainer.contains(e.target);
+
+    const clickedOutsideMobile =
+      !mobileSearchBar.contains(e.target) &&
+      !searchMobileResultContainer.contains(e.target);
+
+    if (clickedOutsideDesktop && clickedOutsideMobile) {
+      clearResults();
+      searchInput.value = '';
+      if (mobileSearchInput) mobileSearchInput.value = '';
+    }
+  });
+
+  searchIcon.addEventListener('click', () => {
+    const query = sanitizeQuery(searchInput.value);
+    if (query) {
+      window.location.href = `/user/products/searchProductsPage?${query}`;
+    }
+  });
+});

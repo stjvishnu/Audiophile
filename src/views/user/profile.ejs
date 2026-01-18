@@ -1,7 +1,7 @@
 <div class="p-2 sm:p-4 mt-3">
     <div class="min-h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] flex flex-col lg:flex-row gap-3 sm:gap-5 mx-auto my-2 sm:my-3">
         <!-- Sidebar - Sticky with fixed height on desktop -->
-        <div class="bg-black w-full lg:w-64 lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 shadow-2xl rounded-xl sm:rounded-[2rem] overflow-hidden flex-shrink-0">
+        <div class="bg-black w-full lg:w-64 lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 shadow-2xl rounded-[1.8rem] sm:rounded-[2rem] overflow-hidden flex-shrink-0">
             <div class="flex flex-col items-center py-4 sm:py-8 px-4 sm:px-6">
                 <img id="mainProfileImg" src="<%= user.profileImg || 'https://res.cloudinary.com/dsvedpviz/image/upload/v1762330777/Gemini_Generated_Image_ggevjtggevjtggev_s9c1kb.png' %>"
                      alt="User Profile"
@@ -111,7 +111,7 @@
         </div>
         
         <!-- Main content area - Sticky container, content scrolls naturally -->
-        <div class="flex-1 rounded-xl sm:rounded-[2rem] bg-white shadow-2xl overflow-y-auto  lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 min-h-[400px]">
+        <div class="flex-1 rounded-[1.8rem] sm:rounded-[2rem] bg-white shadow-2xl overflow-y-auto  lg:h-[calc(100vh-2rem)] lg:sticky lg:top-0 min-h-[400px]">
             <%-include('./myProfile.ejs') %>
             
             <%-include('./myProfile-editModal.ejs') %>

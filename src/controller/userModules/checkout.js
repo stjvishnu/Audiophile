@@ -27,6 +27,7 @@ const getCheckout = async (req,res)=>{
 
     const user = await User.findById(req.user)
     const cart = await Cart.findOne({userId:req.user}).populate('items.productId');
+
     const address = await Address.findOne({userId:req.user}).sort({isDefault:-1})
     let charge;
     if(address){

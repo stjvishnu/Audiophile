@@ -147,7 +147,6 @@ async function openAddModal(productId=null) {
     isActive.value=product?.isActive||null;
   }
 
-  console.log('product?.productDetails?.mic',product?.productDetails?.mic);
 
 
   function showError(inputId, message, index = null) {

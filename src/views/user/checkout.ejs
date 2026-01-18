@@ -184,7 +184,7 @@
                                       data-product="<%= item.productId %>"
                                       data-product-color="<%= item.color %>"
                                       data-variant="<%= item.variantId %>"
-                                      class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-lg h-4 w-4 sm:h-5.5 sm:w-5.5">
+                                      class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-5.5 sm:w-5.5">
                                 <svg class="w-1 h-1 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 2">
                                   <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
                                 </svg>
@@ -201,7 +201,7 @@
                                       data-product="<%= item.productId%>"
                                       data-product-color="<%= item.color %>"
                                       data-variant="<%= item.variantId %>"
-                                      class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-lg h-4 w-4 sm:h-5.5 sm:w-5.5">
+                                      class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-5.5 sm:w-5.5">
                                 <svg class="w-1 h-2 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 18">
                                   <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
                                 </svg>
@@ -430,6 +430,9 @@ document.addEventListener('keydown', function(e) {
       const btn = e.target.closest('button');
 if(btn.classList.contains('increment')){
   try {
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
+
     const response = await axios.post('/user/cart/update-quantity',{
     productId: btn.dataset.product,
     variantId: btn.dataset.variant,
@@ -439,6 +442,9 @@ if(btn.classList.contains('increment')){
   await applyCoupon()
   await getCoupons()
   } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
+
     console.log('Error in incrementing quantity',error);
     const message = error?.response?.data?.customMessage || 'Something went wrong';
     if(message) showToast('error',message)
@@ -448,6 +454,9 @@ if(btn.classList.contains('increment')){
 
 if (btn.classList.contains('decrement')) {
   try {
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
+
     const response= await axios.post('/user/cart/update-quantity', {
     productId: btn.dataset.product,
     variantId: btn.dataset.variant,
@@ -457,6 +466,9 @@ if (btn.classList.contains('decrement')) {
   await applyCoupon()
   await getCoupons()
   } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+  document.body.style.overflow = '';
+
     console.log('Error in incrementing quantity',error);
     const message = error?.response?.data?.customMessage || 'Something went wrong';
     if(message) showToast('error',message)
@@ -466,11 +478,17 @@ if (btn.classList.contains('decrement')) {
 
 if (btn.classList.contains('remove')) {
   try {
+    document.getElementById('loader').classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
+
    const response = await axios.delete(`/user/cart/${btn.dataset.variant}`);
   await refreshCheckoutCart();
   await applyCoupon()
   await getCoupons()
   } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+  document.body.style.overflow = '';
+
     console.log('Error in incrementing quantity',error);
     const message = error?.response?.data?.customMessage || 'Something went wrong';
     if(message) showToast('error',message)
@@ -482,6 +500,7 @@ if (btn.classList.contains('remove')) {
 
 async function refreshCheckoutCart(){
 try {
+ 
   const selectedAddress = document.getElementById('selectedAddress');
   console.log(selectedAddress);
   const pincode = selectedAddress.querySelector('.pincode').textContent
@@ -503,18 +522,24 @@ try {
 }
 
 async function renderCheckoutCart(cart){
-  console.log('ji');
-  console.log('inside renderCheckoutCart',cart);
-  console.log('hello');
-  console.log('cartItemsListContainer',cartItemsListContainer);
-  cartItemsListContainer.innerHTML='';
+
+  if(cartItemsListContainer){
+    cartItemsListContainer.innerHTML='';
+  }
 
   if (!cart || !cart.items.length) {
-    cartItemsListContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
-    subTotalEl.textContent = `0 ₹`
+    if(cartItemsListContainer){
+      cartItemsListContainer.innerHTML = `<p class="text-center text-gray-500">Your cart is empty.</p>`;
+    }
+    
+    subTotalEl.textContent = `₹ 0`
+    document.getElementById('deliveryFee').textContent = `₹ 0`
+    document.getElementById('discountAmount').textContent = `₹ 0`
+    document.getElementById('couponDiscount').textContent = `₹ 0`
+    document.getElementById('total').textContent = `₹ 0`
     document.getElementById('loader').classList.add('hidden')
     document.body.style.overflow = '';
-    document.getElementById('cartModal').classList.remove('hidden')
+    
       return
   }
      console.log('cart',cart);
@@ -577,8 +602,8 @@ async function renderCheckoutCart(cart){
                     data-product="${item.productId}" 
                     data-product-color="${item.color}" 
                     data-variant="${item.variantId}"
-                    class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-6 w-6 sm:h-7 sm:w-7">
-              <svg class="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" fill="none" viewBox="0 0 18 2">
+                    class="decrement shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-5.5 sm:w-5.5">
+              <svg class="w-1 h-1 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 2">
                 <path stroke="currentColor" stroke-width="2" d="M1 1h16" />
               </svg>
             </button>
@@ -596,8 +621,8 @@ async function renderCheckoutCart(cart){
                     data-product="${item.productId}" 
                     data-product-color="${item.color}" 
                     data-variant="${item.variantId}"
-                    class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-6 w-6 sm:h-7 sm:w-7">
-              <svg class="w-2 h-2 sm:w-3 sm:h-3 text-white" fill="none" viewBox="0 0 18 18">
+                    class="increment shrink-0 bg-black hover:bg-gray-700 inline-flex items-center justify-center border border-gray-300 rounded-md h-4 w-4 sm:h-5.5 sm:w-5.5">
+              <svg class="w-1 h-1 sm:w-2 sm:h-2 text-white" fill="none" viewBox="0 0 18 18">
                 <path stroke="currentColor" stroke-width="2" d="M9 1v16M1 9h16" />
               </svg>
             </button>
@@ -620,7 +645,7 @@ async function renderCheckoutCart(cart){
       `
 
       cartItemsListContainer.appendChild(productDiv)
-      orderSummaryContainer.querySelector('#subTotal').textContent=`₹ ${cart.subTotal}`
+      orderSummaryContainer.querySelector('#subTotal').textContent =`₹ ${cart.subTotal}`
       orderSummaryContainer.querySelector('#discountAmount').textContent=`₹ ${cart.totalDiscount}`;
       document.getElementById('totalAmount').value=`₹ ${cart.total}`;
       document.getElementById('deliveryFee').textContent = `₹ ${cart.charge||0}`
@@ -639,6 +664,8 @@ async function renderCheckoutCart(cart){
       
       
 })
+document.getElementById('loader').classList.add('hidden')
+  document.body.style.overflow = '';
 
 }
 

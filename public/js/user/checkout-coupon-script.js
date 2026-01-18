@@ -99,17 +99,23 @@ let appliedCouponCode = null;
 async function applyCoupon(){
   console.log('call inside apply couponss');
   try {
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
     const couponCode =document.getElementById('couponCode').value;
     console.log('coupon code', couponCode);
     const total = document.getElementById('totalAmount').value;
 
     if(!couponCode && !appliedCouponCode) {
-      console.log('hello');
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       return
+      
     }
 
     if(!couponCode){
       showToast('error','Invalid Coupon')
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
       return
     }
 
@@ -124,6 +130,8 @@ async function applyCoupon(){
     }
 
   } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
     console.log('Error in apply coupon',error);
     const message = error?.response?.data?.customMessage||'Something went wrong';
     if(message) showToast('error',message)
@@ -133,6 +141,8 @@ async function applyCoupon(){
 
 async function removeCoupon(){
   try {
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
     refreshCheckoutCart();
     document.getElementById('couponCode').value=''
   } catch (error) {
