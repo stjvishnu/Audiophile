@@ -29,6 +29,9 @@ passport.use( new GoogleStrategy({
         googleID: profile.id,
       })
       await user.save();
+      const newReferralCode = user.firstName.slice(0,3).toUpperCase()+user._id.toString().slice(-5).toUpperCase();
+      user.referralCode=newReferralCode;
+      await newUser.save();
     }
 
    return done(null,user)

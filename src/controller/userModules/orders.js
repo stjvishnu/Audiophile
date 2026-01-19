@@ -481,7 +481,7 @@ const downloadInvoice = async (req, res) => {
     
     // Display total discount
     doc.text('Total Discount:', labelX, discountPos);
-    doc.text(`-Rs.${order.totalDiscount||0}`, valueX, discountPos, { width: 60, align: 'right' });
+    doc.text(`-Rs.${order.discount||0}`, valueX, discountPos, { width: 60, align: 'right' });
     
     generateHr(doc, hrPos);
     

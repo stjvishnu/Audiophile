@@ -107,7 +107,7 @@ const returnWholeItem = async (req,res)=>{
       order.orderStatus='returned';
       await order.save();
       if(order.payment.method=='razorpay' || order.payment.method=='wallet'){
-        let amount = order.finalPayableAmount || order.totalPrice;
+        let amount = order.finalPayableAmount || order.total;
         creditWallet(order.userId,amount,order.orderStatus,order.orderNumber)
       }
        order.items.forEach(item=>updateStock(item.productId,item.variantId,item.quantity) )

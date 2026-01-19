@@ -37,16 +37,24 @@ const addressPage = document.getElementById('addressPage');
 
 
 addressBtn.addEventListener('click',async(e)=>{
-  console.log('Address btn clicked');
   e.preventDefault();
-  console.log('page',addressPage);
-  // console.log('hello',hello);
-  // hello.innerHTML=''
+  try {
+  
+  document.getElementById('loader').classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
+
   profileInfo.classList.add('hidden')
   walletPage.classList.add('hidden')
   ordersSection.classList.add('hidden')
   walletPage.classList.add('hidden')
+  document.getElementById('loader').classList.add('hidden')
+  document.body.style.overflow = '';
   addressPage.classList.remove('hidden');
+  } catch (error) {
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
+  }
+
 
   // document.body.style.position = 'fixed';
 

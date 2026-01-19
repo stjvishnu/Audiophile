@@ -14,7 +14,7 @@ const getWishlist = async (req,res)=>{
   const wishlist = await Wishlist.findOne({user:req.user}).populate('items.productId').skip(skip).limit(limit)
 
   if(!wishlist){
-    return res.render('user/wishlist.ejs',{wishlistProducts:[]})
+    return res.render('user/wishlist.ejs',{wishlistProducts:[],currentPage:page,totalPages:totalPages})
   }
   const wishlistProducts=wishlist.items.map((item)=>{
     const product = item.productId;

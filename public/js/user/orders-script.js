@@ -16,12 +16,24 @@ ordersBtn.addEventListener('click', async (e)=>{
   referralPage.classList.add('hidden')
   try{
 
+    document.getElementById('loader').classList.remove('hidden')
+    document.body.style.overflow = 'hidden';
     const response  = await axios.get('/user/profile/orders');
     if(response.data.orders){
       const ordersContainer = ordersSection.querySelector('#ordersContainer');
       ordersContainer.innerHTML='';
       orders=response.data.orders;
-      console.log(orders);
+      console.log('orders',orders);
+      if(!orders || orders.length==0){
+        const orderCard = document.createElement('div');
+        orderCard.innerHTML=`
+        <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-center min-h-[40vh] text-2xl text-gray-500">
+        <img class="w-28 h-28 opacity-70" src="https://res.cloudinary.com/dsvedpviz/image/upload/v1768114703/dissapointment_vnymrn.png" alt=""> 
+        No Orders Found .....!
+       </div>
+       `
+       ordersContainer.appendChild(orderCard)
+      }
       orders.forEach((order,index)=>{
         console.log(order);
         
@@ -29,83 +41,85 @@ ordersBtn.addEventListener('click', async (e)=>{
         orderCard.innerHTML=`
 
         <div class="group relative rounded-3xl border-2 border-black/40 p-5 bg-white shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-  <!-- Decorative corner accent -->
-  <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-100 to-transparent rounded-bl-[3rem] rounded-tr-3xl opacity-50"></div>
-  
-  <!-- Header Section -->
-  <div class="relative flex items-start justify-between gap-4 mb-4">
-    <div class="flex items-start gap-4 flex-1">
-      <!-- Product Image with badge -->
-      <div class="relative flex-shrink-0">
-        <img 
-          src="${order.items[0].productImage}"
-          class="w-20 h-20 rounded-2xl object-cover border-2  shadow-md" 
-          alt="Product"
-        />
-        ${order.items.length > 1 ? `
-        <div class="absolute -top-2 -right-2 bg-black text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-md">
-          +${order.items.length - 1}
+        <!-- Decorative corner accent -->
+        <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-100 to-transparent rounded-bl-[3rem] rounded-tr-3xl opacity-50"></div>
+        
+        <!-- Header Section -->
+        <div class="relative flex items-start justify-between gap-4 mb-4">
+          <div class="flex items-start gap-4 flex-1 min-w-0">
+            <!-- Product Image with badge -->
+            <div class="relative flex-shrink-0">
+              <img 
+                src="${order.items[0].productImage}"
+                class="w-20 h-20 rounded-2xl object-cover border-2  shadow-md" 
+                alt="Product"
+              />
+              ${order.items.length > 1 ? `
+              <div class="absolute -top-2 -right-2 bg-black text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                +${order.items.length - 1}
+              </div>
+              ` : ''}
+            </div>
+            
+            <!-- Product Info -->
+            <div class="flex-1 min-w-0 pr-2">
+              <h2 class="text-base sm:text-lg font-bold text-gray-900 truncate mb-1 break-words">${order.items[0].productName}</h2>
+              <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Order #${order.orderNumber}</p>
+              ${order.items.length > 1 ? `
+              <p class="text-sm text-gray-600 mt-1">+${order.items.length - 1} more item${order.items.length > 2 ? 's' : ''}</p>
+              ` : ''}
+            </div>
+          </div>
+          
+          <!-- Price Badge -->
+          <div class="flex-shrink-0">
+            <div class="bg-black text-white px-3 sm:px-4 py-1 rounded-full whitespace-nowrap">
+              <p class="text-sm sm:text-md font-bold">₹${order.total}</p>
+            </div>
+          </div>
         </div>
-        ` : ''}
+        
+        <!-- Divider -->
+        <div class="my-4 border-t-2 border-gray-200"></div>
+        
+        <!-- Footer Section -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <!-- Order Info -->
+          <div class="flex flex-col gap-1">
+            <p class="text-sm text-gray-600 flex items-center gap-2">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span class="font-medium">Ordered: 4 Nov 2025</span>
+            </p>
+          </div>
+          
+                  <!-- Actions -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <!-- Status Badge -->
+          <span class="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-gray-800 to-black text-white text-xs font-bold rounded-full uppercase tracking-wide whitespace-nowrap">
+            ${order.orderStatus}
+          </span>
+          
+          <!-- View Details Button -->
+          <button 
+            onclick="viewDetails('${order._id}')" 
+            class="group/btn flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-white border-2 border-black/60 text-black text-sm font-bold rounded-full hover:bg-black hover:text-white transition-all duration-200 hover:shadow-lg whitespace-nowrap">
+            <span>Details</span>
+            <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+        </div>
       </div>
-      
-      <!-- Product Info -->
-      <div class="flex-1 min-w-0">
-        <h2 class="text-lg font-bold text-gray-900 truncate mb-1">${order.items[0].productName}</h2>
-        <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Order #${order.orderNumber}</p>
-        ${order.items.length > 1 ? `
-        <p class="text-sm text-gray-600 mt-1">+${order.items.length - 1} more item${order.items.length > 2 ? 's' : ''}</p>
-        ` : ''}
-      </div>
-    </div>
-    
-    <!-- Price Badge -->
-    <div class="flex-shrink-0">
-      <div class="bg-black  text-white px-4 py-1 rounded-full ">
-        <p class="text-md font-bold">₹${order.total}</p>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Divider -->
-  <div class="my-4 border-t-2 border-gray-200"></div>
-  
-  <!-- Footer Section -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-    <!-- Order Info -->
-    <div class="flex flex-col gap-1">
-      <p class="text-sm text-gray-600 flex items-center gap-2">
-        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-        <span class="font-medium">Ordered: 4 Nov 2025</span>
-      </p>
-    </div>
-    
-    <!-- Actions -->
-    <div class="flex items-center gap-3">
-      <!-- Status Badge -->
-      <span class="px-4 py-1.5 bg-gradient-to-r from-gray-800 to-black text-white text-xs font-bold rounded-full uppercase tracking-wide ">
-        ${order.orderStatus}
-      </span>
-      
-      <!-- View Details Button -->
-      <button 
-        onclick="viewDetails('${order._id}')" 
-        class="group/btn flex items-center gap-1.5 px-4 py-1.5 bg-white border-2 border-black/60 text-black text-sm font-bold rounded-full hover:bg-black hover:text-white transition-all duration-200  hover:shadow-lg">
-        <span>Details</span>
-        <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
         `
      ordersContainer.prepend(orderCard)
       })
 
       
+      document.getElementById('loader').classList.add('hidden')
+      document.body.style.overflow = '';
     }
 
     
@@ -113,6 +127,8 @@ ordersBtn.addEventListener('click', async (e)=>{
     
   }catch(error){
 
+    document.getElementById('loader').classList.add('hidden')
+    document.body.style.overflow = '';
   }
 
   
